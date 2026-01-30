@@ -3,433 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenClaw 中文文档</title>
-    <style>
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --bg: #0f0f23;
-            --bg-card: #1a1a2e;
-            --text: #e4e4e7;
-            --text-muted: #a1a1aa;
-            --border: #27273a;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.7;
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        header {
-            text-align: center;
-            padding: 4rem 0;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 3rem;
-        }
-        
-        h1 {
-            font-size: 3rem;
-            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
-        }
-        
-        .tagline {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            font-style: italic;
-            margin-bottom: 1.5rem;
-        }
-        
-        .description {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto 2rem;
-        }
-        
-        .links {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .links a {
-            color: var(--primary);
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--primary);
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-        
-        .links a:hover {
-            background: var(--primary);
-            color: white;
-        }
-        
-        h2 {
-            color: var(--primary);
-            margin: 2.5rem 0 1rem;
-            font-size: 1.5rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 0.5rem;
-        }
-        
-        h3 {
-            color: var(--text);
-            margin: 1.5rem 0 0.75rem;
-            font-size: 1.2rem;
-        }
-        
-        p {
-            margin-bottom: 1rem;
-            color: var(--text-muted);
-        }
-        
-        code {
-            background: var(--bg-card);
-            padding: 0.2rem 0.4rem;
-            border-radius: 4px;
-            font-family: 'SF Mono', Monaco, monospace;
-            font-size: 0.9em;
-            color: #f472b6;
-        }
-        
-        pre {
-            background: var(--bg-card);
-            padding: 1.5rem;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 1.5rem 0;
-            border: 1px solid var(--border);
-        }
-        
-        pre code {
-            background: none;
-            padding: 0;
-            color: var(--text);
-        }
-        
-        .highlight-box {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
-            border: 1px solid var(--primary);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-        }
-        
-        .highlight-box p {
-            margin: 0;
-        }
-        
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-        
-        .feature-item {
-            background: var(--bg-card);
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-        }
-        
-        .feature-icon {
-            font-size: 1.5rem;
-            flex-shrink: 0;
-        }
-        
-        .feature-content h4 {
-            color: var(--text);
-            font-size: 0.95rem;
-            margin-bottom: 0.25rem;
-        }
-        
-        .feature-content p {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin: 0;
-        }
-        
-        .quick-links {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 0.5rem;
-            margin: 1rem 0;
-        }
-        
-        .quick-links a {
-            color: var(--primary);
-            text-decoration: none;
-            padding: 0.5rem;
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
-        
-        .quick-links a:hover {
-            background: rgba(99, 102, 241, 0.1);
-        }
-        
-        .diagram {
-            background: var(--bg-card);
-            padding: 1.5rem;
-            border-radius: 8px;
-            font-family: 'SF Mono', monospace;
-            font-size: 0.85rem;
-            line-height: 1.6;
-            overflow-x: auto;
-            margin: 1.5rem 0;
-            color: var(--text-muted);
-        }
-        
-        blockquote {
-            border-left: 3px solid var(--primary);
-            padding-left: 1rem;
-            margin: 1.5rem 0;
-            color: var(--text-muted);
-            font-style: italic;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 3rem 0;
-            border-top: 1px solid var(--border);
-            margin-top: 3rem;
-            color: var(--text-muted);
-        }
-        
-        .lobster {
-            font-size: 2rem;
-        }
-        
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .container {
-                padding: 1rem;
-            }
-            
-            header {
-                padding: 2rem 0;
-            }
-        }
-    </style>
+    <title>OpenClaw 文档 - AI 助手网关</title>
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="lobster">🦞</div>
-            <h1>OpenClaw</h1>
-            <p class="tagline">"去角质！去角质！" —— 一只太空龙虾，大概</p>
-            <p class="description">
-                适用于 AI 代理的跨平台消息网关。支持 WhatsApp、Telegram、Discord、iMessage，
-                插件还可扩展 Mattermost 等平台。
-            </p>
-            <div class="links">
-                <a href="https://github.com/openclaw/openclaw">GitHub</a>
-                <a href="https://github.com/openclaw/openclaw/releases">Releases</a>
-                <a href="https://docs.openclaw.ai/">英文文档</a>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-icon">🦞</span>
+                <span class="logo-text">OpenClaw 中文文档</span>
+            </a>
+            <button class="nav-toggle" onclick="toggleNav()">☰</button>
+            <div class="nav-links" id="navLinks">
+                <div class="nav-section">
+                    <span class="nav-section-title">入门指南</span>
+                    <a href="start/getting-started.html">快速入门</a>
+                    <a href="start/wizard.html">向导</a>
+                    <a href="start/pairing.html">配对</a>
+                    <a href="start/setup.html">设置</a>
+                    <a href="start/openclaw.html">OpenClaw 助手</a>
+                    <a href="start/hubs.html">文档中心</a>
+                </div>
+                <div class="nav-section">
+                    <span class="nav-section-title">网关配置</span>
+                    <a href="gateway/configuration.html">配置</a>
+                    <a href="gateway/configuration-examples.html">配置示例</a>
+                    <a href="gateway/security.html">安全</a>
+                    <a href="gateway/remote.html">远程访问</a>
+                    <a href="gateway/tailscale.html">Tailscale</a>
+                    <a href="gateway/multiple-gateways.html">多网关</a>
+                    <a href="gateway/discovery.html">发现机制</a>
+                </div>
+                <div class="nav-section">
+                    <span class="nav-section-title">消息渠道</span>
+                    <a href="channels/whatsapp.html">WhatsApp</a>
+                    <a href="channels/telegram.html">Telegram</a>
+                    <a href="channels/discord.html">Discord</a>
+                    <a href="channels/mattermost.html">Mattermost</a>
+                    <a href="channels/imessage.html">iMessage</a>
+                </div>
+                <div class="nav-section">
+                    <span class="nav-section-title">Web 界面</span>
+                    <a href="web/webchat.html">WebChat</a>
+                    <a href="web/control-ui.html">控制界面</a>
+                    <a href="web/dashboard.html">控制台</a>
+                </div>
+                <div class="nav-section">
+                    <span class="nav-section-title">核心概念</span>
+                    <a href="concepts/streaming.html">流式传输</a>
+                    <a href="concepts/groups.html">群组</a>
+                    <a href="concepts/group-messages.html">群组消息</a>
+                    <a href="concepts/multi-agent.html">多代理路由</a>
+                    <a href="concepts/session.html">会话</a>
+                </div>
+                <div class="nav-section">
+                    <span class="nav-section-title">自动化</span>
+                    <a href="automation/cron-jobs.html">定时任务</a>
+                    <a href="automation/webhook.html">Webhooks</a>
+                    <a href="automation/gmail-pubsub.html">Gmail Pub/Sub</a>
+                </div>
+                <div class="nav-section">
+                    <span class="nav-section-title">工具与技能</span>
+                    <a href="tools/slash-commands.html">斜杠命令</a>
+                    <a href="tools/skills.html">技能</a>
+                    <a href="tools/skills-config.html">技能配置</a>
+                    <a href="tools/web.html">Web 工具</a>
+                </div>
+                <div class="nav-section">
+                    <span class="nav-section-title">安装与平台</span>
+                    <a href="install/updating.html">更新</a>
+                    <a href="install/nix.html">Nix 模式</a>
+                    <a href="platforms/macos.html">macOS</a>
+                    <a href="platforms/ios.html">iOS</a>
+                    <a href="platforms/android.html">Android</a>
+                    <a href="platforms/windows.html">Windows (WSL2)</a>
+                    <a href="platforms/linux.html">Linux</a>
+                </div>
+                <div class="nav-section">
+                    <span class="nav-section-title">节点与媒体</span>
+                    <a href="nodes/index.html">节点</a>
+                    <a href="nodes/images.html">图片</a>
+                    <a href="nodes/audio.html">音频</a>
+                </div>
+                <div class="nav-section">
+                    <span class="nav-section-title">其他</span>
+                    <a href="help.html">帮助</a>
+                </div>
             </div>
-        </header>
+        </div>
+    </nav>
 
-        <section>
-            <h2>简介</h2>
-            <p>
-                OpenClaw 打通了以下平台与编程代理（如 <a href="https://github.com/badlogic/pi-mono">Pi</a>）之间的连接：
+    <div class="overlay" onclick="toggleNav()"></div>
+
+    <main class="main-content">
+        <div class="hero">
+            <h1>🦞 OpenClaw</h1>
+            <p class="hero-quote">" exfoliate! exfoliate! " — 一只太空龙虾，大概</p>
+            <p class="hero-description">
+                任意操作系统 + WhatsApp/Telegram/Discord/iMessage 网关，专为 AI 助手打造。
+                发送消息，即刻获得智能回复——就在你的口袋中。
             </p>
-            <ul style="margin: 1rem 0 1rem 1.5rem; color: var(--text-muted);">
-                <li><strong>WhatsApp</strong> —— 通过 WhatsApp Web / Baileys</li>
-                <li><strong>Telegram</strong> —— Bot API / grammY</li>
-                <li><strong>Discord</strong> —— Bot API / channels.discord.js</li>
-                <li><strong>iMessage</strong> —— imsg CLI（macOS）</li>
+            <div class="hero-links">
+                <a href="https://github.com/openclaw/openclaw" class="btn btn-primary" target="_blank">GitHub</a>
+                <a href="start/getting-started.html" class="btn btn-secondary">开始使用</a>
+                <a href="start/openclaw.html" class="btn btn-secondary">设置 OpenClaw 助手</a>
+            </div>
+        </div>
+
+        <div class="content">
+            <h2>从这里开始</h2>
+            <ul>
+                <li><strong>从零开始安装：</strong><a href="start/getting-started.html">快速入门</a></li>
+                <li><strong>引导式设置（推荐）：</strong><a href="start/wizard.html">向导</a> (openclaw onboard)</li>
+                <li><strong>打开控制台（本地网关）：</strong><a href="http://127.0.0.1:18789/">http://127.0.0.1:18789/</a></li>
             </ul>
-            <p>插件还支持 Mattermost（Bot API + WebSocket）等更多平台。</p>
-        </section>
 
-        <section>
-            <h2>快速开始</h2>
-            
-            <div class="highlight-box">
-                <p><strong>运行时要求：</strong>Node.js ≥ 22</p>
-            </div>
+            <p>如果网关运行在同一台电脑上，该链接会立即打开浏览器控制界面。如果失败，请先启动网关：<code>openclaw gateway</code></p>
 
-            <h3>推荐安装方式（npm/pnpm 全局安装）</h3>
-            <pre><code># 安装
-npm install -g openclaw@latest
-# 或：pnpm add -g openclaw@latest
-
-# 引导配置 + 安装服务（launchd/systemd 用户服务）
-openclaw onboard --install-daemon
-
-# 配对 WhatsApp Web（会显示二维码）
-openclaw channels login
-
-# 启动网关
-openclaw gateway --port 18789</code></pre>
-
-            <h3>从源码安装（开发环境）</h3>
-            <pre><code>git clone https://github.com/openclaw/openclaw.git
-cd openclaw
-pnpm install
-pnpm ui:build
-pnpm build
-openclaw onboard --install-daemon</code></pre>
-
-            <h3>发送测试消息</h3>
-            <pre><code>openclaw message send --target +15555550123 --message "Hello from OpenClaw"</code></pre>
-        </section>
-
-        <section>
             <h2>工作原理</h2>
             <div class="diagram">
+<pre>
 WhatsApp / Telegram / Discord / iMessage (+ 插件)
-                │
-                ▼
-    ┌───────────────────────────┐
-    │          网关              │  ws://127.0.0.1:18789
-    │        (单一来源)          │
-    └───────────┬───────────────┘
-                │
-    ├─ Pi 代理（RPC 模式）
-    ├─ CLI（openclaw …）
-    ├─ macOS 应用（OpenClaw.app）
-    ├─ iOS 节点（通过网关 WS + 配对）
-    └─ Android 节点（通过网关 WS + 配对）
+    │
+    ▼
+┌───────────────────────────┐
+│        网关 (Gateway)      │ ws://127.0.0.1:18789 (仅本地)
+│      (单一数据源)          │
+│                           │ http://&lt;gateway-host&gt;:18793
+│                           │ /__openclaw__/canvas/ (画布主机)
+└───────────┬───────────────┘
+    │
+    ├─ Pi 代理 (RPC)
+    ├─ CLI (openclaw …)
+    ├─ 聊天界面 (SwiftUI)
+    ├─ macOS 应用 (OpenClaw.app)
+    ├─ iOS 节点 (通过网关 WS + 配对)
+    └─ Android 节点 (通过网关 WS + 配对)
+</pre>
             </div>
-            <p>
-                大多数操作都通过<strong>网关</strong>（<code>openclaw gateway</code>）流转，
-                这是一个长期运行的单一进程，负责管理所有渠道连接和 WebSocket 控制平面。
-            </p>
-        </section>
 
-        <section>
             <h2>功能特性</h2>
-            <div class="feature-grid">
-                <div class="feature-item">
+            <div class="features">
+                <div class="feature">
                     <span class="feature-icon">📱</span>
-                    <div class="feature-content">
-                        <h4>WhatsApp 集成</h4>
-                        <p>使用 Baileys 实现 WhatsApp Web 协议</p>
-                    </div>
+                    <span>WhatsApp 集成 — 使用 Baileys 协议</span>
                 </div>
-                <div class="feature-item">
+                <div class="feature">
                     <span class="feature-icon">✈️</span>
-                    <div class="feature-content">
-                        <h4>Telegram 机器人</h4>
-                        <p>支持私聊和群组，基于 grammY</p>
-                    </div>
+                    <span>Telegram 机器人 — 支持私信和群组</span>
                 </div>
-                <div class="feature-item">
+                <div class="feature">
                     <span class="feature-icon">🎮</span>
-                    <div class="feature-content">
-                        <h4>Discord 机器人</h4>
-                        <p>支持私聊和公会频道</p>
-                    </div>
+                    <span>Discord 机器人 — 支持私信和公会频道</span>
                 </div>
-                <div class="feature-item">
+                <div class="feature">
+                    <span class="feature-icon">🧩</span>
+                    <span>Mattermost 机器人（插件）</span>
+                </div>
+                <div class="feature">
                     <span class="feature-icon">💬</span>
-                    <div class="feature-content">
-                        <h4>iMessage</h4>
-                        <p>本地 imsg CLI 集成（macOS）</p>
-                    </div>
+                    <span>iMessage — 本地 imsg CLI 集成</span>
                 </div>
-                <div class="feature-item">
+                <div class="feature">
                     <span class="feature-icon">🤖</span>
-                    <div class="feature-content">
-                        <h4>代理桥接</h4>
-                        <p>Pi（RPC 模式），支持工具流式传输</p>
-                    </div>
+                    <span>代理桥接 — Pi (RPC 模式)</span>
                 </div>
-                <div class="feature-item">
+                <div class="feature">
+                    <span class="feature-icon">⏱️</span>
+                    <span>流式传输 + 分块</span>
+                </div>
+                <div class="feature">
                     <span class="feature-icon">🧠</span>
-                    <div class="feature-content">
-                        <h4>多代理路由</h4>
-                        <p>将不同对话路由到隔离的代理</p>
-                    </div>
+                    <span>多代理路由</span>
                 </div>
-                <div class="feature-item">
+                <div class="feature">
+                    <span class="feature-icon">🔐</span>
+                    <span>订阅认证</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">💬</span>
+                    <span>会话管理</span>
+                </div>
+                <div class="feature">
                     <span class="feature-icon">👥</span>
-                    <div class="feature-content">
-                        <h4>群组聊天支持</h4>
-                        <p>基于提及触发或始终响应</p>
-                    </div>
+                    <span>群组聊天支持</span>
                 </div>
-                <div class="feature-item">
+                <div class="feature">
                     <span class="feature-icon">📎</span>
-                    <div class="feature-content">
-                        <h4>媒体支持</h4>
-                        <p>发送和接收图片、音频、文档</p>
-                    </div>
+                    <span>媒体支持 — 图片、音频、文档</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">🎤</span>
+                    <span>语音消息</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">🖥️</span>
+                    <span>WebChat + macOS 应用</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">📱</span>
+                    <span>iOS 节点</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">📱</span>
+                    <span>Android 节点</span>
                 </div>
             </div>
-        </section>
 
-        <section>
-            <h2>配置示例</h2>
-            <p>配置文件位于 <code>~/.openclaw/openclaw.json</code></p>
-            <pre><code>{
-  "channels": {
-    "whatsapp": {
-      "allowFrom": ["+15555550123"],
-      "groups": {
-        "*": { "requireMention": true }
-      }
-    }
-  },
-  "messages": {
-    "groupChat": {
-      "mentionPatterns": ["@openclaw"]
-    }
-  }
-}</code></pre>
-        </section>
+            <h2>快速开始</h2>
+            <pre><code># 运行时要求: Node ≥ 22
 
-        <section>
-            <h2>名字的由来</h2>
-            <blockquote>
-                <strong>OpenClaw</strong> = CLAW + TARDIS —— 因为每只太空龙虾都需要一台时空机器。
-            </blockquote>
-        </section>
+# 推荐：全局安装 (npm/pnpm)
+npm install -g openclaw@latest
+# 或: pnpm add -g openclaw@latest
 
-        <section>
-            <h2>致谢</h2>
-            <ul style="margin: 1rem 0 1rem 1.5rem; color: var(--text-muted);">
-                <li><strong>Peter Steinberger</strong> —— 创造者，龙虾语者</li>
-                <li><strong>Mario Zechner</strong> —— Pi 创造者，安全渗透测试师</li>
-                <li><strong>Clawd</strong> —— 要求更好名字的太空龙虾</li>
-            </ul>
-        </section>
+# 初始化并安装服务
+openclaw onboard --install-daemon
 
-        <footer>
-            <p>MIT 许可证 —— 像大海中的龙虾一样自由 🦞</p>
-            <p style="margin-top: 1rem; font-size: 0.9rem;">
-                本文档由社区翻译 | 原文：<a href="https://docs.openclaw.ai/" style="color: var(--primary);">docs.openclaw.ai</a>
-            </p>
-        </footer>
-    </div>
+# 配对 WhatsApp Web (显示二维码)
+openclaw channels login
+
+# 手动运行网关
+openclaw gateway --port 18789</code></pre>
+
+            <h2>文档导航</h2>
+            <div class="doc-grid">
+                <a href="start/getting-started.html" class="doc-card">
+                    <h3>🚀 快速入门</h3>
+                    <p>从零开始使用 OpenClaw</p>
+                </a>
+                <a href="gateway/configuration.html" class="doc-card">
+                    <h3>⚙️ 网关配置</h3>
+                    <p>完整的配置选项参考</p>
+                </a>
+                <a href="gateway/security.html" class="doc-card">
+                    <h3>🔒 安全指南</h3>
+                    <p>保护你的 OpenClaw 设置</p>
+                </a>
+                <a href="channels/whatsapp.html" class="doc-card">
+                    <h3>📱 渠道配置</h3>
+                    <p>WhatsApp、Telegram、Discord 等</p>
+                </a>
+                <a href="tools/skills.html" class="doc-card">
+                    <h3>🛠️ 技能系统</h3>
+                    <p>扩展 OpenClaw 功能</p>
+                </a>
+                <a href="help.html" class="doc-card">
+                    <h3>❓ 帮助</h3>
+                    <p>常见问题与故障排除</p>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>OpenClaw = CLAW + TARDIS — 因为每只太空龙虾都需要一台时空机器</p>
+            <p>"我们都在玩自己的提示词。" — 某个 AI，大概 token 嗨了</p>
+            <p class="license">MIT 协议 — 像海洋中的龙虾一样自由 🦞</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
 </body>
 </html>
