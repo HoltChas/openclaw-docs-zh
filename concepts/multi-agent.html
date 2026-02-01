@@ -121,11 +121,291 @@
     <main class="main-content">
         <div class="content">
             <h1>多代理路由</h1>
+<h1>多 Agent 路由</h1>
+<p>目标：在一个 Gateway 进程中运行多个<strong>隔离</strong> Agent（各自的 workspace + <code>agentDir</code> + sessions），并支持多个频道账号（比如两个 WhatsApp）。入站消息通过绑定路由到具体 Agent。</p>
+<h2>什么是“一位 Agent”？</h2>
+<p><strong>Agent</strong> 是一个完整隔离的“脑”，拥有自己的：</p>
+<ul>
+<li><strong>工作区</strong>（文件、AGENTS.md/SOUL.md/USER.md、本地笔记、人格规则）。</li>
+<li><strong>状态目录</strong>（<code>agentDir</code>），保存认证配置、模型注册表和每个 Agent 的配置。</li>
+<li><strong>会话存储</strong>（聊天历史 + 路由状态）位于 <code>~/.openclaw/agents/&lt;agentId&gt;/sessions</code>。</li>
+</ul>
+<p>认证配置是 <strong>每个 Agent 独立</strong>。每个 Agent 从自己的文件读取：</p>
+<pre><code>~/.openclaw/agents/&lt;agentId&gt;/agent/auth-profiles.json
+</code></pre>
+<p>主 Agent 的凭证不会自动共享。不要跨 Agent 共享 <code>agentDir</code>（会导致认证/会话冲突）。如果你要共享凭证，请复制 <code>auth-profiles.json</code> 到另一个 Agent 的 <code>agentDir</code>。</p>
+<p>技能是每个 Agent 的 <code>workspace/skills</code>，共享技能放在 <code>~/.openclaw/skills</code>。<br>参见 <a href="/tools/skills#per-agent-vs-shared-skills">技能：每个 Agent vs 共享</a>。</p>
+<p>Gateway 可以同时托管 <strong>一个 Agent</strong>（默认）或 <strong>多个 Agent</strong>。</p>
+<p><strong>工作区说明：</strong> 每个 Agent 的工作区是 <strong>默认 cwd</strong>，不是硬隔离。相对路径解析在工作区内，但绝对路径可访问其他主机路径，除非开启沙盒。参见 <a href="/gateway/sandboxing">沙盒化</a>。</p>
+<h2>路径速查</h2>
+<ul>
+<li>配置：<code>~/.openclaw/openclaw.json</code>（或 <code>OPENCLAW_CONFIG_PATH</code>）</li>
+<li>状态目录：<code>~/.openclaw</code>（或 <code>OPENCLAW_STATE_DIR</code>）</li>
+<li>工作区：<code>~/.openclaw/workspace</code>（或 <code>~/.openclaw/workspace-&lt;agentId&gt;</code>）</li>
+<li>Agent 目录：<code>~/.openclaw/agents/&lt;agentId&gt;/agent</code>（或 <code>agents.list[].agentDir</code>）</li>
+<li>会话：<code>~/.openclaw/agents/&lt;agentId&gt;/sessions</code></li>
+</ul>
+<h3>单 Agent 模式（默认）</h3>
+<p>如果你不做任何事，OpenClaw 运行单 Agent：</p>
+<ul>
+<li><code>agentId</code> 默认是 <strong><code>main</code></strong>。</li>
+<li>会话键为 <code>agent:main:&lt;mainKey&gt;</code>。</li>
+<li>工作区默认 <code>~/.openclaw/workspace</code>（或设置 <code>OPENCLAW_PROFILE</code> 时 <code>~/.openclaw/workspace-&lt;profile&gt;</code>）。</li>
+<li>状态默认 <code>~/.openclaw/agents/main/agent</code>。</li>
+</ul>
+<h2>Agent 助手</h2>
+<p>使用 Agent 向导添加一个新的隔离 Agent：</p>
+<pre><code class="language-bash">openclaw agents add work # 中文注释：新增一个叫 work 的 Agent
+</code></pre>
+<p>然后添加 <code>bindings</code>（或让向导做）来路由入站消息。</p>
+<p>验证：</p>
+<pre><code class="language-bash">openclaw agents list --bindings # 中文注释：查看 Agent 及其绑定
+</code></pre>
+<h2>多 Agent = 多个人、多种人格</h2>
+<p>在 <strong>多 Agent</strong> 设置中，每个 <code>agentId</code> 是一个<strong>完全隔离</strong>的人设：</p>
+<ul>
+<li><strong>不同账号/手机号</strong>（每个频道 <code>accountId</code>）。</li>
+<li><strong>不同人格</strong>（每个 Agent 的工作区文件如 <code>AGENTS.md</code> 和 <code>SOUL.md</code>）。</li>
+<li><strong>独立认证 + 会话</strong>（除非明确共享）。</li>
+</ul>
+<p>这样可以让<strong>多个人</strong>共享一个 Gateway 服务器，同时保持 AI “大脑”与数据隔离。</p>
+<h2>一个 WhatsApp 号，多个人（DM 拆分）</h2>
+<p>你可以在 <strong>一个 WhatsApp 账号</strong> 下，将不同 DM 路由给不同 Agent，通过发送者 E.164（如 <code>+15551234567</code>）匹配 <code>peer.kind: &quot;dm&quot;</code>。回复仍来自同一个 WhatsApp 号码（无法按 Agent 区分发送者身份）。</p>
+<p>重要细节：直聊会折叠到 Agent 的 <strong>主会话键</strong>，因此真正隔离需要 <strong>一人一个 Agent</strong>。</p>
+<p>示例：</p>
+<pre><code class="language-json5">{
+  agents: {
+    list: [
+      { id: &quot;alex&quot;, workspace: &quot;~/.openclaw/workspace-alex&quot; },
+      { id: &quot;mia&quot;, workspace: &quot;~/.openclaw/workspace-mia&quot; }
+    ]
+  },
+  bindings: [
+    { agentId: &quot;alex&quot;, match: { channel: &quot;whatsapp&quot;, peer: { kind: &quot;dm&quot;, id: &quot;+15551230001&quot; } } },
+    { agentId: &quot;mia&quot;,  match: { channel: &quot;whatsapp&quot;, peer: { kind: &quot;dm&quot;, id: &quot;+15551230002&quot; } } }
+  ],
+  channels: {
+    whatsapp: {
+      dmPolicy: &quot;allowlist&quot;, // 中文注释：DM 允许列表模式
+      allowFrom: [&quot;+15551230001&quot;, &quot;+15551230002&quot;]
+    }
+  }
+}
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>DM 访问控制是 <strong>每个 WhatsApp 账号全局</strong>（配对/允许列表），不是每个 Agent。</li>
+<li>对共享群，绑定到一个 Agent 或使用 <a href="/broadcast-groups">广播群组</a>。</li>
+</ul>
+<h2>路由规则（消息如何选择 Agent）</h2>
+<p>绑定是 <strong>确定性</strong> 且 <strong>最具体优先</strong>：</p>
+<ol>
+<li><code>peer</code> 匹配（精确 DM/群/频道 id）</li>
+<li><code>guildId</code>（Discord）</li>
+<li><code>teamId</code>（Slack）</li>
+<li>频道的 <code>accountId</code> 匹配</li>
+<li>频道级匹配（<code>accountId: &quot;*&quot;</code>）</li>
+<li>回退到默认 Agent（<code>agents.list[].default</code>，否则列表第一项，默认：<code>main</code>）</li>
+</ol>
+<h2>多账号 / 多手机号</h2>
+<p>支持 <strong>多账号</strong> 的频道（如 WhatsApp）使用 <code>accountId</code> 标识每个登录。<br>每个 <code>accountId</code> 可以路由给不同 Agent，因此一个服务器可托管多个手机号而不混淆会话。</p>
+<h2>核心概念</h2>
+<ul>
+<li><code>agentId</code>：一个“脑”（工作区、每个 Agent 的认证、每个 Agent 的会话存储）。</li>
+<li><code>accountId</code>：一个频道账号实例（如 WhatsApp 账号 &quot;personal&quot; vs &quot;biz&quot;）。</li>
+<li><code>binding</code>：通过 <code>(channel, accountId, peer)</code> 将入站消息路由到 <code>agentId</code>，可选 guild/team id。</li>
+<li>直聊折叠到 <code>agent:&lt;agentId&gt;:&lt;mainKey&gt;</code>（每个 Agent 的 “main”；<code>session.mainKey</code>）。</li>
+</ul>
+<h2>示例：两个 WhatsApp → 两个 Agent</h2>
+<p><code>~/.openclaw/openclaw.json</code>（JSON5）：</p>
+<pre><code class="language-js">{
+  agents: {
+    list: [
+      {
+        id: &quot;home&quot;,
+        default: true,
+        name: &quot;Home&quot;,
+        workspace: &quot;~/.openclaw/workspace-home&quot;,
+        agentDir: &quot;~/.openclaw/agents/home/agent&quot;,
+      },
+      {
+        id: &quot;work&quot;,
+        name: &quot;Work&quot;,
+        workspace: &quot;~/.openclaw/workspace-work&quot;,
+        agentDir: &quot;~/.openclaw/agents/work/agent&quot;,
+      },
+    ],
+  },
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/concepts/multi-agent" target="_blank">查看原始英文文档</a></p>
-        
+  // 中文注释：确定性路由，最具体优先
+  bindings: [
+    { agentId: &quot;home&quot;, match: { channel: &quot;whatsapp&quot;, accountId: &quot;personal&quot; } },
+    { agentId: &quot;work&quot;, match: { channel: &quot;whatsapp&quot;, accountId: &quot;biz&quot; } },
+
+    // 中文注释：可选单个群聊覆写
+    {
+      agentId: &quot;work&quot;,
+      match: {
+        channel: &quot;whatsapp&quot;,
+        accountId: &quot;personal&quot;,
+        peer: { kind: &quot;group&quot;, id: &quot;1203630...@g.us&quot; },
+      },
+    },
+  ],
+
+  // 中文注释：默认关闭，Agent 间消息必须显式启用 + 允许列表
+  tools: {
+    agentToAgent: {
+      enabled: false,
+      allow: [&quot;home&quot;, &quot;work&quot;],
+    },
+  },
+
+  channels: {
+    whatsapp: {
+      accounts: {
+        personal: {
+          // 中文注释：可选覆盖。默认：~/.openclaw/credentials/whatsapp/personal
+          // authDir: &quot;~/.openclaw/credentials/whatsapp/personal&quot;,
+        },
+        biz: {
+          // 中文注释：可选覆盖。默认：~/.openclaw/credentials/whatsapp/biz
+          // authDir: &quot;~/.openclaw/credentials/whatsapp/biz&quot;,
+        },
+      },
+    },
+  },
+}
+</code></pre>
+<h2>示例：WhatsApp 日常 + Telegram 深度工作</h2>
+<p>按频道拆分：WhatsApp 路由到快速日常 Agent，Telegram 路由到 Opus Agent。</p>
+<pre><code class="language-json5">{
+  agents: {
+    list: [
+      {
+        id: &quot;chat&quot;,
+        name: &quot;Everyday&quot;,
+        workspace: &quot;~/.openclaw/workspace-chat&quot;,
+        model: &quot;anthropic/claude-sonnet-4-5&quot;
+      },
+      {
+        id: &quot;opus&quot;,
+        name: &quot;Deep Work&quot;,
+        workspace: &quot;~/.openclaw/workspace-opus&quot;,
+        model: &quot;anthropic/claude-opus-4-5&quot;
+      }
+    ]
+  },
+  bindings: [
+    { agentId: &quot;chat&quot;, match: { channel: &quot;whatsapp&quot; } },
+    { agentId: &quot;opus&quot;, match: { channel: &quot;telegram&quot; } }
+  ]
+}
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>如果你有多个账号，给绑定加上 <code>accountId</code>（例如 <code>{ channel: &quot;whatsapp&quot;, accountId: &quot;personal&quot; }</code>）。</li>
+<li>想把某个 DM/群路由到 Opus，同时其余保持 chat，添加 <code>match.peer</code> 绑定；peer 匹配总是胜过频道级规则。</li>
+</ul>
+<h2>示例：同频道，单一 peer 到 Opus</h2>
+<p>保持 WhatsApp 走快速 Agent，但把一个 DM 路由到 Opus：</p>
+<pre><code class="language-json5">{
+  agents: {
+    list: [
+      { id: &quot;chat&quot;, name: &quot;Everyday&quot;, workspace: &quot;~/.openclaw/workspace-chat&quot;, model: &quot;anthropic/claude-sonnet-4-5&quot; },
+      { id: &quot;opus&quot;, name: &quot;Deep Work&quot;, workspace: &quot;~/.openclaw/workspace-opus&quot;, model: &quot;anthropic/claude-opus-4-5&quot; }
+    ]
+  },
+  bindings: [
+    { agentId: &quot;opus&quot;, match: { channel: &quot;whatsapp&quot;, peer: { kind: &quot;dm&quot;, id: &quot;+15551234567&quot; } } },
+    { agentId: &quot;chat&quot;, match: { channel: &quot;whatsapp&quot; } }
+  ]
+}
+</code></pre>
+<p>peer 绑定总是胜出，所以把它放在频道级规则上方。</p>
+<h2>示例：家庭 Agent 绑定到 WhatsApp 群</h2>
+<p>把一个专用家庭 Agent 绑定到单个群，同时启用提及门控和更严格的工具策略：</p>
+<pre><code class="language-json5">{
+  agents: {
+    list: [
+      {
+        id: &quot;family&quot;,
+        name: &quot;Family&quot;,
+        workspace: &quot;~/.openclaw/workspace-family&quot;,
+        identity: { name: &quot;Family Bot&quot; },
+        groupChat: {
+          mentionPatterns: [&quot;@family&quot;, &quot;@familybot&quot;, &quot;@Family Bot&quot;]
+        },
+        sandbox: {
+          mode: &quot;all&quot;,
+          scope: &quot;agent&quot;
+        },
+        tools: {
+          allow: [&quot;exec&quot;, &quot;read&quot;, &quot;sessions_list&quot;, &quot;sessions_history&quot;, &quot;sessions_send&quot;, &quot;sessions_spawn&quot;, &quot;session_status&quot;],
+          deny: [&quot;write&quot;, &quot;edit&quot;, &quot;apply_patch&quot;, &quot;browser&quot;, &quot;canvas&quot;, &quot;nodes&quot;, &quot;cron&quot;]
+        }
+      }
+    ]
+  },
+  bindings: [
+    {
+      agentId: &quot;family&quot;,
+      match: {
+        channel: &quot;whatsapp&quot;,
+        peer: { kind: &quot;group&quot;, id: &quot;120363999999999999@g.us&quot; }
+      }
+    }
+  ]
+}
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>工具允许/拒绝列表是 <strong>工具</strong>，不是技能。若技能需要运行二进制，请确保允许 <code>exec</code> 且二进制存在于沙盒中。</li>
+<li>若要更严格门控，设置 <code>agents.list[].groupChat.mentionPatterns</code> 并保持频道群允许列表启用。</li>
+</ul>
+<h2>每个 Agent 的沙盒和工具配置</h2>
+<p>从 v2026.1.6 开始，每个 Agent 可以有自己的沙盒和工具限制：</p>
+<pre><code class="language-js">{
+  agents: {
+    list: [
+      {
+        id: &quot;personal&quot;,
+        workspace: &quot;~/.openclaw/workspace-personal&quot;,
+        sandbox: {
+          mode: &quot;off&quot;,  // 中文注释：个人 Agent 不启用沙盒
+        },
+        // 中文注释：不限制工具 - 全部可用
+      },
+      {
+        id: &quot;family&quot;,
+        workspace: &quot;~/.openclaw/workspace-family&quot;,
+        sandbox: {
+          mode: &quot;all&quot;,     // 中文注释：始终沙盒
+          scope: &quot;agent&quot;,  // 中文注释：每个 Agent 一个容器
+          docker: {
+            // 中文注释：容器创建后的可选一次性设置
+            setupCommand: &quot;apt-get update &amp;&amp; apt-get install -y git curl&quot;,
+          },
+        },
+        tools: {
+          allow: [&quot;read&quot;],                    // 中文注释：只允许 read
+          deny: [&quot;exec&quot;, &quot;write&quot;, &quot;edit&quot;, &quot;apply_patch&quot;],    // 中文注释：拒绝其他工具
+        },
+      },
+    ],
+  },
+}
+</code></pre>
+<p>注意：<code>setupCommand</code> 位于 <code>sandbox.docker</code> 下，并在容器创建时运行一次。当解析后的 scope 为 <code>&quot;shared&quot;</code> 时，每个 Agent 的 <code>sandbox.docker.*</code> 覆盖会被忽略。</p>
+<p><strong>好处：</strong></p>
+<ul>
+<li><strong>安全隔离</strong>：限制不可信 Agent 的工具</li>
+<li><strong>资源控制</strong>：为特定 Agent 开沙盒，同时其他 Agent 走主机</li>
+<li><strong>灵活策略</strong>：不同 Agent 不同权限</li>
+</ul>
+<p>注意：<code>tools.elevated</code> 是 <strong>全局</strong> 且基于发送者；不能按 Agent 配置。如果你需要每 Agent 的边界，使用 <code>agents.list[].tools</code> 禁用 <code>exec</code>。<br>针对群聊，使用 <code>agents.list[].groupChat.mentionPatterns</code> 以便 @mention 清晰映射到目标 Agent。</p>
+<p>参见 <a href="/multi-agent-sandbox-tools">多 Agent 沙盒与工具</a> 获取更多示例。</p>
+
         </div>
     </main>
 

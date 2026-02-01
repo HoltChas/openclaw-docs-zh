@@ -121,11 +121,254 @@
     <main class="main-content">
         <div class="content">
             <h1>Web 工具</h1>
+<h1>Web 工具</h1>
+<p>OpenClaw 自带两个轻量级 Web 工具：</p>
+<ul>
+<li><code>web_search</code> — 通过 Brave Search API（默认）或 Perplexity Sonar（直接或通过 OpenRouter）搜索网页。</li>
+<li><code>web_fetch</code> — HTTP 获取 + 可读提取（HTML → Markdown/文本）。</li>
+</ul>
+<p>这些 <strong>不是</strong> 浏览器自动化。对于 JS 密集型站点或登录，使用<br><a href="/tools/browser">浏览器工具</a>。</p>
+<h2>工作原理</h2>
+<ul>
+<li><code>web_search</code> 调用你配置的 Provider 并返回结果。<ul>
+<li><strong>Brave</strong>（默认）：返回结构化结果（标题、URL、片段）。</li>
+<li><strong>Perplexity</strong>：返回 AI 合成的答案，带实时网页搜索的引用。</li>
+</ul>
+</li>
+<li>结果按查询缓存 15 分钟（可配置）。</li>
+<li><code>web_fetch</code> 执行简单的 HTTP GET 并提取可读内容<br>（HTML → Markdown/文本）。它 <strong>不</strong> 执行 JavaScript。</li>
+<li><code>web_fetch</code> 默认启用（除非显式禁用）。</li>
+</ul>
+<h2>选择搜索 Provider</h2>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>优点</th>
+<th>缺点</th>
+<th>API 密钥</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Brave</strong>（默认）</td>
+<td>快速、结构化结果、免费层</td>
+<td>传统搜索结果</td>
+<td><code>BRAVE_API_KEY</code></td>
+</tr>
+<tr>
+<td><strong>Perplexity</strong></td>
+<td>AI 合成答案、引用、实时</td>
+<td>需要 Perplexity 或 OpenRouter 访问</td>
+<td><code>OPENROUTER_API_KEY</code> 或 <code>PERPLEXITY_API_KEY</code></td>
+</tr>
+</tbody></table>
+<p>参见 <a href="/brave-search">Brave Search 设置</a> 和 <a href="/perplexity">Perplexity Sonar</a> 了解 Provider 特定详情。</p>
+<p>在配置中设置 Provider：</p>
+<pre><code class="language-json5">{
+  tools: {
+    web: {
+      search: {
+        provider: &quot;brave&quot;  // 或 &quot;perplexity&quot;
+      }
+    }
+  }
+}
+</code></pre>
+<p>示例：切换到 Perplexity Sonar（直接 API）：</p>
+<pre><code class="language-json5">{
+  tools: {
+    web: {
+      search: {
+        provider: &quot;perplexity&quot;,
+        perplexity: {
+          apiKey: &quot;pplx-...&quot;,
+          baseUrl: &quot;https://api.perplexity.ai&quot;,
+          model: &quot;perplexity/sonar-pro&quot;
+        }
+      }
+    }
+  }
+}
+</code></pre>
+<h2>获取 Brave API 密钥</h2>
+<ol>
+<li>在 <a href="https://brave.com/search/api/">https://brave.com/search/api/</a> 创建 Brave Search API 账户</li>
+<li>在仪表板中，选择 <strong>Data for Search</strong> 计划（不是&quot;Data for AI&quot;）并生成 API 密钥。</li>
+<li>运行 <code>openclaw configure --section web</code> 将密钥存储在配置中（推荐），或在环境中设置 <code>BRAVE_API_KEY</code>。</li>
+</ol>
+<p>Brave 提供免费层加付费计划；查看 Brave API 门户了解当前限制和定价。</p>
+<h3>在哪里设置密钥（推荐）</h3>
+<p><strong>推荐：</strong> 运行 <code>openclaw configure --section web</code>。它将密钥存储在<br><code>~/.openclaw/openclaw.json</code> 的 <code>tools.web.search.apiKey</code> 下。</p>
+<p><strong>环境替代方案：</strong> 在 Gateway 进程中设置 <code>BRAVE_API_KEY</code> 环境变量。<br>对于 Gateway 安装，将其放在 <code>~/.openclaw/.env</code>（或你的服务环境）中。参见 <a href="/help/faq#how-does-openclaw-load-environment-variables">环境变量</a>。</p>
+<h2>使用 Perplexity（直接或通过 OpenRouter）</h2>
+<p>Perplexity Sonar 模型具有内置网页搜索功能，并返回带引用的 AI 合成答案。你可以通过 OpenRouter 使用它们（无需信用卡 - 支持加密/预付）。</p>
+<h3>获取 OpenRouter API 密钥</h3>
+<ol>
+<li>在 <a href="https://openrouter.ai/">https://openrouter.ai/</a> 创建账户</li>
+<li>添加积分（支持加密、预付或信用卡）</li>
+<li>在账户设置中生成 API 密钥</li>
+</ol>
+<h3>设置 Perplexity 搜索</h3>
+<pre><code class="language-json5">{
+  tools: {
+    web: {
+      search: {
+        enabled: true,
+        provider: &quot;perplexity&quot;,
+        perplexity: {
+          // API 密钥（如果设置了 OPENROUTER_API_KEY 或 PERPLEXITY_API_KEY 则可选）
+          apiKey: &quot;sk-or-v1-...&quot;,
+          // 基础 URL（如果省略则自动选择）
+          baseUrl: &quot;https://openrouter.ai/api/v1&quot;,
+          // 模型（默认为 perplexity/sonar-pro）
+          model: &quot;perplexity/sonar-pro&quot;
+        }
+      }
+    }
+  }
+}
+</code></pre>
+<p><strong>环境替代方案：</strong> 在 Gateway 环境中设置 <code>OPENROUTER_API_KEY</code> 或 <code>PERPLEXITY_API_KEY</code>。<br>对于 Gateway 安装，将其放在 <code>~/.openclaw/.env</code> 中。</p>
+<p>如果没有设置基础 URL，OpenClaw 根据 API 密钥源选择默认值：</p>
+<ul>
+<li><code>PERPLEXITY_API_KEY</code> 或 <code>pplx-...</code> → <code>https://api.perplexity.ai</code></li>
+<li><code>OPENROUTER_API_KEY</code> 或 <code>sk-or-...</code> → <code>https://openrouter.ai/api/v1</code></li>
+<li>未知密钥格式 → OpenRouter（安全回退）</li>
+</ul>
+<h3>可用的 Perplexity 模型</h3>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>描述</th>
+<th>最适合</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>perplexity/sonar</code></td>
+<td>快速问答 + 网页搜索</td>
+<td>快速查找</td>
+</tr>
+<tr>
+<td><code>perplexity/sonar-pro</code>（默认）</td>
+<td>多步推理 + 网页搜索</td>
+<td>复杂问题</td>
+</tr>
+<tr>
+<td><code>perplexity/sonar-reasoning-pro</code></td>
+<td>思维链分析</td>
+<td>深度研究</td>
+</tr>
+</tbody></table>
+<h2>web_search</h2>
+<p>使用你配置的 Provider 搜索网页。</p>
+<h3>要求</h3>
+<ul>
+<li><code>tools.web.search.enabled</code> 不能为 <code>false</code>（默认：启用）</li>
+<li>所选 Provider 的 API 密钥：<ul>
+<li><strong>Brave</strong>：<code>BRAVE_API_KEY</code> 或 <code>tools.web.search.apiKey</code></li>
+<li><strong>Perplexity</strong>：<code>OPENROUTER_API_KEY</code>、<code>PERPLEXITY_API_KEY</code> 或 <code>tools.web.search.perplexity.apiKey</code></li>
+</ul>
+</li>
+</ul>
+<h3>配置</h3>
+<pre><code class="language-json5">{
+  tools: {
+    web: {
+      search: {
+        enabled: true,
+        apiKey: &quot;BRAVE_API_KEY_HERE&quot;, // 如果设置了 BRAVE_API_KEY 则可选
+        maxResults: 5,
+        timeoutSeconds: 30,
+        cacheTtlMinutes: 15
+      }
+    }
+  }
+}
+</code></pre>
+<h3>工具参数</h3>
+<ul>
+<li><code>query</code>（必需）</li>
+<li><code>count</code>（1–10；默认来自配置）</li>
+<li><code>country</code>（可选）：区域特定结果的 2 字母国家代码（如 &quot;DE&quot;、&quot;US&quot;、&quot;ALL&quot;）。如果省略，Brave 选择其默认区域。</li>
+<li><code>search_lang</code>（可选）：搜索结果的 ISO 语言代码（如 &quot;de&quot;、&quot;en&quot;、&quot;fr&quot;）</li>
+<li><code>ui_lang</code>（可选）：UI 元素的 ISO 语言代码</li>
+<li><code>freshness</code>（可选，仅 Brave）：按发现时间过滤（<code>pd</code>、<code>pw</code>、<code>pm</code>、<code>py</code> 或 <code>YYYY-MM-DDtoYYYY-MM-DD</code>）</li>
+</ul>
+<p><strong>示例：</strong></p>
+<pre><code class="language-javascript">// 德语特定搜索
+await web_search({
+  query: &quot;TV online schauen&quot;,
+  count: 10,
+  country: &quot;DE&quot;,
+  search_lang: &quot;de&quot;
+});
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/tools/web" target="_blank">查看原始英文文档</a></p>
-        
+// 法语搜索 + 法语 UI
+await web_search({
+  query: &quot;actualités&quot;,
+  country: &quot;FR&quot;,
+  search_lang: &quot;fr&quot;,
+  ui_lang: &quot;fr&quot;
+});
+
+// 最近结果（过去一周）
+await web_search({
+  query: &quot;TMBG interview&quot;,
+  freshness: &quot;pw&quot;
+});
+</code></pre>
+<h2>web_fetch</h2>
+<p>获取 URL 并提取可读内容。</p>
+<h3>要求</h3>
+<ul>
+<li><code>tools.web.fetch.enabled</code> 不能为 <code>false</code>（默认：启用）</li>
+<li>可选 Firecrawl 回退：设置 <code>tools.web.fetch.firecrawl.apiKey</code> 或 <code>FIRECRAWL_API_KEY</code>。</li>
+</ul>
+<h3>配置</h3>
+<pre><code class="language-json5">{
+  tools: {
+    web: {
+      fetch: {
+        enabled: true,
+        maxChars: 50000,
+        timeoutSeconds: 30,
+        cacheTtlMinutes: 15,
+        maxRedirects: 3,
+        userAgent: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 14_7_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36&quot;,
+        readability: true,
+        firecrawl: {
+          enabled: true,
+          apiKey: &quot;FIRECRAWL_API_KEY_HERE&quot;, // 如果设置了 FIRECRAWL_API_KEY 则可选
+          baseUrl: &quot;https://api.firecrawl.dev&quot;,
+          onlyMainContent: true,
+          maxAgeMs: 86400000, // ms（1 天）
+          timeoutSeconds: 60
+        }
+      }
+    }
+  }
+}
+</code></pre>
+<h3>工具参数</h3>
+<ul>
+<li><code>url</code>（必需，仅 http/https）</li>
+<li><code>extractMode</code>（<code>markdown</code> | <code>text</code>）</li>
+<li><code>maxChars</code>（截断长页面）</li>
+</ul>
+<p>说明：</p>
+<ul>
+<li><code>web_fetch</code> 首先使用 Readability（主要内容提取），然后使用 Firecrawl（如果配置）。如果两者都失败，工具返回错误。</li>
+<li>Firecrawl 请求使用机器人规避模式并默认缓存结果。</li>
+<li><code>web_fetch</code> 默认发送类 Chrome User-Agent 和 <code>Accept-Language</code>；如果需要覆盖 <code>userAgent</code>。</li>
+<li><code>web_fetch</code> 阻止私有/内部主机名并重新检查重定向（用 <code>maxRedirects</code> 限制）。</li>
+<li><code>web_fetch</code> 是尽力提取；某些站点需要浏览器工具。</li>
+<li>参见 <a href="/tools/firecrawl">Firecrawl</a> 了解密钥设置和服务详情。</li>
+<li>响应被缓存（默认 15 分钟）以减少重复获取。</li>
+<li>如果你使用工具配置文件/允许列表，添加 <code>web_search</code>/<code>web_fetch</code> 或 <code>group:web</code>。</li>
+<li>如果缺少 Brave 密钥，<code>web_search</code> 返回带有文档链接的简短设置提示。</li>
+</ul>
+
         </div>
     </main>
 

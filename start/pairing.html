@@ -121,11 +121,71 @@
     <main class="main-content">
         <div class="content">
             <h1>配对</h1>
+<h1>配对</h1>
+<p>&quot;配对&quot;是 OpenClaw 的显式<strong>所有者批准</strong>步骤。<br>它在两个地方使用：</p>
+<ol>
+<li><strong>私聊配对</strong>（谁被允许与 Bot 对话）</li>
+<li><strong>节点配对</strong>（哪些设备/节点被允许加入 Gateway 网络）</li>
+</ol>
+<p>安全上下文：<a href="/gateway/security">安全</a></p>
+<h2>1) 私聊配对（入站聊天访问）</h2>
+<p>当频道配置为私聊策略 <code>pairing</code> 时，未知发送者会收到一个短码，他们的消息<strong>不会被处理</strong>，直到你批准。</p>
+<p>默认私聊策略文档在：<a href="/gateway/security">安全</a></p>
+<p>配对码：</p>
+<ul>
+<li>8 个字符，大写，无歧义字符（<code>0O1I</code>）。</li>
+<li><strong>1 小时后过期</strong>。Bot 只在新请求创建时发送配对消息（大约每小时每个发送者一次）。</li>
+<li>待处理的私聊配对请求默认上限为<strong>每频道 3 个</strong>；额外请求会被忽略，直到一个过期或被批准。</li>
+</ul>
+<h3>批准发送者</h3>
+<pre><code class="language-bash"># 列出待处理的 Telegram 配对请求
+openclaw pairing list telegram
+# 批准特定配对码
+openclaw pairing approve telegram &lt;CODE&gt;
+</code></pre>
+<p>支持的频道：<code>telegram</code>、<code>whatsapp</code>、<code>signal</code>、<code>imessage</code>、<code>discord</code>、<code>slack</code>。</p>
+<h3>状态存储位置</h3>
+<p>存储在 <code>~/.openclaw/credentials/</code>：</p>
+<ul>
+<li>待处理请求：<code>&lt;channel&gt;-pairing.json</code></li>
+<li>已批准白名单存储：<code>&lt;channel&gt;-allowFrom.json</code></li>
+</ul>
+<p>将这些视为敏感文件（它们控制对你的助手的访问）。</p>
+<h2>2) 节点设备配对（iOS/Android/macOS/无头节点）</h2>
+<p>节点以 <code>role: node</code> 的<strong>设备</strong>身份连接到 Gateway。Gateway<br>创建设备配对请求，必须被批准。</p>
+<h3>批准节点设备</h3>
+<pre><code class="language-bash"># 列出待处理的设备
+openclaw devices list
+# 批准特定设备请求
+openclaw devices approve &lt;requestId&gt;
+# 拒绝设备请求
+openclaw devices reject &lt;requestId&gt;
+</code></pre>
+<h3>状态存储位置</h3>
+<p>存储在 <code>~/.openclaw/devices/</code>：</p>
+<ul>
+<li><code>pending.json</code>（短期；待处理请求会过期）</li>
+<li><code>paired.json</code>（已配对设备 + Token）</li>
+</ul>
+<h3>注意</h3>
+<ul>
+<li>旧版 <code>node.pair.*</code> API（CLI：<code>openclaw nodes pending/approve</code>）是<br>单独的 Gateway 拥有的配对存储。WS 节点仍然需要设备配对。</li>
+</ul>
+<h2>相关文档</h2>
+<ul>
+<li>安全模型 + 提示注入：<a href="/gateway/security">安全</a></li>
+<li>安全更新（运行 doctor）：<a href="/install/updating">更新</a></li>
+<li>频道配置：<ul>
+<li>Telegram：<a href="/channels/telegram">Telegram</a></li>
+<li>WhatsApp：<a href="/channels/whatsapp">WhatsApp</a></li>
+<li>Signal：<a href="/channels/signal">Signal</a></li>
+<li>iMessage：<a href="/channels/imessage">iMessage</a></li>
+<li>Discord：<a href="/channels/discord">Discord</a></li>
+<li>Slack：<a href="/channels/slack">Slack</a></li>
+</ul>
+</li>
+</ul>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/start/pairing" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

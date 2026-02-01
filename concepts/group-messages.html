@@ -121,11 +121,81 @@
     <main class="main-content">
         <div class="content">
             <h1>群组消息</h1>
+<h1>群消息（WhatsApp web 频道）</h1>
+<p>目标：让 Clawd 在 WhatsApp 群里待命，只有被点名才唤醒，并且群聊与个人 DM 会话分开。</p>
+<p>注意：<code>agents.list[].groupChat.mentionPatterns</code> 现在也被 Telegram/Discord/Slack/iMessage 使用；本文聚焦 WhatsApp 的具体行为。多 Agent 设置下，请给每个 Agent 设置 <code>agents.list[].groupChat.mentionPatterns</code>（或用 <code>messages.groupChat.mentionPatterns</code> 作为全局回退）。</p>
+<h2>已实现内容（2025-12-03）</h2>
+<ul>
+<li>激活模式：<code>mention</code>（默认）或 <code>always</code>。<code>mention</code> 需要被点名（真实的 WhatsApp @mention，通过 <code>mentionedJids</code>，正则匹配或机器人 E.164 出现在文本中）。<code>always</code> 会在每条消息上唤醒 Agent，但它应该只在有价值时回复，否则返回静默 token <code>NO_REPLY</code>。默认值可在配置中设置（<code>channels.whatsapp.groups</code>），并可通过 <code>/activation</code> 在每个群覆盖。当设置 <code>channels.whatsapp.groups</code> 时，它也作为群允许列表（包含 <code>&quot;*&quot;</code> 允许所有）。</li>
+<li>群策略：<code>channels.whatsapp.groupPolicy</code> 控制是否接受群消息（<code>open|disabled|allowlist</code>）。<code>allowlist</code> 使用 <code>channels.whatsapp.groupAllowFrom</code>（回退：明确 <code>channels.whatsapp.allowFrom</code>）。默认是 <code>allowlist</code>（在你添加发送者之前会阻止）。</li>
+<li>群会话隔离：会话键形如 <code>agent:&lt;agentId&gt;:whatsapp:group:&lt;jid&gt;</code>，因此 <code>/verbose on</code> 或 <code>/think high</code>（作为独立消息发送）仅作用于该群；个人 DM 状态不受影响。群聊会话不运行 Heartbeat。</li>
+<li>上下文注入：<strong>仅待处理</strong>的群消息（默认 50 条）且未触发运行时会被前缀为 <code>[Chat messages since your last reply - for context]</code>，触发消息在 <code>[Current message - respond to this]</code> 中。已在会话里的消息不会重复注入。</li>
+<li>发送者显示：每个群批次末尾附加 <code>[from: Sender Name (+E164)]</code>，方便 Agent 知道是谁在说话。</li>
+<li>临时/阅后即焚消息：解析文本/提及时先展开，因此其中的提及仍可触发。</li>
+<li>群系统提示：群会话第一次运行时（以及 <code>/activation</code> 改变模式时），系统提示会注入一段短说明，例如：<code>你正在 WhatsApp 群 &quot;&lt;subject&gt;&quot; 中回复。群成员：Alice (+44...) ... 激活模式：仅触发 ... 请对上下文中标记的发送者回复。</code> 如果元数据不可用，也会提示这是群聊。</li>
+</ul>
+<h2>配置示例（WhatsApp）</h2>
+<p>在 <code>~/.openclaw/openclaw.json</code> 中添加 <code>groupChat</code>，即使 WhatsApp 文本中不显示 <code>@</code>，显示名的 ping 也能工作：</p>
+<pre><code class="language-json5">{
+  channels: {
+    whatsapp: {
+      groups: {
+        &quot;*&quot;: { requireMention: true } // 中文注释：所有群都需要被提及才触发
+      }
+    }
+  },
+  agents: {
+    list: [
+      {
+        id: &quot;main&quot;,
+        groupChat: {
+          historyLimit: 50, // 中文注释：注入的历史上限
+          mentionPatterns: [
+            &quot;@?openclaw&quot;, // 中文注释：匹配显示名提及
+            &quot;\\+?15555550123&quot; // 中文注释：匹配号码（可带 +）
+          ]
+        }
+      }
+    ]
+  }
+}
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>正则是大小写不敏感；覆盖显示名 ping（如 <code>@openclaw</code>）和原始号码（带或不带 <code>+</code>/空格）。</li>
+<li>WhatsApp 仍会在有人点击联系人时通过 <code>mentionedJids</code> 发送标准提及，所以号码回退很少需要，但它是个安全网。</li>
+</ul>
+<h3>激活命令（仅所有者）</h3>
+<p>在群聊中使用：</p>
+<ul>
+<li><code>/activation mention</code></li>
+<li><code>/activation always</code></li>
+</ul>
+<p>只有所有者号码（来自 <code>channels.whatsapp.allowFrom</code>，或当未设置时使用机器人自己的 E.164）可以更改该设置。在群里发送 <code>/status</code> 作为独立消息可查看当前激活模式。</p>
+<h2>如何使用</h2>
+<ol>
+<li>将运行 OpenClaw 的 WhatsApp 账号加入群。</li>
+<li>说 <code>@openclaw ...</code>（或包含号码）。除非你设置 <code>groupPolicy: &quot;open&quot;</code>，否则只有允许列表发送者能触发。</li>
+<li>Agent 提示会包含最近群上下文，并带 <code>[from: …]</code> 标记以便对正确的人回复。</li>
+<li>会话级指令（<code>/verbose on</code>、<code>/think high</code>、<code>/new</code> 或 <code>/reset</code>、<code>/compact</code>）仅作用于该群的会话；请作为独立消息发送以便注册。个人 DM 会话保持独立。</li>
+</ol>
+<h2>测试 / 验证</h2>
+<ul>
+<li>手动冒烟测试：<ul>
+<li>在群里发送 <code>@openclaw</code> 并确认回复引用发送者姓名。</li>
+<li>发送第二次 ping 并验证历史块被包含，然后在下一次轮次被清除。</li>
+</ul>
+</li>
+<li>检查 Gateway 日志（用 <code>--verbose</code>）查看 <code>inbound web message</code> 条目显示 <code>from: &lt;groupJid&gt;</code> 和 <code>[from: …]</code> 后缀。</li>
+</ul>
+<h2>已知注意事项</h2>
+<ul>
+<li>群聊故意跳过 Heartbeat，避免噪声广播。</li>
+<li>回声抑制使用合并批次字符串；如果你两次发送相同文本且未提及，只有第一次会收到回复。</li>
+<li>会话存储条目会出现在 <code>agent:&lt;agentId&gt;:whatsapp:group:&lt;jid&gt;</code>（默认在 <code>~/.openclaw/agents/&lt;agentId&gt;/sessions/sessions.json</code>）；缺失条目只意味着群还没触发运行。</li>
+<li>群内输入指示遵循 <code>agents.defaults.typingMode</code>（默认：未提及时为 <code>message</code>）。</li>
+</ul>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/concepts/group-messages" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

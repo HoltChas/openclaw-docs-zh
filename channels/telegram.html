@@ -121,11 +121,95 @@
     <main class="main-content">
         <div class="content">
             <h1>Telegram</h1>
+<h1>Telegram（Bot API）</h1>
+<p>状态：通过 grammY 支持 Bot 私聊 + 群组的生产就绪。默认长轮询；Webhook 可选。</p>
+<h2>快速设置（初学者）</h2>
+<ol>
+<li>使用 <strong>@BotFather</strong> 创建 Bot 并复制 token。</li>
+<li>设置 token：<ul>
+<li>环境变量：<code>TELEGRAM_BOT_TOKEN=...</code></li>
+<li>或配置：<code>channels.telegram.botToken: &quot;...&quot;</code>。</li>
+<li>如果两者都设置，配置优先（环境变量回退仅用于默认账户）。</li>
+</ul>
+</li>
+<li>启动 Gateway。</li>
+<li>私聊访问默认是配对；首次联系时批准配对码。</li>
+</ol>
+<p>最小配置：</p>
+<pre><code class="language-json5">{
+  channels: {
+    telegram: {
+      enabled: true,
+      botToken: &quot;123:abc&quot;,
+      dmPolicy: &quot;pairing&quot;
+    }
+  }
+}
+</code></pre>
+<h2>它是什么</h2>
+<ul>
+<li>Gateway 拥有的 Telegram Bot API 频道。</li>
+<li>确定性路由：回复返回给 Telegram；模型从不选择频道。</li>
+<li>私聊共享 Agent 的主会话；群组保持隔离（<code>agent:&lt;agentId&gt;:telegram:group:&lt;chatId&gt;</code>）。</li>
+</ul>
+<h2>设置（快速路径）</h2>
+<h3>1) 创建 Bot Token（BotFather）</h3>
+<ol>
+<li>打开 Telegram 并与 <strong>@BotFather</strong> 聊天。</li>
+<li>运行 <code>/newbot</code>，然后按照提示操作（名称 + 以 <code>bot</code> 结尾的用户名）。</li>
+<li>复制 token 并安全存储。</li>
+</ol>
+<p>可选的 BotFather 设置：</p>
+<ul>
+<li><code>/setjoingroups</code> — 允许/拒绝将 Bot 添加到群组。</li>
+<li><code>/setprivacy</code> — 控制 Bot 是否看到所有群组消息。</li>
+</ul>
+<h3>2) 配置 Token（环境变量或配置）</h3>
+<p>示例：</p>
+<pre><code class="language-json5">{
+  channels: {
+    telegram: {
+      enabled: true,
+      botToken: &quot;123:abc&quot;,
+      dmPolicy: &quot;pairing&quot;,
+      groups: { &quot;*&quot;: { requireMention: true } }
+    }
+  }
+}
+</code></pre>
+<p>环境变量选项：<code>TELEGRAM_BOT_TOKEN=...</code>（适用于默认账户）。<br>如果环境变量和配置都设置，配置优先。</p>
+<p>多账户支持：使用 <code>channels.telegram.accounts</code> 和每账户 token 及可选的 <code>name</code>。参见 <a href="/gateway/configuration#telegramaccounts--discordaccounts--slackaccounts--signalaccounts--imessageaccounts"><code>gateway/configuration</code></a> 了解共享模式。</p>
+<ol start="3">
+<li>启动 Gateway。Telegram 在 token 解析时启动（配置优先，环境变量回退）。</li>
+<li>私聊访问默认为配对。Bot 首次被联系时批准代码。</li>
+<li>对于群组：添加 Bot，决定隐私/管理员行为（如下），然后设置 <code>channels.telegram.groups</code> 来控制提及门控 + 白名单。</li>
+</ol>
+<h2>Token + 隐私 + 权限（Telegram 端）</h2>
+<h3>Token 创建（BotFather）</h3>
+<ul>
+<li><code>/newbot</code> 创建 Bot 并返回 token（保密）。</li>
+<li>如果 token 泄露，通过 @BotFather 撤销/重新生成并更新配置。</li>
+</ul>
+<h3>群组消息可见性（隐私模式）</h3>
+<p>Telegram Bot 默认为<strong>隐私模式</strong>，这限制它们接收哪些群组消息。<br>如果你的 Bot 必须看到<em>所有</em>群组消息，你有两个选项：</p>
+<ul>
+<li>使用 <code>/setprivacy</code> 禁用隐私模式 <strong>或</strong></li>
+<li>将 Bot 添加为群组<strong>管理员</strong>（管理员 Bot 接收所有消息）。</li>
+</ul>
+<p><strong>注意：</strong> 切换隐私模式时，Telegram 需要移除 + 重新添加 Bot<br>到每个群组以使更改生效。</p>
+<h3>群组权限（管理员权限）</h3>
+<p>管理员状态在群组内设置（Telegram UI）。管理员 Bot 总是接收所有<br>群组消息，因此如果你需要完全可见性，请使用管理员。</p>
+<h2>工作原理（行为）</h2>
+<ul>
+<li>入站消息被标准化为共享频道信封，带有回复上下文和媒体占位符。</li>
+<li>群组回复默认需要提及（原生 @提及或 <code>agents.list[].groupChat.mentionPatterns</code> / <code>messages.groupChat.mentionPatterns</code>）。</li>
+<li>多 Agent 覆盖：在 <code>agents.list[].groupChat.mentionPatterns</code> 上设置每 Agent 模式。</li>
+<li>回复总是路由回相同的 Telegram 聊天。</li>
+<li>长轮询使用 grammY runner 和每聊天排序；整体并发由 <code>agents.defaults.maxConcurrent</code> 限制。</li>
+<li>Telegram Bot API 不支持已读回执；没有 <code>sendReadReceipts</code> 选项。</li>
+</ul>
+<h2>格式化（Telegram HTML）</h2>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/channels/telegram" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

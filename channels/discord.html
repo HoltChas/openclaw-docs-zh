@@ -121,11 +121,82 @@
     <main class="main-content">
         <div class="content">
             <h1>Discord</h1>
+<h1>Discord（Bot API）</h1>
+<p>状态：通过官方 Discord Bot Gateway 支持私聊和公会文字频道。</p>
+<h2>快速设置（初学者）</h2>
+<ol>
+<li>创建 Discord Bot 并复制 Bot Token。</li>
+<li>在 Discord 应用设置中，启用<strong>消息内容意图</strong>（以及<strong>服务器成员意图</strong>，如果你计划使用白名单或名称查找）。</li>
+<li>为 OpenClaw 设置 Token：<ul>
+<li>环境变量：<code>DISCORD_BOT_TOKEN=...</code></li>
+<li>或配置：<code>channels.discord.token: &quot;...&quot;</code>。</li>
+<li>如果两者都设置，配置优先（环境变量回退仅用于默认账户）。</li>
+</ul>
+</li>
+<li>邀请 Bot 到你的服务器，具有消息权限（如果你只想要私聊，创建私有服务器）。</li>
+<li>启动 Gateway。</li>
+<li>私聊访问默认是配对；首次联系时批准配对码。</li>
+</ol>
+<p>最小配置：</p>
+<pre><code class="language-json5">{
+  channels: {
+    discord: {
+      enabled: true,
+      token: &quot;YOUR_BOT_TOKEN&quot;
+    }
+  }
+}
+</code></pre>
+<h2>目标</h2>
+<ul>
+<li>通过 Discord 私聊或公会频道与 OpenClaw 对话。</li>
+<li>直接聊天折叠到 Agent 的主会话（默认 <code>agent:main:main</code>）；公会频道保持隔离为 <code>agent:&lt;agentId&gt;:discord:channel:&lt;channelId&gt;</code>（显示名称使用 <code>discord:&lt;guildSlug&gt;#&lt;channelSlug&gt;</code>）。</li>
+<li>群组私聊默认被忽略；通过 <code>channels.discord.dm.groupEnabled</code> 启用，并可选择通过 <code>channels.discord.dm.groupChannels</code> 限制。</li>
+<li>保持路由确定性：回复总是返回到它们到达的频道。</li>
+</ul>
+<h2>工作原理</h2>
+<ol>
+<li>创建 Discord 应用 → Bot，启用你需要的意图（私聊 + 公会消息 + 消息内容），并获取 Bot Token。</li>
+<li>邀请 Bot 到你的服务器，具有在你想使用它的地方读取/发送消息所需的权限。</li>
+<li>使用 <code>channels.discord.token</code>（或 <code>DISCORD_BOT_TOKEN</code> 作为回退）配置 OpenClaw。</li>
+<li>运行 Gateway；当 Token 可用时自动启动 Discord 频道（配置优先，环境变量回退）且 <code>channels.discord.enabled</code> 不为 <code>false</code>。<ul>
+<li>如果你更喜欢环境变量，设置 <code>DISCORD_BOT_TOKEN</code>（配置块是可选的）。</li>
+</ul>
+</li>
+<li>直接聊天：发送时使用 <code>user:&lt;id&gt;</code>（或 <code>&lt;@id&gt;</code> 提及）；所有轮次都落在共享的 <code>main</code> 会话中。纯数字 ID 有歧义并被拒绝。</li>
+<li>公会频道：发送时使用 <code>channel:&lt;channelId&gt;</code>。默认需要提及，可以为每个公会或每个频道设置。</li>
+<li>直接聊天：通过 <code>channels.discord.dm.policy</code> 默认安全（默认：<code>&quot;pairing&quot;</code>）。未知发送者获得配对码（1 小时后过期）；通过 <code>openclaw pairing approve discord &lt;code&gt;</code> 批准。<ul>
+<li>保持旧的&quot;对任何人开放&quot;行为：设置 <code>channels.discord.dm.policy=&quot;open&quot;</code> 和 <code>channels.discord.dm.allowFrom=[&quot;*&quot;]</code>。</li>
+<li>硬白名单：设置 <code>channels.discord.dm.policy=&quot;allowlist&quot;</code> 并在 <code>channels.discord.dm.allowFrom</code> 中列出发送者。</li>
+<li>忽略所有私聊：设置 <code>channels.discord.dm.enabled=false</code> 或 <code>channels.discord.dm.policy=&quot;disabled&quot;</code>。</li>
+</ul>
+</li>
+<li>群组私聊默认被忽略；通过 <code>channels.discord.dm.groupEnabled</code> 启用，并可选择通过 <code>channels.discord.dm.groupChannels</code> 限制。</li>
+<li>可选公会规则：通过公会 id（首选）或 slug 设置 <code>channels.discord.guilds</code>，带有每频道规则。</li>
+<li>可选原生命令：<code>commands.native</code> 默认为 <code>&quot;auto&quot;</code>（Discord/Telegram 开启，Slack 关闭）。使用 <code>channels.discord.commands.native: true|false|&quot;auto&quot;</code> 覆盖；<code>false</code> 清除先前注册的命令。文本命令由 <code>commands.text</code> 控制，必须作为独立的 <code>/...</code> 消息发送。使用 <code>commands.useAccessGroups: false</code> 绕过命令的访问组检查。<ul>
+<li>完整命令列表 + 配置：<a href="/tools/slash-commands">斜杠命令</a></li>
+</ul>
+</li>
+<li>可选公会上下文历史：设置 <code>channels.discord.historyLimit</code>（默认 20，回退到 <code>messages.groupChat.historyLimit</code>）以在回复提及时包含最后 N 条公会消息作为上下文。设置 <code>0</code> 禁用。</li>
+<li>反应：Agent 可以通过 <code>discord</code> 工具触发反应（由 <code>channels.discord.actions.*</code> 门控）。<ul>
+<li>反应移除语义：参见 <a href="/tools/reactions">/tools/reactions</a>。</li>
+<li><code>discord</code> 工具仅在当前频道是 Discord 时暴露。</li>
+</ul>
+</li>
+<li>原生命令使用隔离的会话键（<code>agent:&lt;agentId&gt;:discord:slash:&lt;userId&gt;</code>）而不是共享的 <code>main</code> 会话。</li>
+</ol>
+<p>注意：名称 → id 解析使用公会成员搜索并需要服务器成员意图；如果 Bot 无法搜索成员，使用 id 或 <code>&lt;@id&gt;</code> 提及。<br>注意：Slugs 是小写，空格替换为 <code>-</code>。频道名称不带前导 <code>#</code> 进行 slug 化。<br>注意：公会上下文 <code>[from:]</code> 行包含 <code>author.tag</code> + <code>id</code> 以便轻松进行 ping 就绪回复。</p>
+<h2>配置写入</h2>
+<p>默认情况下，Discord 允许写入由 <code>/config set|unset</code> 触发的配置更新（需要 <code>commands.config: true</code>）。</p>
+<p>禁用：</p>
+<pre><code class="language-json5">{
+  channels: { discord: { configWrites: false } }
+}
+</code></pre>
+<h2>如何创建你自己的 Bot</h2>
+<p>这是在服务器（公会）频道如 <code>#help</code> 中运行 OpenClaw 的&quot;Discord 开发者门户&quot;设置。</p>
+<h3>1) 创建 Discord 应用 + Bot 用户</h3>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/channels/discord" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

@@ -121,11 +121,166 @@
     <main class="main-content">
         <div class="content">
             <h1>网关配置</h1>
+<h1>配置 🔧</h1>
+<p>OpenClaw 从 <code>~/.openclaw/openclaw.json</code> 读取可选的 <strong>JSON5</strong> 配置（允许注释 + 尾随逗号）。</p>
+<p>如果文件缺失，OpenClaw 使用安全的默认值（嵌入式 Pi Agent + 每发送者会话 + 工作空间 <code>~/.openclaw/workspace</code>）。你通常只需要配置来：</p>
+<ul>
+<li>限制谁可以触发 Bot（<code>channels.whatsapp.allowFrom</code>、<code>channels.telegram.allowFrom</code> 等）</li>
+<li>控制群组白名单 + 提及行为（<code>channels.whatsapp.groups</code>、<code>channels.telegram.groups</code>、<code>channels.discord.guilds</code>、<code>agents.list[].groupChat</code>）</li>
+<li>自定义消息前缀（<code>messages</code>）</li>
+<li>设置 Agent 的工作空间（<code>agents.defaults.workspace</code> 或 <code>agents.list[].workspace</code>）</li>
+<li>调整嵌入式 Agent 默认值（<code>agents.defaults</code>）和会话行为（<code>session</code>）</li>
+<li>设置每 Agent 身份（<code>agents.list[].identity</code>）</li>
+</ul>
+<blockquote>
+<p><strong>刚接触配置？</strong> 查看 <a href="/gateway/configuration-examples">配置示例</a> 指南获取完整示例和详细说明！</p>
+</blockquote>
+<h2>严格配置验证</h2>
+<p>OpenClaw 只接受完全匹配模式的配置。<br>未知键、格式错误的类型或无效值会导致 Gateway <strong>拒绝启动</strong> 以确保安全。</p>
+<p>验证失败时：</p>
+<ul>
+<li>Gateway 不会启动。</li>
+<li>只允许诊断命令（例如：<code>openclaw doctor</code>、<code>openclaw logs</code>、<code>openclaw health</code>、<code>openclaw status</code>、<code>openclaw service</code>、<code>openclaw help</code>）。</li>
+<li>运行 <code>openclaw doctor</code> 查看具体问题。</li>
+<li>运行 <code>openclaw doctor --fix</code>（或 <code>--yes</code>）应用迁移/修复。</li>
+</ul>
+<p>Doctor 除非你明确选择 <code>--fix</code>/<code>--yes</code>，否则不会写入更改。</p>
+<h2>模式 + UI 提示</h2>
+<p>Gateway 通过 <code>config.schema</code> 暴露配置的 JSON Schema 表示供 UI 编辑器使用。<br>Control UI 从此模式渲染表单，并提供 <strong>原始 JSON</strong> 编辑器作为逃生舱。</p>
+<p>频道插件和扩展可以为它们的配置注册模式 + UI 提示，因此频道设置<br>在应用中保持模式驱动，无需硬编码表单。</p>
+<p>提示（标签、分组、敏感字段）与模式一起提供，因此客户端可以渲染<br>更好的表单而无需硬编码配置知识。</p>
+<h2>应用 + 重启（RPC）</h2>
+<p>使用 <code>config.apply</code> 验证 + 写入完整配置并一步重启 Gateway。<br>它会写入重启标记并在 Gateway 恢复后 ping 最后一个活动会话。</p>
+<p>警告：<code>config.apply</code> 替换<strong>整个配置</strong>。如果你只想更改几个键，<br>使用 <code>config.patch</code> 或 <code>openclaw config set</code>。备份 <code>~/.openclaw/openclaw.json</code>。</p>
+<p>参数：</p>
+<ul>
+<li><code>raw</code> (string) — 整个配置的 JSON5 负载</li>
+<li><code>baseHash</code> (可选) — 来自 <code>config.get</code> 的配置哈希（当配置已存在时需要）</li>
+<li><code>sessionKey</code> (可选) — 唤醒 ping 的最后一个活动会话键</li>
+<li><code>note</code> (可选) — 包含在重启标记中的注释</li>
+<li><code>restartDelayMs</code> (可选) — 重启前延迟（默认 2000）</li>
+</ul>
+<p>示例（通过 <code>gateway call</code>）：</p>
+<pre><code class="language-bash"># 获取当前配置哈希
+openclaw gateway call config.get --params &#39;{}&#39; # 捕获 payload.hash
+# 应用新配置
+openclaw gateway call config.apply --params &#39;{
+  &quot;raw&quot;: &quot;{\\n  agents: { defaults: { workspace: \\&quot;~/.openclaw/workspace\\&quot; } }\\n}\\n&quot;,
+  &quot;baseHash&quot;: &quot;&lt;hash-from-config.get&gt;&quot;,
+  &quot;sessionKey&quot;: &quot;agent:main:whatsapp:dm:+15555550123&quot;,
+  &quot;restartDelayMs&quot;: 1000
+}&#39;
+</code></pre>
+<h2>部分更新（RPC）</h2>
+<p>使用 <code>config.patch</code> 将部分更新合并到现有配置而不覆盖<br>无关的键。它应用 JSON 合并补丁语义：</p>
+<ul>
+<li>对象递归合并</li>
+<li><code>null</code> 删除键</li>
+<li>数组替换<br>像 <code>config.apply</code> 一样，它验证、写入配置、存储重启标记，并调度<br>Gateway 重启（当提供 <code>sessionKey</code> 时可选唤醒）。</li>
+</ul>
+<p>参数：</p>
+<ul>
+<li><code>raw</code> (string) — 仅包含要更改的键的 JSON5 负载</li>
+<li><code>baseHash</code> (必需) — 来自 <code>config.get</code> 的配置哈希</li>
+<li><code>sessionKey</code> (可选) — 唤醒 ping 的最后一个活动会话键</li>
+<li><code>note</code> (可选) — 包含在重启标记中的注释</li>
+<li><code>restartDelayMs</code> (可选) — 重启前延迟（默认 2000）</li>
+</ul>
+<p>示例：</p>
+<pre><code class="language-bash"># 获取当前配置哈希
+openclaw gateway call config.get --params &#39;{}&#39; # 捕获 payload.hash
+# 打补丁更新配置
+openclaw gateway call config.patch --params &#39;{
+  &quot;raw&quot;: &quot;{\\n  channels: { telegram: { groups: { \\&quot;*\\&quot;: { requireMention: false } } } }\\n}\\n&quot;,
+  &quot;baseHash&quot;: &quot;&lt;hash-from-config.get&gt;&quot;,
+  &quot;sessionKey&quot;: &quot;agent:main:whatsapp:dm:+15555550123&quot;,
+  &quot;restartDelayMs&quot;: 1000
+}&#39;
+</code></pre>
+<h2>最小配置（推荐起点）</h2>
+<pre><code class="language-json5">{
+  agents: { defaults: { workspace: &quot;~/.openclaw/workspace&quot; } },
+  channels: { whatsapp: { allowFrom: [&quot;+15555550123&quot;] } }
+}
+</code></pre>
+<p>用以下命令构建默认镜像：</p>
+<pre><code class="language-bash">scripts/sandbox-setup.sh
+</code></pre>
+<h2>自聊模式（推荐用于群组控制）</h2>
+<p>为防止 Bot 响应 WhatsApp 群组中的 @-提及（只响应特定文本触发器）：</p>
+<pre><code class="language-json5">{
+  agents: {
+    defaults: { workspace: &quot;~/.openclaw/workspace&quot; },
+    list: [
+      {
+        id: &quot;main&quot;,
+        groupChat: { mentionPatterns: [&quot;@openclaw&quot;, &quot;reisponde&quot;] }
+      }
+    ]
+  },
+  channels: {
+    whatsapp: {
+      // 白名单仅用于私聊；包含你自己的号码启用自聊模式。
+      allowFrom: [&quot;+15555550123&quot;],
+      groups: { &quot;*&quot;: { requireMention: true } }
+    }
+  }
+}
+</code></pre>
+<h2>配置包含（<code>$include</code>）</h2>
+<p>使用 <code>$include</code> 指令将配置拆分为多个文件。这对于以下情况很有用：</p>
+<ul>
+<li>组织大型配置（例如，每客户端 Agent 定义）</li>
+<li>跨环境共享通用设置</li>
+<li>将敏感配置分开</li>
+</ul>
+<h3>基本用法</h3>
+<pre><code class="language-json5">// ~/.openclaw/openclaw.json
+{
+  gateway: { port: 18789 },
+  
+  // 包含单个文件（替换键的值）
+  agents: { &quot;$include&quot;: &quot;./agents.json5&quot; },
+  
+  // 包含多个文件（按顺序深度合并）
+  broadcast: { 
+    &quot;$include&quot;: [
+      &quot;./clients/mueller.json5&quot;,
+      &quot;./clients/schmidt.json5&quot;
+    ]
+  }
+}
+</code></pre>
+<pre><code class="language-json5">// ~/.openclaw/agents.json5
+{
+  defaults: { sandbox: { mode: &quot;all&quot;, scope: &quot;session&quot; } },
+  list: [
+    { id: &quot;main&quot;, workspace: &quot;~/.openclaw/workspace&quot; }
+  ]
+}
+</code></pre>
+<h3>合并行为</h3>
+<ul>
+<li><strong>单个文件</strong>：替换包含 <code>$include</code> 的对象</li>
+<li><strong>文件数组</strong>：按顺序深度合并（后面的文件覆盖前面的）</li>
+<li><strong>与兄弟键</strong>：兄弟键在包含后合并（覆盖包含的值）</li>
+<li><strong>兄弟键 + 数组/原始值</strong>：不支持（包含的内容必须是对象）</li>
+</ul>
+<pre><code class="language-json5">// 兄弟键覆盖包含的值
+{
+  &quot;$include&quot;: &quot;./base.json5&quot;,   // { a: 1, b: 2 }
+  b: 99                          // 结果: { a: 1, b: 99 }
+}
+</code></pre>
+<h3>嵌套包含</h3>
+<p>包含的文件本身可以包含 <code>$include</code> 指令（最多 10 层深度）：</p>
+<pre><code class="language-json5">// clients/mueller.json5
+{
+  agents: { &quot;$include&quot;: &quot;./mueller/agents.json5&quot; },
+  broadcast: { &quot;$include&quot;: &quot;./mueller/broadcast.json5&quot; }
+}
+</code></pre>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/gateway/configuration" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

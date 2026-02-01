@@ -121,11 +121,66 @@
     <main class="main-content">
         <div class="content">
             <h1>WhatsApp</h1>
+<h1>WhatsApp（网页频道）</h1>
+<p>状态：仅通过 Baileys 使用 WhatsApp Web。Gateway 拥有会话。</p>
+<h2>快速设置（初学者）</h2>
+<ol>
+<li>如果可能，使用<strong>单独的电话号码</strong>（推荐）。</li>
+<li>在 <code>~/.openclaw/openclaw.json</code> 中配置 WhatsApp。</li>
+<li>运行 <code>openclaw channels login</code> 扫描二维码（已关联设备）。</li>
+<li>启动 Gateway。</li>
+</ol>
+<p>最小配置：</p>
+<pre><code class="language-json5">{
+  channels: {
+    whatsapp: {
+      dmPolicy: &quot;allowlist&quot;,
+      allowFrom: [&quot;+15551234567&quot;]
+    }
+  }
+}
+</code></pre>
+<h2>目标</h2>
+<ul>
+<li>在一个 Gateway 进程中支持多个 WhatsApp 账户（多账户）。</li>
+<li>确定性路由：回复返回到 WhatsApp，无需模型路由。</li>
+<li>模型看到足够的上下文来理解引用回复。</li>
+</ul>
+<h2>配置写入</h2>
+<p>默认情况下，WhatsApp 允许写入由 <code>/config set|unset</code> 触发的配置更新（需要 <code>commands.config: true</code>）。</p>
+<p>禁用：</p>
+<pre><code class="language-json5">{
+  channels: { whatsapp: { configWrites: false } }
+}
+</code></pre>
+<h2>架构（谁拥有什么）</h2>
+<ul>
+<li><strong>Gateway</strong> 拥有 Baileys 套接字和收件箱循环。</li>
+<li><strong>CLI / macOS 应用</strong> 与 Gateway 通信；不直接使用 Baileys。</li>
+<li><strong>活动监听器</strong> 是出站发送必需的；否则发送快速失败。</li>
+</ul>
+<h2>获取电话号码（两种模式）</h2>
+<p>WhatsApp 需要真实的手机号码进行验证。VoIP 和虚拟号码通常被阻止。有两种支持的方式在 WhatsApp 上运行 OpenClaw：</p>
+<h3>专用号码（推荐）</h3>
+<p>为 OpenClaw 使用<strong>单独的电话号码</strong>。最佳用户体验、清晰路由、无自聊问题。理想设置：<strong>备用/旧 Android 手机 + eSIM</strong>。保持 Wi-Fi 和电源连接，并通过 QR 链接。</p>
+<p><strong>WhatsApp Business：</strong> 你可以在同一设备上使用不同的号码运行 WhatsApp Business。非常适合保持个人 WhatsApp 分开 —— 安装 WhatsApp Business 并在那里注册 OpenClaw 号码。</p>
+<p><strong>示例配置（专用号码，单用户白名单）：</strong></p>
+<pre><code class="language-json5">{
+  channels: {
+    whatsapp: {
+      dmPolicy: &quot;allowlist&quot;,
+      allowFrom: [&quot;+15551234567&quot;]
+    }
+  }
+}
+</code></pre>
+<p><strong>配对模式（可选）：</strong><br>如果你想要配对而不是白名单，将 <code>channels.whatsapp.dmPolicy</code> 设置为 <code>pairing</code>。未知发送者获得配对码；批准使用：<br><code>openclaw pairing approve whatsapp &lt;code&gt;</code></p>
+<h3>个人号码（备用）</h3>
+<p>快速备用：在<strong>你自己的号码</strong>上运行 OpenClaw。给自己发消息（WhatsApp &quot;给自己发消息&quot;）进行测试，这样不会骚扰联系人。预计在设置和实验期间在主手机上读取验证码。<strong>必须启用自聊模式。</strong><br>当向导询问你的个人 WhatsApp 号码时，输入你将从中发送消息的 phone（所有者/发送者），而不是助手号码。</p>
+<p><strong>示例配置（个人号码，自聊）：</strong></p>
+<pre><code class="language-json">{
+</code></pre>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/channels/whatsapp" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

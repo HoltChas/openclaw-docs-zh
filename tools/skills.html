@@ -121,11 +121,205 @@
     <main class="main-content">
         <div class="content">
             <h1>技能</h1>
+<h1>技能 (OpenClaw)</h1>
+<p>OpenClaw 使用 <strong><a href="https://agentskills.io">AgentSkills</a> 兼容</strong>的技能文件夹来教 Agent 如何使用工具。每个技能是一个包含带有 YAML 前置事项和说明的 <code>SKILL.md</code> 的目录。OpenClaw 加载<strong>捆绑技能</strong>加上可选的本地覆盖，并根据环境、配置和二进制存在性在加载时过滤它们。</p>
+<h2>位置和优先级</h2>
+<p>技能从 <strong>三个</strong> 地方加载：</p>
+<ol>
+<li><strong>捆绑技能</strong>：随安装一起发布（npm 包或 OpenClaw.app）</li>
+<li><strong>托管/本地技能</strong>：<code>~/.openclaw/skills</code></li>
+<li><strong>工作区技能</strong>：<code>&lt;workspace&gt;/skills</code></li>
+</ol>
+<p>如果技能名称冲突，优先级为：</p>
+<p><code>&lt;workspace&gt;/skills</code>（最高） → <code>~/.openclaw/skills</code> → 捆绑技能（最低）</p>
+<p>此外，你可以通过 <code>~/.openclaw/openclaw.json</code> 中的 <code>skills.load.extraDirs</code> 配置额外的技能文件夹（最低优先级）。</p>
+<h2>每个 Agent vs 共享技能</h2>
+<p>在 <strong>多 Agent</strong> 设置中，每个 Agent 有自己的工作区。这意味着：</p>
+<ul>
+<li><strong>每个 Agent 的技能</strong>存在于该 Agent 的 <code>&lt;workspace&gt;/skills</code> 中。</li>
+<li><strong>共享技能</strong>存在于 <code>~/.openclaw/skills</code>（托管/本地），对同一机器上的 <strong>所有 Agent</strong> 可见。</li>
+<li><strong>共享文件夹</strong>也可以通过 <code>skills.load.extraDirs</code> 添加（最低优先级），如果你想让多个 Agent 使用一个共同的技能包。</li>
+</ul>
+<p>如果同一名称的技能存在于多个地方，应用通常的优先级规则：工作区获胜，然后是托管/本地，最后是捆绑。</p>
+<h2>插件 + 技能</h2>
+<p>插件可以通过在 <code>openclaw.plugin.json</code> 中列出 <code>skills</code> 目录来提供自己的技能（路径相对于插件根）。插件技能在插件启用时加载，并参与正常的技能优先级规则。<br>你可以通过插件配置条目上的 <code>metadata.openclaw.requires.config</code> 来门控它们。参见 <a href="/plugin">插件</a> 了解发现/配置，参见 <a href="/tools">工具</a> 了解这些技能教的工具表面。</p>
+<h2>ClawdHub（安装 + 同步）</h2>
+<p>ClawdHub 是 OpenClaw 的公共技能注册表。在 <a href="https://clawdhub.com">https://clawdhub.com</a> 浏览。用它来发现、安装、更新和备份技能。<br>完整指南：<a href="/tools/clawdhub">ClawdHub</a>。</p>
+<p>常见流程：</p>
+<ul>
+<li>安装技能到工作区：<ul>
+<li><code>clawdhub install &lt;skill-slug&gt;</code></li>
+</ul>
+</li>
+<li>更新所有已安装技能：<ul>
+<li><code>clawdhub update --all</code></li>
+</ul>
+</li>
+<li>同步（扫描 + 发布更新）：<ul>
+<li><code>clawdhub sync --all</code></li>
+</ul>
+</li>
+</ul>
+<p>默认情况下，<code>clawdhub</code> 安装到当前工作目录下的 <code>./skills</code>（或回退到配置的 OpenClaw 工作区）。OpenClaw 在下一次会话中将其作为 <code>&lt;workspace&gt;/skills</code> 获取。</p>
+<h2>安全说明</h2>
+<ul>
+<li>将第三方技能视为 <strong>可信代码</strong>。启用前阅读它们。</li>
+<li>对不可信输入和风险工具优先使用沙盒运行。参见 <a href="/gateway/sandboxing">沙盒化</a>。</li>
+<li><code>skills.entries.*.env</code> 和 <code>skills.entries.*.apiKey</code> 将 secrets 注入 <strong>主机</strong> 进程<br>用于该 Agent 轮次（非沙盒）。保持 secrets 不在提示和日志中。</li>
+<li>更广泛的威胁模型和检查表，参见 <a href="/gateway/security">安全</a>。</li>
+</ul>
+<h2>格式 (AgentSkills + Pi 兼容)</h2>
+<p><code>SKILL.md</code> 必须至少包含：</p>
+<pre><code class="language-markdown">---
+name: nano-banana-pro
+description: 通过 Gemini 3 Pro Image 生成或编辑图像
+---
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>我们遵循 AgentSkills 规范布局/意图。</li>
+<li>嵌入式 Agent 使用的解析器支持 <strong>单行</strong> 前置事项键。</li>
+<li><code>metadata</code> 应该是 <strong>单行</strong> JSON 对象。</li>
+<li>在说明中使用 <code>{baseDir}</code> 引用技能文件夹路径。</li>
+<li>可选前置事项键：<ul>
+<li><p><code>homepage</code> — 在 macOS 技能 UI 中显示为&quot;网站&quot;的 URL（也可通过 <code>metadata.openclaw.homepage</code> 支持）。</p>
+</li>
+<li><p><code>user-invocable</code> — <code>true|false</code>（默认：<code>true</code>）。为 <code>true</code> 时，技能作为用户斜杠命令暴露。</p>
+</li>
+<li><p><code>disable-model-invocation</code> — <code>true|false</code>（默认：<code>false</code>）。为 <code>true</code> 时，技能从模型提示中排除（仍可通过用户调用可用）。</p>
+</li>
+<li><p><code>command-dispatch</code> — <code>tool</code>（可选）。设置为 <code>tool</code> 时，斜杠命令绕过模型直接调度到工具。</p>
+</li>
+<li><p><code>command-tool</code> — 当设置 <code>command-dispatch: tool</code> 时调用的工具名称。</p>
+</li>
+<li><p><code>command-arg-mode</code> — <code>raw</code>（默认）。用于工具调度，将原始参数字符串转发给工具（无核心解析）。</p>
+<p>工具以参数调用：<br><code>{ command: &quot;&lt;raw args&gt;&quot;, commandName: &quot;&lt;slash command&gt;&quot;, skillName: &quot;&lt;skill name&gt;&quot; }</code>。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2>门控（加载时过滤器）</h2>
+<p>OpenClaw 在加载时使用 <code>metadata</code>（单行 JSON）<strong>过滤技能</strong>：</p>
+<pre><code class="language-markdown">---
+name: nano-banana-pro
+description: 通过 Gemini 3 Pro Image 生成或编辑图像
+metadata: {&quot;openclaw&quot;:{&quot;requires&quot;:{&quot;bins&quot;:[&quot;uv&quot;],&quot;env&quot;:[&quot;GEMINI_API_KEY&quot;],&quot;config&quot;:[&quot;browser.enabled&quot;]},&quot;primaryEnv&quot;:&quot;GEMINI_API_KEY&quot;}}
+---
+</code></pre>
+<p><code>metadata.openclaw</code> 下的字段：</p>
+<ul>
+<li><code>always: true</code> — 始终包含该技能（跳过其他门控）。</li>
+<li><code>emoji</code> — macOS 技能 UI 使用的可选表情符号。</li>
+<li><code>homepage</code> — macOS 技能 UI 中显示为&quot;网站&quot;的可选 URL。</li>
+<li><code>os</code> — 可选平台列表（<code>darwin</code>、<code>linux</code>、<code>win32</code>）。如果设置，技能仅在这些 OS 上有效。</li>
+<li><code>requires.bins</code> — 列表；每个必须在 <code>PATH</code> 上存在。</li>
+<li><code>requires.anyBins</code> — 列表；至少一个必须在 <code>PATH</code> 上存在。</li>
+<li><code>requires.env</code> — 列表；环境变量必须存在 <strong>或</strong> 在配置中提供。</li>
+<li><code>requires.config</code> — 必须 truthy 的 <code>openclaw.json</code> 路径列表。</li>
+<li><code>primaryEnv</code> — 与 <code>skills.entries.&lt;name&gt;.apiKey</code> 关联的环境变量名。</li>
+<li><code>install</code> — macOS 技能 UI 使用的可选安装程序规范数组（brew/node/go/uv/download）。</li>
+</ul>
+<p>关于沙盒化的说明：</p>
+<ul>
+<li><code>requires.bins</code> 在技能加载时在 <strong>主机</strong> 上检查。</li>
+<li>如果 Agent 被沙盒化，二进制文件也必须存在于 <strong>容器</strong> 内部。<br>通过 <code>agents.defaults.sandbox.docker.setupCommand</code>（或自定义镜像）安装它。<br><code>setupCommand</code> 在容器创建后运行一次。<br>包安装还需要沙盒中的网络出口、可写根文件系统和 root 用户。<br>示例：<code>summarize</code> 技能（<code>skills/summarize/SKILL.md</code>）需要 <code>summarize</code> CLI<br>在沙盒容器中运行。</li>
+</ul>
+<p>安装程序示例：</p>
+<pre><code class="language-markdown">---
+name: gemini
+description: 使用 Gemini CLI 进行编码协助和 Google 搜索查找。
+metadata: {&quot;openclaw&quot;:{&quot;emoji&quot;:&quot;♊️&quot;,&quot;requires&quot;:{&quot;bins&quot;:[&quot;gemini&quot;]},&quot;install&quot;:[{&quot;id&quot;:&quot;brew&quot;,&quot;kind&quot;:&quot;brew&quot;,&quot;formula&quot;:&quot;gemini-cli&quot;,&quot;bins&quot;:[&quot;gemini&quot;],&quot;label&quot;:&quot;安装 Gemini CLI (brew)&quot;}]}}
+---
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>如果列出多个安装程序，Gateway 选择 <strong>单个</strong> 首选选项（如果可用则选 brew，否则 node）。</li>
+<li>如果所有安装程序都是 <code>download</code>，OpenClaw 列出每个条目以便查看可用的工件。</li>
+<li>安装程序规范可以包含 <code>os: [&quot;darwin&quot;|&quot;linux&quot;|&quot;win32&quot;]</code> 按平台过滤选项。</li>
+<li>Node 安装遵守 <code>openclaw.json</code> 中的 <code>skills.install.nodeManager</code>（默认：npm；选项：npm/pnpm/yarn/bun）。<br>这只影响 <strong>技能安装</strong>；Gateway 运行时仍应该是 Node<br>（Bun 不推荐用于 WhatsApp/Telegram）。</li>
+<li>Go 安装：如果缺少 <code>go</code> 且 <code>brew</code> 可用，Gateway 先通过 Homebrew 安装 Go，并在可能时将 <code>GOBIN</code> 设置为 Homebrew 的 <code>bin</code>。</li>
+<li>下载安装：<code>url</code>（必需）、<code>archive</code>（<code>tar.gz</code> | <code>tar.bz2</code> | <code>zip</code>）、<code>extract</code>（默认：检测到存档时自动）、<code>stripComponents</code>、<code>targetDir</code>（默认：<code>~/.openclaw/tools/&lt;skillKey&gt;</code>）。</li>
+</ul>
+<p>如果没有 <code>metadata.openclaw</code>，技能始终有效（除非在配置中禁用或被 <code>skills.allowBundled</code> 阻止用于捆绑技能）。</p>
+<h2>配置覆盖 (<code>~/.openclaw/openclaw.json</code>)</h2>
+<p>可以切换捆绑/托管技能并为其提供环境值：</p>
+<pre><code class="language-json5">{
+  skills: {
+    entries: {
+      &quot;nano-banana-pro&quot;: {
+        enabled: true,
+        apiKey: &quot;GEMINI_KEY_HERE&quot;,
+        env: {
+          GEMINI_API_KEY: &quot;GEMINI_KEY_HERE&quot;
+        },
+        config: {
+          endpoint: &quot;https://example.invalid&quot;,
+          model: &quot;nano-pro&quot;
+        }
+      },
+      peekaboo: { enabled: true },
+      sag: { enabled: false }
+    }
+  }
+}
+</code></pre>
+<p>注意：如果技能名称包含连字符，引用键（JSON5 允许引用键）。</p>
+<p>配置键默认匹配 <strong>技能名称</strong>。如果技能定义了 <code>metadata.openclaw.skillKey</code>，使用 <code>skills.entries</code> 下的该键。</p>
+<p>规则：</p>
+<ul>
+<li><code>enabled: false</code> 禁用技能，即使它是捆绑/已安装的。</li>
+<li><code>env</code>：仅当进程中的变量尚未设置时注入。</li>
+<li><code>apiKey</code>：声明 <code>metadata.openclaw.primaryEnv</code> 的技能的便利选项。</li>
+<li><code>config</code>：自定义每个技能字段的可选包；自定义键必须住在这里。</li>
+<li><code>allowBundled</code>：仅 <strong>捆绑</strong> 技能的可选允许列表。如果设置，仅列表中的捆绑技能有效（托管/工作区技能不受影响）。</li>
+</ul>
+<h2>环境注入（每个 Agent 运行）</h2>
+<p>当 Agent 运行开始时，OpenClaw：</p>
+<ol>
+<li>读取技能元数据。</li>
+<li>应用任何 <code>skills.entries.&lt;key&gt;.env</code> 或 <code>skills.entries.&lt;key&gt;.apiKey</code> 到<br><code>process.env</code>。</li>
+<li>用 <strong>有效</strong> 技能构建系统提示。</li>
+<li>运行结束后恢复原始环境。</li>
+</ol>
+<p>这 <strong>限定于 Agent 运行</strong>，不是全局 shell 环境。</p>
+<h2>会话快照（性能）</h2>
+<p>OpenClaw 在会话开始时快照有效技能，并在同一会话的后续轮次中重用该列表。技能或配置的更改在下一次新会话时生效。</p>
+<p>当启用技能监视器或新的有效远程节点出现时，技能也可以在会话中刷新（见下文）。将其视为 <strong>热重载</strong>：刷新的列表在下一次 Agent 轮次中获取。</p>
+<h2>远程 macOS 节点（Linux Gateway）</h2>
+<p>如果 Gateway 在 Linux 上运行，但 <strong>macOS 节点</strong> 已连接 <strong>且允许 <code>system.run</code></strong>（Exec 批准安全未设置为 <code>deny</code>），当所需二进制文件存在于该节点上时，OpenClaw 可以将仅限 macOS 的技能视为有效。Agent 应该通过 <code>nodes</code> 工具执行这些技能（通常是 <code>nodes.run</code>）。</p>
+<p>这依赖于节点报告其命令支持和通过 <code>system.run</code> 的二进制探测。如果 macOS 节点稍后离线，技能仍然可见；调用可能失败直到节点重新连接。</p>
+<h2>技能监视器（自动刷新）</h2>
+<p>默认情况下，OpenClaw 监视技能文件夹并在 <code>SKILL.md</code> 文件更改时更新技能快照。在 <code>skills.load</code> 下配置：</p>
+<pre><code class="language-json5">{
+  skills: {
+    load: {
+      watch: true,
+      watchDebounceMs: 250
+    }
+  }
+}
+</code></pre>
+<h2>令牌影响（技能列表）</h2>
+<p>当技能有效时，OpenClaw 将可用技能的紧凑 XML 列表注入系统提示（通过 <code>pi-coding-agent</code> 中的 <code>formatSkillsForPrompt</code>）。成本是确定的：</p>
+<ul>
+<li><strong>基础开销（仅当 ≥1 技能时）：</strong> 195 字符。</li>
+<li><strong>每个技能：</strong> 97 字符 + XML 转义的 <code>&lt;name&gt;</code>、<code>&lt;description&gt;</code> 和 <code>&lt;location&gt;</code> 值的长度。</li>
+</ul>
+<p>公式（字符）：</p>
+<pre><code>total = 195 + Σ (97 + len(name_escaped) + len(description_escaped) + len(location_escaped))
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>XML 转义将 <code>&amp; &lt; &gt; &quot; &#39;</code> 扩展为实体（<code>&amp;amp;</code>、<code>&amp;lt;</code> 等），增加长度。</li>
+<li>令牌计数因模型分词器而异。粗略的 OpenAI 风格估计是 ~4 字符/令牌，所以 <strong>97 字符 ≈ 24 令牌</strong> 每个技能加上实际字段长度。</li>
+</ul>
+<h2>托管技能生命周期</h2>
+<p>OpenClaw 将一组基线技能作为 <strong>捆绑技能</strong> 随安装一起发布（npm 包或 OpenClaw.app）。<code>~/.openclaw/skills</code> 存在用于本地覆盖（例如，固定/修补技能而不更改捆绑副本）。工作区技能是用户拥有的，在名称冲突时覆盖两者。</p>
+<h2>配置参考</h2>
+<p>参见 <a href="/tools/skills-config">技能配置</a> 了解完整配置模式。</p>
+<h2>寻找更多技能？</h2>
+<p>浏览 <a href="https://clawdhub.com%E3%80%82">https://clawdhub.com。</a></p>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/tools/skills" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

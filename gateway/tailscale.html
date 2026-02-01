@@ -121,11 +121,88 @@
     <main class="main-content">
         <div class="content">
             <h1>Tailscale</h1>
+<h1>Tailscale（Gateway 控制台）</h1>
+<p>OpenClaw 可以自动配置 Tailscale <strong>Serve</strong>（tailnet）或 <strong>Funnel</strong>（公共）用于 Gateway 控制台和 WebSocket 端口。<br>这样 Gateway 可以继续绑定 loopback，而由 Tailscale 提供 HTTPS、路由以及（Serve 下）身份 header。</p>
+<h2>模式</h2>
+<ul>
+<li><code>serve</code>：使用 <code>tailscale serve</code> 的 tailnet 内 Serve。Gateway 仍绑定 <code>127.0.0.1</code>。</li>
+<li><code>funnel</code>：使用 <code>tailscale funnel</code> 的公共 HTTPS。OpenClaw 要求共享密码。</li>
+<li><code>off</code>：默认（不自动配置 Tailscale）。</li>
+</ul>
+<h2>认证</h2>
+<p>设置 <code>gateway.auth.mode</code> 控制握手：</p>
+<ul>
+<li><code>token</code>（当设置了 <code>OPENCLAW_GATEWAY_TOKEN</code> 时默认）</li>
+<li><code>password</code>（通过 <code>OPENCLAW_GATEWAY_PASSWORD</code> 或配置共享密钥）</li>
+</ul>
+<p>当 <code>tailscale.mode = &quot;serve&quot;</code> 且 <code>gateway.auth.allowTailscale</code> 为 <code>true</code> 时，<br>有效的 Serve 代理请求可通过 Tailscale 身份 header<br>（<code>tailscale-user-login</code>）进行认证，而无需 token/密码。OpenClaw 会通过本地 Tailscale<br>守护进程（<code>tailscale whois</code>）解析 <code>x-forwarded-for</code> 地址并与 header 匹配，确认身份后接受。<br>OpenClaw 只在请求来自 loopback 且包含 Tailscale 的 <code>x-forwarded-for</code>、<code>x-forwarded-proto</code>、<code>x-forwarded-host</code> 时视为 Serve。<br>要强制显式凭证，设置 <code>gateway.auth.allowTailscale: false</code> 或强制 <code>gateway.auth.mode: &quot;password&quot;</code>。</p>
+<h2>配置示例</h2>
+<h3>仅 tailnet（Serve）</h3>
+<pre><code class="language-json5">{
+  gateway: {
+    bind: &quot;loopback&quot;, // 中文注释：Gateway 仍只监听本地
+    tailscale: { mode: &quot;serve&quot; }
+  }
+}
+</code></pre>
+<p>访问：<code>https://&lt;magicdns&gt;/</code>（或你设置的 <code>gateway.controlUi.basePath</code>）</p>
+<h3>仅 tailnet（绑定 Tailnet IP）</h3>
+<p>当你想让 Gateway 直接监听 Tailnet IP（无需 Serve/Funnel）时使用：</p>
+<pre><code class="language-json5">{
+  gateway: {
+    bind: &quot;tailnet&quot;,
+    auth: { mode: &quot;token&quot;, token: &quot;your-token&quot; }
+  }
+}
+</code></pre>
+<p>从另一台 Tailnet 设备连接：</p>
+<ul>
+<li>控制台：<code>http://&lt;tailscale-ip&gt;:18789/</code></li>
+<li>WebSocket：<code>ws://&lt;tailscale-ip&gt;:18789</code></li>
+</ul>
+<p>注意：loopback（<code>http://127.0.0.1:18789</code>）在此模式下 <strong>不可用</strong>。</p>
+<h3>公网（Funnel + 共享密码）</h3>
+<pre><code class="language-json5">{
+  gateway: {
+    bind: &quot;loopback&quot;,
+    tailscale: { mode: &quot;funnel&quot; },
+    auth: { mode: &quot;password&quot;, password: &quot;replace-me&quot; }
+  }
+}
+</code></pre>
+<p>建议使用 <code>OPENCLAW_GATEWAY_PASSWORD</code>，不要把密码写进磁盘。</p>
+<h2>CLI 示例</h2>
+<pre><code class="language-bash">openclaw gateway --tailscale serve # 中文注释：使用 Tailnet Serve
+openclaw gateway --tailscale funnel --auth password # 中文注释：使用 Funnel + 密码认证
+</code></pre>
+<h2>说明</h2>
+<ul>
+<li>Tailscale Serve/Funnel 需要安装并登录 <code>tailscale</code> CLI。</li>
+<li><code>tailscale.mode: &quot;funnel&quot;</code> 会拒绝启动，除非认证模式是 <code>password</code>，以避免公开暴露。</li>
+<li>设置 <code>gateway.tailscale.resetOnExit</code> 让 OpenClaw 在关闭时撤销 <code>tailscale serve</code><br>或 <code>tailscale funnel</code> 配置。</li>
+<li><code>gateway.bind: &quot;tailnet&quot;</code> 是直接绑定 Tailnet（无 HTTPS、无 Serve/Funnel）。</li>
+<li><code>gateway.bind: &quot;auto&quot;</code> 优先 loopback；若想仅 tailnet，请用 <code>tailnet</code>。</li>
+<li>Serve/Funnel 只暴露 <strong>Gateway 控制台 + WS</strong>。节点连接也使用同一 WS 端点，因此 Serve 可用于节点访问。</li>
+</ul>
+<h2>浏览器控制（远程 Gateway + 本地浏览器）</h2>
+<p>如果 Gateway 在一台机器上运行，但你想在另一台机器上控制浏览器，<br>在浏览器机器上运行 <strong>节点主机</strong> 并保持两台设备在同一 tailnet。<br>Gateway 会把浏览器动作代理到节点；不需要单独的控制服务器或 Serve URL。</p>
+<p>避免对浏览器控制使用 Funnel；把节点配对当作操作员访问。</p>
+<h2>Tailscale 前置条件 + 限制</h2>
+<ul>
+<li>Serve 需要 Tailnet 启用 HTTPS；CLI 会在缺失时提示。</li>
+<li>Serve 注入 Tailscale 身份 header；Funnel 不注入。</li>
+<li>Funnel 需要 Tailscale v1.38.3+、MagicDNS、启用 HTTPS、以及 funnel 节点属性。</li>
+<li>Funnel 仅支持 <code>443</code>、<code>8443</code>、<code>10000</code> 端口的 TLS。</li>
+<li>macOS 上 Funnel 需要开源版本的 Tailscale 应用。</li>
+</ul>
+<h2>了解更多</h2>
+<ul>
+<li>Tailscale Serve 概览：<a href="https://tailscale.com/kb/1312/serve">https://tailscale.com/kb/1312/serve</a></li>
+<li><code>tailscale serve</code> 命令：<a href="https://tailscale.com/kb/1242/tailscale-serve">https://tailscale.com/kb/1242/tailscale-serve</a></li>
+<li>Tailscale Funnel 概览：<a href="https://tailscale.com/kb/1223/tailscale-funnel">https://tailscale.com/kb/1223/tailscale-funnel</a></li>
+<li><code>tailscale funnel</code> 命令：<a href="https://tailscale.com/kb/1311/tailscale-funnel">https://tailscale.com/kb/1311/tailscale-funnel</a></li>
+</ul>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/gateway/tailscale" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

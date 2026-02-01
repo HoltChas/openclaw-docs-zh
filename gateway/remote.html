@@ -121,11 +121,99 @@
     <main class="main-content">
         <div class="content">
             <h1>远程访问</h1>
+<h1>远程访问（SSH、隧道与 tailnet）</h1>
+<p>这个仓库支持“通过 SSH 远程”方式：在专用主机（桌面/服务器）上运行一个 Gateway（主控），客户端连接到它。</p>
+<ul>
+<li><strong>操作员（你 / macOS 应用）</strong>：SSH 隧道是通用回退。</li>
+<li><strong>节点（iOS/Android 等）</strong>：连接到 Gateway <strong>WebSocket</strong>（LAN/tailnet 或必要时 SSH 隧道）。</li>
+</ul>
+<h2>核心理念</h2>
+<ul>
+<li>Gateway WebSocket 绑定在 <strong>环回地址</strong> 上（默认端口 18789）。</li>
+<li>远程使用时，通过 SSH 转发该环回端口（或用 tailnet/VPN 减少隧道需求）。</li>
+</ul>
+<h2>常见 VPN/tailnet 场景（Agent 在哪里）</h2>
+<p>把 <strong>Gateway 主机</strong> 当作“Agent 所在地”。它拥有会话、认证配置、频道和状态。<br>你的笔记本/桌面（以及节点）连接到这个主机。</p>
+<h3>1) tailnet 内始终在线的 Gateway（VPS 或家用服务器）</h3>
+<p>在持续运行的主机上跑 Gateway，并通过 <strong>Tailscale</strong> 或 SSH 访问。</p>
+<ul>
+<li><strong>最佳体验：</strong> 保持 <code>gateway.bind: &quot;loopback&quot;</code>，并使用 <strong>Tailscale Serve</strong> 暴露 Control UI。</li>
+<li><strong>回退：</strong> 仍使用 loopback + SSH 隧道（需要访问的机器都开隧道）。</li>
+<li><strong>示例：</strong> <a href="/platforms/exe-dev">exe.dev</a>（易用 VM）或 <a href="/platforms/hetzner">Hetzner</a>（生产 VPS）。</li>
+</ul>
+<p>这适合笔记本经常休眠但你希望 Agent 始终在线的场景。</p>
+<h3>2) 家用桌面运行 Gateway，笔记本远程控制</h3>
+<p>笔记本 <strong>不运行</strong> Agent，只进行远程连接：</p>
+<ul>
+<li>使用 macOS 应用的 <strong>Remote over SSH</strong> 模式（设置 → 通用 → “OpenClaw runs”）。</li>
+<li>应用会打开并管理隧道，因此 WebChat + 健康检查“即插即用”。</li>
+</ul>
+<p>运行手册：<a href="/platforms/mac/remote">macOS 远程访问</a>。</p>
+<h3>3) 笔记本运行 Gateway，其他机器远程访问</h3>
+<p>保持 Gateway 本地但安全暴露：</p>
+<ul>
+<li>从其他机器通过 SSH 隧道连接，或</li>
+<li>使用 Tailscale Serve 暴露 Control UI，同时保持 Gateway 仅 loopback。</li>
+</ul>
+<p>指南：<a href="/gateway/tailscale">Tailscale</a> 与 <a href="/web">Web 概览</a>。</p>
+<h2>命令流（什么在什么地方运行）</h2>
+<p>一个 Gateway 服务拥有状态 + 频道。节点是外围设备。</p>
+<p>示例流程（Telegram → 节点）：</p>
+<ul>
+<li>Telegram 消息到达 <strong>Gateway</strong>。</li>
+<li>Gateway 运行 <strong>Agent</strong> 并决定是否调用节点工具。</li>
+<li>Gateway 通过 Gateway WebSocket 调用 <strong>节点</strong>（<code>node.*</code> RPC）。</li>
+<li>节点返回结果；Gateway 再回复 Telegram。</li>
+</ul>
+<p>说明：</p>
+<ul>
+<li><strong>节点不运行 Gateway 服务。</strong> 除非你刻意运行隔离 profile，否则每台主机只运行一个 Gateway（见 <a href="/gateway/multiple-gateways">多 Gateway</a>）。</li>
+<li>macOS 应用的“节点模式”只是一个通过 Gateway WebSocket 的节点客户端。</li>
+</ul>
+<h2>SSH 隧道（CLI + 工具）</h2>
+<p>创建本地隧道到远程 Gateway WS：</p>
+<pre><code class="language-bash">ssh -N -L 18789:127.0.0.1:18789 user@host # 中文注释：将本地 18789 转发到远程 Gateway
+</code></pre>
+<p>隧道建立后：</p>
+<ul>
+<li><code>openclaw health</code> 和 <code>openclaw status --deep</code> 通过 <code>ws://127.0.0.1:18789</code> 连接远程 Gateway。</li>
+<li><code>openclaw gateway {status,health,send,agent,call}</code> 也可以通过 <code>--url</code> 指向转发 URL。</li>
+</ul>
+<p>注意：将 <code>18789</code> 替换为你的 <code>gateway.port</code>（或 <code>--port</code>/<code>OPENCLAW_GATEWAY_PORT</code>）。</p>
+<h2>CLI 远程默认</h2>
+<p>你可以持久化一个远程目标，让 CLI 默认使用它：</p>
+<pre><code class="language-json5">{
+  gateway: {
+    mode: &quot;remote&quot;,
+    remote: {
+      url: &quot;ws://127.0.0.1:18789&quot;,
+      token: &quot;your-token&quot; // 中文注释：远程 CLI 访问令牌
+    }
+  }
+}
+</code></pre>
+<p>当 Gateway 仅 loopback 时，保持 URL 为 <code>ws://127.0.0.1:18789</code> 并先打开 SSH 隧道。</p>
+<h2>通过 SSH 的聊天 UI</h2>
+<p>WebChat 不再使用独立 HTTP 端口。SwiftUI Chat UI 直接连接 Gateway WebSocket。</p>
+<ul>
+<li>通过 SSH 转发 <code>18789</code>（见上文），然后客户端连接 <code>ws://127.0.0.1:18789</code>。</li>
+<li>在 macOS 上，优先使用应用的“Remote over SSH”模式，它自动管理隧道。</li>
+</ul>
+<h2>macOS 应用“Remote over SSH”</h2>
+<p>macOS 菜单栏应用可以端到端驱动该设置（远程状态检查、WebChat 和 Voice Wake 转发）。</p>
+<p>运行手册：<a href="/platforms/mac/remote">macOS 远程访问</a>。</p>
+<h2>安全规则（远程/VPN）</h2>
+<p>短版：<strong>保持 Gateway 仅 loopback</strong>，除非你确定需要绑定。</p>
+<ul>
+<li><strong>Loopback + SSH/Tailscale Serve</strong> 是最安全的默认（无公共暴露）。</li>
+<li><strong>非 loopback 绑定</strong>（<code>lan</code>/<code>tailnet</code>/<code>custom</code>，或 loopback 不可用时 <code>auto</code>）必须使用认证 token/密码。</li>
+<li><code>gateway.remote.token</code> <strong>仅</strong>用于远程 CLI 调用 — <strong>不会</strong>启用本地认证。</li>
+<li><code>gateway.remote.tlsFingerprint</code> 在使用 <code>wss://</code> 时固定远程 TLS 证书。</li>
+<li><strong>Tailscale Serve</strong> 可在 <code>gateway.auth.allowTailscale: true</code> 时通过身份 header 认证。<br>设为 <code>false</code> 或强制 <code>gateway.auth.mode: &quot;password&quot;</code> 可要求显式凭证。</li>
+<li>将浏览器控制视为操作员访问：仅 tailnet + 谨慎节点配对。</li>
+</ul>
+<p>深入了解：<a href="/gateway/security">安全</a>。</p>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/gateway/remote" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

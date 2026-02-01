@@ -121,11 +121,46 @@
     <main class="main-content">
         <div class="content">
             <h1>WebChat</h1>
+<h1>WebChat（Gateway WebSocket UI）</h1>
+<p>状态：macOS/iOS SwiftUI 聊天 UI 直接与 Gateway WebSocket 通信。</p>
+<h2>它是什么</h2>
+<ul>
+<li>Gateway 的原生聊天 UI（无嵌入式浏览器和本地静态服务器）。</li>
+<li>使用与其他频道相同的会话和路由规则。</li>
+<li>确定性路由：回复总是返回到 WebChat。</li>
+</ul>
+<h2>快速开始</h2>
+<ol>
+<li>启动 Gateway。</li>
+<li>打开 WebChat UI（macOS/iOS 应用）或 Control UI 聊天标签。</li>
+<li>确保配置了 Gateway 认证（默认需要，即使在回环上）。</li>
+</ol>
+<h2>工作原理（行为）</h2>
+<ul>
+<li>UI 连接到 Gateway WebSocket 并使用 <code>chat.history</code>、<code>chat.send</code> 和 <code>chat.inject</code>。</li>
+<li><code>chat.inject</code> 将助手注释直接附加到记录并广播到 UI（无 Agent 运行）。</li>
+<li>历史总是从 Gateway 获取（无本地文件监视）。</li>
+<li>如果 Gateway 无法访问，WebChat 是只读的。</li>
+</ul>
+<h2>远程使用</h2>
+<ul>
+<li>远程模式通过 SSH/Tailscale 隧道传输 Gateway WebSocket。</li>
+<li>你不需要运行单独的 WebChat 服务器。</li>
+</ul>
+<h2>配置参考（WebChat）</h2>
+<p>完整配置：<a href="/gateway/configuration">配置</a></p>
+<p>频道选项：</p>
+<ul>
+<li>无专门的 <code>webchat.*</code> 块。WebChat 使用 Gateway 端点 + 以下认证设置。</li>
+</ul>
+<p>相关全局选项：</p>
+<ul>
+<li><code>gateway.port</code>、<code>gateway.bind</code>：WebSocket 主机/端口。</li>
+<li><code>gateway.auth.mode</code>、<code>gateway.auth.token</code>、<code>gateway.auth.password</code>：WebSocket 认证。</li>
+<li><code>gateway.remote.url</code>、<code>gateway.remote.token</code>、<code>gateway.remote.password</code>：远程 Gateway 目标。</li>
+<li><code>session.*</code>：会话存储和主密钥默认值。</li>
+</ul>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/web/webchat" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

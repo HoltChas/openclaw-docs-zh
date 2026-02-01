@@ -121,11 +121,39 @@
     <main class="main-content">
         <div class="content">
             <h1>控制台</h1>
+<h1>Dashboard（Control UI）</h1>
+<p>Gateway Dashboard 是浏览器 Control UI，默认在 <code>/</code> 提供<br>（使用 <code>gateway.controlUi.basePath</code> 覆盖）。</p>
+<p>快速打开（本地 Gateway）：</p>
+<ul>
+<li><a href="http://127.0.0.1:18789/%EF%BC%88%E6%88%96">http://127.0.0.1:18789/（或</a> <a href="http://localhost:18789/%EF%BC%89">http://localhost:18789/）</a></li>
+</ul>
+<p>关键参考：</p>
+<ul>
+<li><a href="/web/control-ui">Control UI</a> 了解使用和 UI 功能。</li>
+<li><a href="/gateway/tailscale">Tailscale</a> 了解 Serve/Funnel 自动化。</li>
+<li><a href="/web">Web 界面</a> 了解绑定模式和安全说明。</li>
+</ul>
+<p>认证通过 <code>connect.params.auth</code>（token 或密码）在 WebSocket 握手时强制执行。参见 <code>gateway.auth</code> 在 <a href="/gateway/configuration">Gateway 配置</a>。</p>
+<p>安全注意：Control UI 是<strong>管理界面</strong>（聊天、配置、执行批准）。<br>不要公开暴露它。UI 在首次加载后将 token 存储在 <code>localStorage</code> 中。<br>优先选择 localhost、Tailscale Serve 或 SSH 隧道。</p>
+<h2>快速路径（推荐）</h2>
+<ul>
+<li>配置后，CLI 现在会用你的 token 自动打开 Dashboard 并打印相同的带 token 链接。</li>
+<li>随时重新打开：<code>openclaw dashboard</code>（复制链接，如果可能则打开浏览器，如果无头则显示 SSH 提示）。</li>
+<li>Token 保持本地（仅限查询参数）；UI 在首次加载后剥离它并保存在 localStorage 中。</li>
+</ul>
+<h2>Token 基础（本地 vs 远程）</h2>
+<ul>
+<li><strong>本地主机</strong>：打开 <code>http://127.0.0.1:18789/</code>。如果你看到&quot;未授权&quot;，运行 <code>openclaw dashboard</code> 并使用带 token 的链接（<code>?token=...</code>）。</li>
+<li><strong>Token 来源</strong>：<code>gateway.auth.token</code>（或 <code>OPENCLAW_GATEWAY_TOKEN</code>）；UI 在首次加载后存储它。</li>
+<li><strong>非本地主机</strong>：使用 Tailscale Serve（如果 <code>gateway.auth.allowTailscale: true</code> 则无 token），带 token 的 tailnet 绑定，或 SSH 隧道。参见 <a href="/web">Web 界面</a>。</li>
+</ul>
+<h2>如果你看到&quot;未授权&quot; / 1008</h2>
+<ul>
+<li>运行 <code>openclaw dashboard</code> 获取新的带 token 链接。</li>
+<li>确保 Gateway 可访问（本地：<code>openclaw status</code>；远程：SSH 隧道 <code>ssh -N -L 18789:127.0.0.1:18789 user@host</code> 然后打开 <code>http://127.0.0.1:18789/?token=...</code>）。</li>
+<li>在 Dashboard 设置中，粘贴你在 <code>gateway.auth.token</code>（或 <code>OPENCLAW_GATEWAY_TOKEN</code>）中配置的相同 token。</li>
+</ul>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/web/dashboard" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

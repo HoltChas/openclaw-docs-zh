@@ -121,11 +121,68 @@
     <main class="main-content">
         <div class="content">
             <h1>控制界面</h1>
+<h1>Control UI（浏览器）</h1>
+<p>Control UI 是一个由 Gateway 提供的<strong>Vite + Lit</strong>单页应用：</p>
+<ul>
+<li>默认：<code>http://&lt;host&gt;:18789/</code></li>
+<li>可选前缀：设置 <code>gateway.controlUi.basePath</code>（例如 <code>/openclaw</code>）</li>
+</ul>
+<p>它<strong>直接通过 WebSocket</strong>在同一端口上与 Gateway 通信。</p>
+<h2>快速打开（本地）</h2>
+<p>如果 Gateway 在同一台计算机上运行，打开：</p>
+<ul>
+<li><a href="http://127.0.0.1:18789/%EF%BC%88%E6%88%96">http://127.0.0.1:18789/（或</a> <a href="http://localhost:18789/%EF%BC%89">http://localhost:18789/）</a></li>
+</ul>
+<p>如果页面加载失败，首先启动 Gateway：<code>openclaw gateway</code>。</p>
+<p>认证通过以下方式在 WebSocket 握手期间提供：</p>
+<ul>
+<li><code>connect.params.auth.token</code></li>
+<li><code>connect.params.auth.password</code><br>Dashboard 设置面板让你存储 token；密码不会持久化。<br>配置向导默认生成 Gateway token，因此首次连接时粘贴它。</li>
+</ul>
+<h2>它能做什么（今天）</h2>
+<ul>
+<li>通过 Gateway WS 与模型聊天（<code>chat.history</code>、<code>chat.send</code>、<code>chat.abort</code>、<code>chat.inject</code>）</li>
+<li>流式传输工具调用 + 聊天中的实时工具输出卡片（Agent 事件）</li>
+<li>频道：WhatsApp/Telegram/Discord/Slack + 插件频道（Mattermost 等）状态 + QR 登录 + 每频道配置（<code>channels.status</code>、<code>web.login.*</code>、<code>config.patch</code>）</li>
+<li>实例：在线列表 + 刷新（<code>system-presence</code>）</li>
+<li>会话：列表 + 每会话思考/详细覆盖（<code>sessions.list</code>、<code>sessions.patch</code>）</li>
+<li>Cron 任务：列表/添加/运行/启用/禁用 + 运行历史（<code>cron.*</code>）</li>
+<li>Skills：状态、启用/禁用、安装、API 密钥更新（<code>skills.*</code>）</li>
+<li>节点：列表 + 功能（<code>node.list</code>）</li>
+<li>执行批准：编辑 Gateway 或节点白名单 + <code>exec host=gateway/node</code> 的询问策略（<code>exec.approvals.*</code>）</li>
+<li>配置：查看/编辑 <code>~/.openclaw/openclaw.json</code>（<code>config.get</code>、<code>config.set</code>）</li>
+<li>配置：验证后应用 + 重启（<code>config.apply</code>）并唤醒最后一个活动会话</li>
+<li>配置写入包括 base-hash 保护以防止覆盖并发编辑</li>
+<li>配置模式 + 表单渲染（<code>config.schema</code>，包括插件 + 频道模式）；原始 JSON 编辑器仍然可用</li>
+<li>调试：状态/健康/模型快照 + 事件日志 + 手动 RPC 调用（<code>status</code>、<code>health</code>、<code>models.list</code>）</li>
+<li>日志：Gateway 文件日志的实时尾部，带过滤/导出（<code>logs.tail</code>）</li>
+<li>更新：运行包/git 更新 + 重启（<code>update.run</code>）带重启报告</li>
+</ul>
+<h2>聊天行为</h2>
+<ul>
+<li><code>chat.send</code> 是<strong>非阻塞</strong>的：它立即确认 <code>{ runId, status: &quot;started&quot; }</code>，响应通过 <code>chat</code> 事件流式传输。</li>
+<li>使用相同的 <code>idempotencyKey</code> 重新发送在运行时返回 <code>{ status: &quot;in_flight&quot; }</code>，完成后返回 <code>{ status: &quot;ok&quot; }</code>。</li>
+<li><code>chat.inject</code> 将助手注释附加到会话记录并广播 <code>chat</code> 事件用于仅 UI 更新（无 Agent 运行，无频道传递）。</li>
+<li>停止：<ul>
+<li>点击<strong>停止</strong>（调用 <code>chat.abort</code>）</li>
+<li>输入 <code>/stop</code>（或 <code>stop|esc|abort|wait|exit|interrupt</code>）进行带外中止</li>
+<li><code>chat.abort</code> 支持 <code>{ sessionKey }</code>（无 <code>runId</code>）以中止该会话的所有活动运行</li>
+</ul>
+</li>
+</ul>
+<h2>Tailnet 访问（推荐）</h2>
+<h3>集成 Tailscale Serve（首选）</h3>
+<p>让 Gateway 保持在回环上，让 Tailscale Serve 用 HTTPS 代理它：</p>
+<pre><code class="language-bash"># 使用 Tailscale Serve 启动 Gateway
+openclaw gateway --tailscale serve
+</code></pre>
+<p>打开：</p>
+<ul>
+<li><code>https://&lt;magicdns&gt;/</code>（或你配置的 <code>gateway.controlUi.basePath</code>）</li>
+</ul>
+<p>默认情况下，当 <code>gateway.auth.allowTailscale</code> 为 <code>true</code> 时，Serve 请求可以通过 Tailscale 身份头<br>（<code>tailscale-user-login</code>）进行认证。OpenClaw<br>通过用 <code>tailscale whois</code> 解析 <code>x-forwarded-for</code> 地址并与头匹配来验证身份，<br>并且仅在请求命中带有 Tailscale 的 <code>x-forwarded-*</code> 头的回环时接受这些。设置<br><code>gateway.auth.allowTailscale: false</code>（或强制 <code>gateway.auth.mode: &quot;password&quot;</code>）<br>如果你想要求 Serve 流量也需要 token/密码。</p>
+<h3>绑定到 tailnet + token</h3>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/web/control-ui" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

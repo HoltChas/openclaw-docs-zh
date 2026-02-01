@@ -121,11 +121,67 @@
     <main class="main-content">
         <div class="content">
             <h1>技能配置</h1>
+<h1>技能配置</h1>
+<p>所有技能相关配置都在 <code>~/.openclaw/openclaw.json</code> 的 <code>skills</code> 下。</p>
+<pre><code class="language-json5">{
+  skills: {
+    allowBundled: [&quot;gemini&quot;, &quot;peekaboo&quot;],
+    load: {
+      extraDirs: [
+        &quot;~/Projects/agent-scripts/skills&quot;,
+        &quot;~/Projects/oss/some-skill-pack/skills&quot;
+      ],
+      watch: true,
+      watchDebounceMs: 250
+    },
+    install: {
+      preferBrew: true,
+      nodeManager: &quot;npm&quot; // npm | pnpm | yarn | bun（Gateway 运行时仍用 Node；Bun 不推荐）
+    },
+    entries: {
+      &quot;nano-banana-pro&quot;: {
+        enabled: true,
+        apiKey: &quot;GEMINI_KEY_HERE&quot;,
+        env: {
+          GEMINI_API_KEY: &quot;GEMINI_KEY_HERE&quot;
+        }
+      },
+      peekaboo: { enabled: true },
+      sag: { enabled: false }
+    }
+  }
+}
+</code></pre>
+<h2>字段</h2>
+<ul>
+<li><code>allowBundled</code>：仅 <strong>捆绑</strong> 技能的可选允许列表。设置时，仅列表中的捆绑技能有效（托管/工作区技能不受影响）。</li>
+<li><code>load.extraDirs</code>：要扫描的额外技能目录（最低优先级）。</li>
+<li><code>load.watch</code>：监视技能文件夹并刷新技能快照（默认：true）。</li>
+<li><code>load.watchDebounceMs</code>：技能监视器事件的去抖（毫秒）（默认：250）。</li>
+<li><code>install.preferBrew</code>：如果可用，优先使用 brew 安装程序（默认：true）。</li>
+<li><code>install.nodeManager</code>：Node 安装器首选项（<code>npm</code> | <code>pnpm</code> | <code>yarn</code> | <code>bun</code>，默认：npm）。<br>这只影响 <strong>技能安装</strong>；Gateway 运行时仍应该是 Node<br>（Bun 不推荐用于 WhatsApp/Telegram）。</li>
+<li><code>entries.&lt;skillKey&gt;</code>：每个技能的覆盖。</li>
+</ul>
+<p>每个技能字段：</p>
+<ul>
+<li><code>enabled</code>：设置为 <code>false</code> 禁用技能，即使它是捆绑/已安装的。</li>
+<li><code>env</code>：为 Agent 运行注入的环境变量（仅当尚未设置时）。</li>
+<li><code>apiKey</code>：声明主环境变量的技能的可选便利选项。</li>
+</ul>
+<h2>说明</h2>
+<ul>
+<li><code>entries</code> 下的键默认映射到技能名称。如果技能定义了 <code>metadata.openclaw.skillKey</code>，改用该键。</li>
+<li>启用监视器时，技能的更改在下一次 Agent 轮次中获取。</li>
+</ul>
+<h3>沙盒化技能 + 环境变量</h3>
+<p>当会话 <strong>沙盒化</strong> 时，技能进程在 Docker 内运行。沙盒 <strong>不会</strong> 继承主机 <code>process.env</code>。</p>
+<p>使用以下之一：</p>
+<ul>
+<li><code>agents.defaults.sandbox.docker.env</code>（或每个 Agent 的 <code>agents.list[].sandbox.docker.env</code>）</li>
+<li>将你的环境烘焙到自定义沙盒镜像中</li>
+</ul>
+<p>全局 <code>env</code> 和 <code>skills.entries.&lt;skill&gt;.env/apiKey</code> 仅适用于 <strong>主机</strong> 运行。</p>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/tools/skills-config" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

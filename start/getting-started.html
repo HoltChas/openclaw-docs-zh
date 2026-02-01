@@ -15,80 +15,103 @@
             </a>
             <button class="nav-toggle" onclick="toggleNav()">☰</button>
             <div class="nav-links" id="navLinks">
-                <div class="nav-section">
-                    <span class="nav-section-title">入门指南</span>
-                    <a href="getting-started.html">快速入门</a>
-                    <a href="wizard.html">向导</a>
-                    <a href="pairing.html">配对</a>
-                    <a href="setup.html">设置</a>
-                    <a href="openclaw.html">OpenClaw 助手</a>
-                    <a href="hubs.html">文档中心</a>
-                </div>
-                <div class="nav-section">
-                    <span class="nav-section-title">网关配置</span>
-                    <a href="../gateway/configuration.html">配置</a>
-                    <a href="../gateway/configuration-examples.html">配置示例</a>
-                    <a href="../gateway/security.html">安全</a>
-                    <a href="../gateway/remote.html">远程访问</a>
-                    <a href="../gateway/tailscale.html">Tailscale</a>
-                    <a href="../gateway/multiple-gateways.html">多网关</a>
-                    <a href="../gateway/discovery.html">发现机制</a>
-                </div>
-                <div class="nav-section">
-                    <span class="nav-section-title">消息渠道</span>
-                    <a href="../channels/whatsapp.html">WhatsApp</a>
-                    <a href="../channels/telegram.html">Telegram</a>
-                    <a href="../channels/discord.html">Discord</a>
-                    <a href="../channels/mattermost.html">Mattermost</a>
-                    <a href="../channels/imessage.html">iMessage</a>
-                </div>
-                <div class="nav-section">
-                    <span class="nav-section-title">Web 界面</span>
-                    <a href="../web/webchat.html">WebChat</a>
-                    <a href="../web/control-ui.html">控制界面</a>
-                    <a href="../web/dashboard.html">控制台</a>
-                </div>
-                <div class="nav-section">
-                    <span class="nav-section-title">核心概念</span>
-                    <a href="../concepts/streaming.html">流式传输</a>
-                    <a href="../concepts/groups.html">群组</a>
-                    <a href="../concepts/group-messages.html">群组消息</a>
-                    <a href="../concepts/multi-agent.html">多代理路由</a>
-                    <a href="../concepts/session.html">会话</a>
-                </div>
-                <div class="nav-section">
-                    <span class="nav-section-title">自动化</span>
-                    <a href="../automation/cron-jobs.html">定时任务</a>
-                    <a href="../automation/webhook.html">Webhooks</a>
-                    <a href="../automation/gmail-pubsub.html">Gmail Pub/Sub</a>
-                </div>
-                <div class="nav-section">
-                    <span class="nav-section-title">工具与技能</span>
-                    <a href="../tools/slash-commands.html">斜杠命令</a>
-                    <a href="../tools/skills.html">技能</a>
-                    <a href="../tools/skills-config.html">技能配置</a>
-                    <a href="../tools/web.html">Web 工具</a>
-                </div>
-                <div class="nav-section">
-                    <span class="nav-section-title">安装与平台</span>
-                    <a href="../install/updating.html">更新</a>
-                    <a href="../install/nix.html">Nix 模式</a>
-                    <a href="../platforms/macos.html">macOS</a>
-                    <a href="../platforms/ios.html">iOS</a>
-                    <a href="../platforms/android.html">Android</a>
-                    <a href="../platforms/windows.html">Windows (WSL2)</a>
-                    <a href="../platforms/linux.html">Linux</a>
-                </div>
-                <div class="nav-section">
-                    <span class="nav-section-title">节点与媒体</span>
-                    <a href="../nodes/index.html">节点</a>
-                    <a href="../nodes/images.html">图片</a>
-                    <a href="../nodes/audio.html">音频</a>
-                </div>
-                <div class="nav-section">
-                    <span class="nav-section-title">其他</span>
-                    <a href="../help.html">帮助</a>
-                </div>
+
+            <div class="nav-section">
+                <span class="nav-section-title">入门指南</span>
+                <a href="../start/getting-started.html">快速入门</a>
+                <a href="../start/wizard.html">向导</a>
+                <a href="../start/pairing.html">配对</a>
+                <a href="../start/setup.html">设置</a>
+                <a href="../start/openclaw.html">OpenClaw 助手</a>
+                <a href="../start/hubs.html">文档中心</a>
+            </div>
+            <div class="nav-section">
+                <span class="nav-section-title">网关配置</span>
+                <a href="../gateway/configuration.html">配置</a>
+                <a href="../gateway/configuration-examples.html">配置示例</a>
+                <a href="../gateway/security.html">安全</a>
+                <a href="../gateway/remote.html">远程访问</a>
+                <a href="../gateway/tailscale.html">Tailscale</a>
+                <a href="../gateway/multiple-gateways.html">多网关</a>
+                <a href="../gateway/discovery.html">发现机制</a>
+                <a href="../environment.html">环境变量</a>
+                <a href="../logging.html">日志配置</a>
+                <a href="../network.html">网络配置</a>
+            </div>
+            <div class="nav-section">
+                <span class="nav-section-title">消息渠道</span>
+                <a href="../channels/whatsapp.html">WhatsApp</a>
+                <a href="../channels/telegram.html">Telegram</a>
+                <a href="../channels/discord.html">Discord</a>
+                <a href="../channels/mattermost.html">Mattermost</a>
+                <a href="../channels/imessage.html">iMessage</a>
+            </div>
+            <div class="nav-section">
+                <span class="nav-section-title">Web 界面</span>
+                <a href="../web/webchat.html">WebChat</a>
+                <a href="../web/control-ui.html">控制界面</a>
+                <a href="../web/dashboard.html">控制台</a>
+            </div>
+            <div class="nav-section">
+                <span class="nav-section-title">核心概念</span>
+                <a href="../concepts/streaming.html">流式传输</a>
+                <a href="../concepts/groups.html">群组</a>
+                <a href="../concepts/group-messages.html">群组消息</a>
+                <a href="../concepts/multi-agent.html">多代理路由</a>
+                <a href="../concepts/session.html">会话</a>
+                <a href="../broadcast-groups.html">广播群组</a>
+                <a href="../multi-agent-sandbox-tools.html">多代理沙盒</a>
+                <a href="../date-time.html">日期时间</a>
+            </div>
+            <div class="nav-section">
+                <span class="nav-section-title">自动化</span>
+                <a href="../automation/cron-jobs.html">定时任务</a>
+                <a href="../automation/webhook.html">Webhooks</a>
+                <a href="../automation/gmail-pubsub.html">Gmail Pub/Sub</a>
+                <a href="../hooks.html">钩子系统</a>
+            </div>
+            <div class="nav-section">
+                <span class="nav-section-title">工具与技能</span>
+                <a href="../tools/slash-commands.html">斜杠命令</a>
+                <a href="../tools/skills.html">技能</a>
+                <a href="../tools/skills-config.html">技能配置</a>
+                <a href="../tools/web.html">Web 工具</a>
+                <a href="../brave-search.html">Brave 搜索</a>
+                <a href="../perplexity.html">Perplexity</a>
+            </div>
+            <div class="nav-section">
+                <span class="nav-section-title">安装与平台</span>
+                <a href="../install/updating.html">更新</a>
+                <a href="../install/nix.html">Nix 模式</a>
+                <a href="../platforms/macos.html">macOS</a>
+                <a href="../platforms/ios.html">iOS</a>
+                <a href="../platforms/android.html">Android</a>
+                <a href="../platforms/windows.html">Windows (WSL2)</a>
+                <a href="../platforms/linux.html">Linux</a>
+                <a href="../northflank.html">Northflank 部署</a>
+                <a href="../bedrock.html">AWS Bedrock</a>
+            </div>
+            <div class="nav-section">
+                <span class="nav-section-title">节点与媒体</span>
+                <a href="../nodes/index.html">节点</a>
+                <a href="../nodes/images.html">图片</a>
+                <a href="../nodes/audio.html">音频</a>
+            </div>
+            <div class="nav-section">
+                <span class="nav-section-title">CLI 与调试</span>
+                <a href="../cli/index.html">CLI 参考</a>
+                <a href="../debug/node-issue.html">Node 问题</a>
+                <a href="../diagnostics/flags.html">诊断标志</a>
+            </div>
+            <div class="nav-section">
+                <span class="nav-section-title">实验性</span>
+                <a href="../experiments/onboarding-config-protocol.html">配置协议</a>
+            </div>
+            <div class="nav-section">
+                <span class="nav-section-title">其他</span>
+                <a href="../help.html">帮助</a>
+            </div>
+
             </div>
         </div>
     </nav>
@@ -98,160 +121,155 @@
     <main class="main-content">
         <div class="content">
             <h1>快速入门</h1>
-            <p>目标：从零开始，用最合理的默认配置，尽快完成首次正常对话。</p>
-
-            <p>最快的聊天方式：打开控制界面（无需配置渠道）。运行 <code>openclaw dashboard</code> 在浏览器中聊天，或在网关主机上打开 <a href="http://127.0.0.1:18789/">http://127.0.0.1:18789/</a>。</p>
-
-            <p>相关文档：<a href="../web/dashboard.html">控制台</a> 和 <a href="../web/control-ui.html">控制界面</a>。</p>
-
-            <h2>推荐路径</h2>
-            <p>使用 CLI 初始化向导（<code>openclaw onboard</code>）。它会设置：</p>
-            <ul>
-                <li>模型/认证（推荐 OAuth）</li>
-                <li>网关设置</li>
-                <li>渠道（WhatsApp/Telegram/Discord/Mattermost 等）</li>
-                <li>配对默认设置（安全的私信）</li>
-                <li>工作区引导 + 技能</li>
-                <li>可选的后台服务</li>
-            </ul>
-
-            <p>如需深入了解参考页面，请跳转到：<a href="wizard.html">向导</a>、<a href="setup.html">设置</a>、<a href="pairing.html">配对</a>、<a href="../gateway/security.html">安全</a>。</p>
-
-            <div class="note">
-                <p><strong>沙盒说明：</strong><code>agents.defaults.sandbox.mode: "non-main"</code> 使用 <code>session.mainKey</code>（默认为 "main"），因此群组/渠道会话会被沙盒化。如果希望主代理始终在主机上运行，请设置明确的每代理覆盖：</p>
-                <pre><code>{
-  "routing": {
-    "agents": {
-      "main": {
-        "workspace": "~/.openclaw/workspace",
-        "sandbox": { "mode": "off" }
+<h1>入门指南</h1>
+<p>目标：让你从<strong>零</strong>快速上手 → 到<strong>第一条可用的聊天消息</strong>（使用合理的默认配置）。</p>
+<p>最快的聊天方式：打开 Control UI（无需设置频道）。运行 <code>openclaw dashboard</code>，<br>然后在浏览器中聊天，或在 Gateway 主机上打开 <code>http://127.0.0.1:18789/</code>。<br>文档：<a href="/web/dashboard">Dashboard</a> 和 <a href="/web/control-ui">Control UI</a>。</p>
+<p>推荐路径：使用 <strong>CLI 配置向导</strong> (<code>openclaw onboard</code>)。它会帮你设置：</p>
+<ul>
+<li>模型/认证（推荐 OAuth）</li>
+<li>Gateway 设置</li>
+<li>频道（WhatsApp/Telegram/Discord/Mattermost (插件)/...）</li>
+<li>配对默认设置（安全的私聊）</li>
+<li>工作空间引导 + Skills</li>
+<li>可选的后台服务</li>
+</ul>
+<p>如果你想看更深入的参考页面，跳转到：<a href="/start/wizard">向导</a>、<a href="/start/setup">设置</a>、<a href="/start/pairing">配对</a>、<a href="/gateway/security">安全</a>。</p>
+<p>沙盒说明：<code>agents.defaults.sandbox.mode: &quot;non-main&quot;</code> 使用 <code>session.mainKey</code>（默认 <code>&quot;main&quot;</code>），<br>所以群组/频道会话会被沙盒隔离。如果你希望 main Agent 始终在主机上运行，请设置明确的每 Agent 覆盖：</p>
+<pre><code class="language-json">{
+  &quot;routing&quot;: {
+    &quot;agents&quot;: {
+      &quot;main&quot;: {
+        &quot;workspace&quot;: &quot;~/.openclaw/workspace&quot;,
+        &quot;sandbox&quot;: { &quot;mode&quot;: &quot;off&quot; }
       }
     }
   }
-}</code></pre>
-            </div>
+}
+</code></pre>
+<h2>0) 前置条件</h2>
+<ul>
+<li>Node <code>&gt;=22</code></li>
+<li><code>pnpm</code>（可选；如果从源码构建则推荐）</li>
+<li><strong>推荐：</strong> Brave Search API 密钥用于网页搜索。最简单的方式：<br><code>openclaw configure --section web</code>（存储 <code>tools.web.search.apiKey</code>）。<br>参见 <a href="/tools/web">Web 工具</a>。</li>
+</ul>
+<p>macOS：如果你计划构建应用，安装 Xcode / CLT。仅使用 CLI + Gateway 的话，Node 就够了。<br>Windows：使用 <strong>WSL2</strong>（推荐 Ubuntu）。强烈建议使用 WSL2；原生 Windows 未经充分测试，问题较多，且工具兼容性较差。先安装 WSL2，然后在 WSL 中运行 Linux 步骤。参见 <a href="/platforms/windows">Windows (WSL2)</a>。</p>
+<h2>1) 安装 CLI（推荐）</h2>
+<pre><code class="language-bash"># 使用官方安装脚本
+curl -fsSL https://openclaw.bot/install.sh | bash
+</code></pre>
+<p>安装选项（安装方式、非交互式、从 GitHub）：<a href="/install">安装</a>。</p>
+<p>Windows (PowerShell)：</p>
+<pre><code class="language-powershell">iwr -useb https://openclaw.ai/install.ps1 | iex
+</code></pre>
+<p>替代方案（全局安装）：</p>
+<pre><code class="language-bash"># 使用 npm
+npm install -g openclaw@latest
 
-            <h2>0) 前置要求</h2>
-            <ul>
-                <li>Node >= 22</li>
-                <li>pnpm（可选；如果从源码构建则推荐）</li>
-                <li>推荐：Brave Search API 密钥用于网页搜索。最简单的方式：<code>openclaw configure --section web</code>（存储在 <code>tools.web.search.apiKey</code>）。详见 <a href="../tools/web.html">Web 工具</a>。</li>
-            </ul>
-
-            <p>macOS：如果计划构建应用，请安装 Xcode / CLT。仅使用 CLI + 网关时，Node 就足够了。</p>
-
-            <p>Windows：使用 WSL2（推荐 Ubuntu）。强烈推荐 WSL2；原生 Windows 未经测试，问题更多，工具兼容性较差。先安装 WSL2，然后在 WSL 中运行 Linux 步骤。详见 <a href="../platforms/windows.html">Windows (WSL2)</a>。</p>
-
-            <h2>1) 安装 CLI（推荐）</h2>
-            <pre><code>curl -fsSL https://openclaw.bot/install.sh | bash</code></pre>
-
-            <p>Windows (PowerShell)：</p>
-            <pre><code>iwr -useb https://openclaw.ai/install.ps1 | iex</code></pre>
-
-            <p>替代方案（全局安装）：</p>
-            <pre><code>npm install -g openclaw@latest
-# 或: pnpm add -g openclaw@latest</code></pre>
-
-            <h2>2) 运行初始化向导（并安装服务）</h2>
-            <pre><code>openclaw onboard --install-daemon</code></pre>
-
-            <p>你需要选择：</p>
-            <ul>
-                <li>本地 vs 远程网关</li>
-                <li>认证：OpenAI Code (Codex) 订阅（OAuth）或 API 密钥。对于 Anthropic，我们推荐 API 密钥；也支持 claude setup-token。</li>
-                <li>提供商：WhatsApp 二维码登录、Telegram/Discord 机器人令牌、Mattermost 插件令牌等</li>
-                <li>守护进程：后台安装（launchd/systemd；WSL2 使用 systemd）</li>
-                <li>运行时：Node（推荐；WhatsApp/Telegram 必需）。不推荐使用 Bun。</li>
-                <li>网关令牌：向导默认生成一个（即使在本地），并存储在 <code>gateway.auth.token</code> 中</li>
-            </ul>
-
-            <p>向导文档：<a href="wizard.html">向导</a></p>
-
-            <h3>认证：存储位置（重要）</h3>
-            <ul>
-                <li>推荐的 Anthropic 路径：设置 API 密钥（向导可以为你存储以服务使用）。也支持 claude setup-token 如果你想重用 Claude Code 凭证。</li>
-                <li>OAuth 凭证（旧版导入）：<code>~/.openclaw/credentials/oauth.json</code></li>
-                <li>认证配置文件（OAuth + API 密钥）：<code>~/.openclaw/agents//agent/auth-profiles.json</code></li>
-            </ul>
-
-            <p>无头/服务器提示：先在普通机器上做 OAuth，然后将 oauth.json 复制到网关主机。</p>
-
-            <h2>3) 启动网关</h2>
-            <p>如果你在初始化过程中安装了服务，网关应该已经在运行：</p>
-            <pre><code>openclaw gateway status</code></pre>
-
-            <p>手动运行（前台）：</p>
-            <pre><code>openclaw gateway --port 18789 --verbose</code></pre>
-
-            <p>控制台（本地）：<a href="http://127.0.0.1:18789/">http://127.0.0.1:18789/</a></p>
-            <p>如果配置了令牌，将其粘贴到控制界面设置中（存储为 <code>connect.params.auth.token</code>）。</p>
-
-            <div class="warning">
-                <p>⚠️ <strong>Bun 警告（WhatsApp + Telegram）：</strong>Bun 对这些渠道有已知问题。如果使用 WhatsApp 或 Telegram，请使用 Node 运行网关。</p>
-            </div>
-
-            <h2>3.5) 快速验证（2 分钟）</h2>
-            <pre><code>openclaw status
+# 或使用 pnpm（更快）
+pnpm add -g openclaw@latest
+</code></pre>
+<h2>2) 运行配置向导（并安装服务）</h2>
+<pre><code class="language-bash"># 运行向导并安装后台服务
+openclaw onboard --install-daemon
+</code></pre>
+<p>你会选择：</p>
+<ul>
+<li><strong>本地 vs 远程</strong> Gateway</li>
+<li><strong>认证</strong>：OpenAI Code (Codex) 订阅（OAuth）或 API 密钥。对于 Anthropic，我们推荐 API 密钥；也支持 <code>claude setup-token</code>。</li>
+<li><strong>Provider</strong>：WhatsApp QR 登录、Telegram/Discord Bot Token、Mattermost 插件 Token 等。</li>
+<li><strong>Daemon</strong>：后台安装（launchd/systemd；WSL2 使用 systemd）<ul>
+<li><strong>运行时</strong>：Node（推荐；WhatsApp/Telegram 必需）。<strong>不推荐</strong> Bun。</li>
+</ul>
+</li>
+<li><strong>Gateway Token</strong>：向导默认会生成一个（即使是回环地址）并存储在 <code>gateway.auth.token</code>。</li>
+</ul>
+<p>向导文档：<a href="/start/wizard">向导</a></p>
+<h3>认证：存储位置（重要）</h3>
+<ul>
+<li><p><strong>推荐的 Anthropic 路径：</strong> 设置 API 密钥（向导可以为服务使用存储它）。如果你想复用 Claude Code 凭据，也支持 <code>claude setup-token</code>。</p>
+</li>
+<li><p>OAuth 凭据（传统导入）：<code>~/.openclaw/credentials/oauth.json</code></p>
+</li>
+<li><p>认证配置（OAuth + API 密钥）：<code>~/.openclaw/agents/&lt;agentId&gt;/agent/auth-profiles.json</code></p>
+</li>
+</ul>
+<p>无头/服务器提示：先在普通机器上做 OAuth，然后将 <code>oauth.json</code> 复制到 Gateway 主机。</p>
+<h2>3) 启动 Gateway</h2>
+<p>如果在配置期间安装了服务，Gateway 应该已经在运行了：</p>
+<pre><code class="language-bash"># 检查 Gateway 状态
+openclaw gateway status
+</code></pre>
+<p>手动运行（前台）：</p>
+<pre><code class="language-bash"># 前台运行 Gateway，便于查看日志
+openclaw gateway --port 18789 --verbose
+</code></pre>
+<p>Dashboard（本地回环）：<code>http://127.0.0.1:18789/</code><br>如果配置了 Token，请将其粘贴到 Control UI 设置中（存储为 <code>connect.params.auth.token</code>）。</p>
+<p>⚠️ <strong>Bun 警告（WhatsApp + Telegram）：</strong> Bun 与这些频道有已知问题。<br>如果使用 WhatsApp 或 Telegram，请使用 <strong>Node</strong> 运行 Gateway。</p>
+<h2>3.5) 快速验证（2 分钟）</h2>
+<pre><code class="language-bash"># 检查 OpenClaw 整体状态
+openclaw status
+# 检查 Gateway 健康状态
 openclaw health
-openclaw security audit --deep</code></pre>
-
-            <h2>4) 配对并连接你的第一个聊天界面</h2>
-
-            <h3>WhatsApp（二维码登录）</h3>
-            <pre><code>openclaw channels login</code></pre>
-            <p>通过 WhatsApp → 设置 → 关联设备扫描。</p>
-            <p>WhatsApp 文档：<a href="../channels/whatsapp.html">WhatsApp</a></p>
-
-            <h3>Telegram / Discord / 其他</h3>
-            <p>向导可以为你写入令牌/配置。如果偏好手动配置，从以下开始：</p>
-            <ul>
-                <li>Telegram：<a href="../channels/telegram.html">Telegram</a></li>
-                <li>Discord：<a href="../channels/discord.html">Discord</a></li>
-                <li>Mattermost（插件）：<a href="../channels/mattermost.html">Mattermost</a></li>
-            </ul>
-
-            <p>Telegram 私信提示：你的第一个私信会返回一个配对码。批准它（见下一步）否则机器人不会回复。</p>
-
-            <h2>5) 私信安全（配对批准）</h2>
-            <p>默认策略：未知私信会收到一个短代码，消息在批准前不会被处理。如果你的第一条私信没有回复，请批准配对：</p>
-            <pre><code>openclaw pairing list whatsapp
-openclaw pairing approve whatsapp &lt;CODE&gt;</code></pre>
-
-            <p>配对文档：<a href="pairing.html">配对</a></p>
-
-            <h2>从源码运行（开发）</h2>
-            <p>如果你正在修改 OpenClaw 本身，请从源码运行：</p>
-            <pre><code>git clone https://github.com/openclaw/openclaw.git
+# 运行深度安全审计
+openclaw security audit --deep
+</code></pre>
+<h2>4) 配对并连接你的第一个聊天界面</h2>
+<h3>WhatsApp（QR 登录）</h3>
+<pre><code class="language-bash"># 登录 WhatsApp 频道
+openclaw channels login
+</code></pre>
+<p>通过 WhatsApp → 设置 → 已关联设备 扫描二维码。</p>
+<p>WhatsApp 文档：<a href="/channels/whatsapp">WhatsApp</a></p>
+<h3>Telegram / Discord / 其他</h3>
+<p>向导可以帮你写入 Token/配置。如果你喜欢手动配置，从以下开始：</p>
+<ul>
+<li>Telegram：<a href="/channels/telegram">Telegram</a></li>
+<li>Discord：<a href="/channels/discord">Discord</a></li>
+<li>Mattermost（插件）：<a href="/channels/mattermost">Mattermost</a></li>
+</ul>
+<p><strong>Telegram 私聊提示：</strong> 你的第一条私聊会返回一个配对码。批准它（见下一步）否则 Bot 不会回复。</p>
+<h2>5) 私聊安全（配对批准）</h2>
+<p>默认策略：未知私聊会收到一个短码，在批准前消息不会被处理。<br>如果你的第一条私聊没有回复，请批准配对：</p>
+<pre><code class="language-bash"># 列出 WhatsApp 的待处理配对
+openclaw pairing list whatsapp
+# 批准特定配对码
+openclaw pairing approve whatsapp &lt;code&gt;
+</code></pre>
+<p>配对文档：<a href="/start/pairing">配对</a></p>
+<h2>从源码运行（开发）</h2>
+<p>如果你要 hack OpenClaw 本身，从源码运行：</p>
+<pre><code class="language-bash"># 克隆仓库
+git clone https://github.com/openclaw/openclaw.git
 cd openclaw
+# 安装依赖
 pnpm install
-pnpm ui:build  # 首次运行时自动安装 UI 依赖
+# 构建 UI（首次运行会自动安装 UI 依赖）
+pnpm ui:build
+# 构建项目
 pnpm build
-openclaw onboard --install-daemon</code></pre>
+# 运行配置向导并安装服务
+openclaw onboard --install-daemon
+</code></pre>
+<p>如果你还没有全局安装，从仓库通过 <code>pnpm openclaw ...</code> 运行配置步骤。<br><code>pnpm build</code> 也会打包 A2UI 资源；如果你只需要运行这一步，使用 <code>pnpm canvas:a2ui:bundle</code>。</p>
+<p>Gateway（从此仓库）：</p>
+<pre><code class="language-bash"># 使用 node 直接运行 Gateway
+node openclaw.mjs gateway --port 18789 --verbose
+</code></pre>
+<h2>7) 端到端验证</h2>
+<p>在新终端中，发送测试消息：</p>
+<pre><code class="language-bash"># 发送测试消息到指定目标
+openclaw message send --target +15555550123 --message &quot;Hello from OpenClaw&quot;
+</code></pre>
+<p>如果 <code>openclaw health</code> 显示 &quot;no auth configured&quot;，返回向导设置 OAuth/密钥认证 —— 没有认证 Agent 无法回复。</p>
+<p>提示：<code>openclaw status --all</code> 是最佳的、可粘贴的、只读调试报告。<br>健康探测：<code>openclaw health</code>（或 <code>openclaw status --deep</code>）会向运行的 Gateway 请求健康快照。</p>
+<h2>后续步骤（可选，但很推荐）</h2>
+<ul>
+<li>macOS 菜单栏应用 + 语音唤醒：<a href="/platforms/macos">macOS 应用</a></li>
+<li>iOS/Android 节点（Canvas/相机/语音）：<a href="/nodes">节点</a></li>
+<li>远程访问（SSH 隧道 / Tailscale Serve）：<a href="/gateway/remote">远程访问</a> 和 <a href="/gateway/tailscale">Tailscale</a></li>
+<li>始终在线 / VPN 设置：<a href="/gateway/remote">远程访问</a>、<a href="/platforms/exe-dev">exe.dev</a>、<a href="/platforms/hetzner">Hetzner</a>、<a href="/platforms/mac/remote">macOS 远程</a></li>
+</ul>
 
-            <p>如果还没有全局安装，请通过 <code>pnpm openclaw ...</code> 从仓库运行初始化步骤。</p>
-
-            <p><code>pnpm build</code> 也会打包 A2UI 资源；如果只需要运行该步骤，使用 <code>pnpm canvas:a2ui:bundle</code>。</p>
-
-            <p>网关（从此仓库）：</p>
-            <pre><code>node openclaw.mjs gateway --port 18789 --verbose</code></pre>
-
-            <h2>7) 端到端验证</h2>
-            <p>在新终端中，发送测试消息：</p>
-            <pre><code>openclaw message send --target +15555550123 --message "Hello from OpenClaw"</code></pre>
-
-            <p>如果 <code>openclaw health</code> 显示 "no auth configured"，请返回向导设置 OAuth/密钥认证 — 没有认证代理将无法回复。</p>
-
-            <p>提示：<code>openclaw status --all</code> 是最佳的可粘贴、只读调试报告。</p>
-
-            <p>健康探测：<code>openclaw health</code>（或 <code>openclaw status --deep</code>）会向运行中的网关请求健康快照。</p>
-
-            <h2>后续步骤（可选，但很棒）</h2>
-            <ul>
-                <li>macOS 菜单栏应用 + 语音唤醒：<a href="../platforms/macos.html">macOS 应用</a></li>
-                <li>iOS/Android 节点（画布/相机/语音）：<a href="../nodes/index.html">节点</a></li>
-                <li>远程访问（SSH 隧道 / Tailscale Serve）：<a href="../gateway/remote.html">远程访问</a> 和 <a href="../gateway/tailscale.html">Tailscale</a></li>
-                <li>始终在线 / VPN 设置：<a href="../gateway/remote.html">远程访问</a></li>
-            </ul>
         </div>
     </main>
 

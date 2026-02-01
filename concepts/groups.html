@@ -121,11 +121,94 @@
     <main class="main-content">
         <div class="content">
             <h1>群组</h1>
+<h1>群组</h1>
+<p>OpenClaw 在跨界面处理群组聊天时保持一致：WhatsApp、Telegram、Discord、Slack、Signal、iMessage、Microsoft Teams。</p>
+<h2>初学者介绍（2 分钟）</h2>
+<p>OpenClaw&quot;生活&quot;在你自己的消息账户上。没有单独的 WhatsApp Bot 用户。<br>如果<strong>你</strong>在群组中，OpenClaw 可以看到该群组并在那里响应。</p>
+<p>默认行为：</p>
+<ul>
+<li>群组受限（<code>groupPolicy: &quot;allowlist&quot;</code>）。</li>
+<li>除非明确禁用提及门控，否则回复需要提及。</li>
+</ul>
+<p>翻译：白名单发送者可以通过提及触发 OpenClaw。</p>
+<blockquote>
+<p>太长不看</p>
+<ul>
+<li><strong>私聊访问</strong>由 <code>*.allowFrom</code> 控制。</li>
+<li><strong>群组访问</strong>由 <code>*.groupPolicy</code> + 白名单（<code>*.groups</code>、<code>*.groupAllowFrom</code>）控制。</li>
+<li><strong>回复触发</strong>由提及门控（<code>requireMention</code>、<code>/activation</code>）控制。</li>
+</ul>
+</blockquote>
+<p>快速流程（群组消息会发生什么）：</p>
+<pre><code>groupPolicy? disabled -&gt; 丢弃
+groupPolicy? allowlist -&gt; 群组允许？否 -&gt; 丢弃
+requireMention? 是 -&gt; 提及？否 -&gt; 仅存储用于上下文
+否则 -&gt; 回复
+</code></pre>
+<p><img src="/images/groups-flow.svg" alt="群组消息流程"></p>
+<p>如果你想要...</p>
+<table>
+<thead>
+<tr>
+<th>目标</th>
+<th>设置什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>允许所有群组但只在 @提及 时回复</td>
+<td><code>groups: { &quot;*&quot;: { requireMention: true } }</code></td>
+</tr>
+<tr>
+<td>禁用所有群组回复</td>
+<td><code>groupPolicy: &quot;disabled&quot;</code></td>
+</tr>
+<tr>
+<td>仅特定群组</td>
+<td><code>groups: { &quot;&lt;group-id&gt;&quot;: { ... } }</code>（无 <code>&quot;*&quot;</code> 键）</td>
+</tr>
+<tr>
+<td>只有你可以在群组中触发</td>
+<td><code>groupPolicy: &quot;allowlist&quot;</code>, <code>groupAllowFrom: [&quot;+1555...&quot;]</code></td>
+</tr>
+</tbody></table>
+<h2>会话键</h2>
+<ul>
+<li>群组会话使用 <code>agent:&lt;agentId&gt;:&lt;channel&gt;:group:&lt;id&gt;</code> 会话键（房间/频道使用 <code>agent:&lt;agentId&gt;:&lt;channel&gt;:channel:&lt;id&gt;</code>）。</li>
+<li>Telegram 论坛主题将 <code>:topic:&lt;threadId&gt;</code> 添加到群组 id，因此每个主题有自己的会话。</li>
+<li>直接聊天使用主会话（或如果配置的每发送者）。</li>
+<li>群组会话跳过心跳。</li>
+</ul>
+<h2>模式：个人私聊 + 公共群组（单 Agent）</h2>
+<p>可以 —— 如果你的&quot;个人&quot;流量是<strong>私聊</strong>而你的&quot;公共&quot;流量是<strong>群组</strong>，这工作得很好。</p>
+<p>为什么：在单 Agent 模式下，私聊通常落在<strong>主</strong>会话键（<code>agent:main:main</code>），而群组总是使用<strong>非主</strong>会话键（<code>agent:main:&lt;channel&gt;:group:&lt;id&gt;</code>）。如果你启用沙盒，<code>mode: &quot;non-main&quot;</code>，那些群组会话在 Docker 中运行，而你的主私聊会话保持在主机上。</p>
+<p>这给你一个 Agent&quot;大脑&quot;（共享工作空间 + 记忆），但两种执行姿态：</p>
+<ul>
+<li><strong>私聊</strong>：完整工具（主机）</li>
+<li><strong>群组</strong>：沙盒 + 受限工具（Docker）</li>
+</ul>
+<blockquote>
+<p>如果你需要真正独立的工作空间/人物（&quot;个人&quot;和&quot;公共&quot;必须永不混合），使用第二个 Agent + 绑定。参见 <a href="/concepts/multi-agent">多 Agent 路由</a>。</p>
+</blockquote>
+<p>示例（主机上的私聊，沙盒群组 + 仅消息工具）：</p>
+<pre><code class="language-json5">{
+  agents: {
+    defaults: {
+      sandbox: {
+        mode: &quot;non-main&quot;, // 群组/频道是非主 -&gt; 沙盒化
+        scope: &quot;session&quot;, // 最强隔离（每个群组/频道一个容器）
+        workspaceAccess: &quot;none&quot;
+      }
+    }
+  },
+  tools: {
+    sandbox: {
+      tools: {
+        // 如果 allow 非空，其他所有东西被阻塞（deny 仍然获胜）。
+        allow: [&quot;group:messaging&quot;, &quot;group:sessions&quot;],
+        deny: [&quot;group:runtime&quot;, &quot;group:fs&quot;, &quot;group:ui&quot;, &quot;nodes&quot;, &quot;cron&quot;, &quot;gateway&quot;]
+      }
+</code></pre>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/concepts/groups" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

@@ -121,11 +121,100 @@
     <main class="main-content">
         <div class="content">
             <h1>iMessage</h1>
+<h1>iMessage（imsg）</h1>
+<p>状态：外部 CLI 集成。Gateway 生成 <code>imsg rpc</code>（stdio 上的 JSON-RPC）。</p>
+<h2>快速设置（初学者）</h2>
+<ol>
+<li>确保 Messages 在此 Mac 上登录。</li>
+<li>安装 <code>imsg</code>：<ul>
+<li><code>brew install steipete/tap/imsg</code></li>
+</ul>
+</li>
+<li>使用 <code>channels.imessage.cliPath</code> 和 <code>channels.imessage.dbPath</code> 配置 OpenClaw。</li>
+<li>启动 Gateway 并批准任何 macOS 提示（自动化 + 完全磁盘访问）。</li>
+</ol>
+<p>最小配置：</p>
+<pre><code class="language-json5">{
+  channels: {
+    imessage: {
+      enabled: true,
+      cliPath: &quot;/usr/local/bin/imsg&quot;,
+      dbPath: &quot;/Users/&lt;you&gt;/Library/Messages/chat.db&quot;
+    }
+  }
+}
+</code></pre>
+<h2>它是什么</h2>
+<ul>
+<li>由 macOS 上的 <code>imsg</code> 支持的 iMessage 频道。</li>
+<li>确定性路由：回复总是返回到 iMessage。</li>
+<li>私聊共享 Agent 的主会话；群组是隔离的（<code>agent:&lt;agentId&gt;:imessage:group:&lt;chat_id&gt;</code>）。</li>
+<li>如果多参与者线程以 <code>is_group=false</code> 到达，你仍然可以使用 <code>channels.imessage.groups</code> 通过 <code>chat_id</code> 隔离它（参见下面的&quot;类群组线程&quot;）。</li>
+</ul>
+<h2>配置写入</h2>
+<p>默认情况下，iMessage 允许写入由 <code>/config set|unset</code> 触发的配置更新（需要 <code>commands.config: true</code>）。</p>
+<p>禁用：</p>
+<pre><code class="language-json5">{
+  channels: { imessage: { configWrites: false } }
+}
+</code></pre>
+<h2>要求</h2>
+<ul>
+<li>登录 Messages 的 macOS。</li>
+<li>OpenClaw + <code>imsg</code> 的完全磁盘访问（Messages DB 访问）。</li>
+<li>发送时的自动化权限。</li>
+<li><code>channels.imessage.cliPath</code> 可以指向任何代理 stdin/stdout 的命令（例如，一个包装脚本，SSH 到另一台 Mac 并运行 <code>imsg rpc</code>）。</li>
+</ul>
+<h2>设置（快速路径）</h2>
+<ol>
+<li>确保 Messages 在此 Mac 上登录。</li>
+<li>配置 iMessage 并启动 Gateway。</li>
+</ol>
+<h3>专用 Bot macOS 用户（用于隔离身份）</h3>
+<p>如果你希望 Bot 从<strong>单独的 iMessage 身份</strong>发送（并保持个人 Messages 干净），使用专用 Apple ID + 专用 macOS 用户。</p>
+<ol>
+<li>创建专用 Apple ID（例如：<code>my-cool-bot@icloud.com</code>）。<ul>
+<li>Apple 可能要求电话号码进行验证 / 2FA。</li>
+</ul>
+</li>
+<li>创建 macOS 用户（例如：<code>openclawhome</code>）并登录。</li>
+<li>在该 macOS 用户中打开 Messages 并使用 Bot Apple ID 登录 iMessage。</li>
+<li>启用远程登录（系统设置 → 通用 → 共享 → 远程登录）。</li>
+<li>安装 <code>imsg</code>：<ul>
+<li><code>brew install steipete/tap/imsg</code></li>
+</ul>
+</li>
+<li>设置 SSH，使 <code>ssh &lt;bot-macos-user&gt;@localhost true</code> 无需密码即可工作。</li>
+<li>将 <code>channels.imessage.accounts.bot.cliPath</code> 指向运行 <code>imsg</code> 作为 Bot 用户的 SSH 包装器。</li>
+</ol>
+<p>首次运行注意：发送/接收可能需要 <em>Bot macOS 用户</em> 中的 GUI 批准（自动化 + 完全磁盘访问）。如果 <code>imsg rpc</code> 看起来卡住或退出，登录到该用户（屏幕共享有帮助），运行一次 <code>imsg chats --limit 1</code> / <code>imsg send ...</code>，批准提示，然后重试。</p>
+<p>示例包装器（<code>chmod +x</code>）。将 <code>&lt;bot-macos-user&gt;</code> 替换为你的实际 macOS 用户名：</p>
+<pre><code class="language-bash">#!/usr/bin/env bash
+set -euo pipefail
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/channels/imessage" target="_blank">查看原始英文文档</a></p>
-        
+# 首先运行一次交互式 SSH 以接受主机密钥：
+#   ssh &lt;bot-macos-user&gt;@localhost true
+exec /usr/bin/ssh -o BatchMode=yes -o ConnectTimeout=5 -T &lt;bot-macos-user&gt;@localhost \
+  &quot;/usr/local/bin/imsg&quot; &quot;$@&quot;
+</code></pre>
+<p>示例配置：</p>
+<pre><code class="language-json5">{
+  channels: {
+    imessage: {
+      enabled: true,
+      accounts: {
+        bot: {
+          name: &quot;Bot&quot;,
+          enabled: true,
+          cliPath: &quot;/path/to/imsg-bot&quot;,
+          dbPath: &quot;/Users/&lt;bot-macos-user&gt;/Library/Messages/chat.db&quot;
+        }
+      }
+    }
+  }
+}
+</code></pre>
+
         </div>
     </main>
 

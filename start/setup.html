@@ -121,11 +121,121 @@
     <main class="main-content">
         <div class="content">
             <h1>设置</h1>
+<h1>设置</h1>
+<p>最后更新：2026-01-01</p>
+<h2>太长不看</h2>
+<ul>
+<li><strong>个性化放在仓库外：</strong> <code>~/.openclaw/workspace</code>（工作空间）+ <code>~/.openclaw/openclaw.json</code>（配置）。</li>
+<li><strong>稳定工作流：</strong> 安装 macOS 应用；让它运行捆绑的 Gateway。</li>
+<li><strong>前沿工作流：</strong> 通过 <code>pnpm gateway:watch</code> 自己运行 Gateway，然后让 macOS 应用以本地模式连接。</li>
+</ul>
+<h2>前置条件（从源码）</h2>
+<ul>
+<li>Node <code>&gt;=22</code></li>
+<li><code>pnpm</code></li>
+<li>Docker（可选；仅用于容器化设置/e2e —— 参见 <a href="/install/docker">Docker</a>）</li>
+</ul>
+<h2>个性化策略（这样更新不会伤害你）</h2>
+<p>如果你想要&quot;100% 个性化&quot;<em>并且</em>轻松更新，将你的自定义放在：</p>
+<ul>
+<li><strong>配置：</strong> <code>~/.openclaw/openclaw.json</code>（JSON/JSON5 风格）</li>
+<li><strong>工作空间：</strong> <code>~/.openclaw/workspace</code>（Skills、Prompts、记忆；做成私有 git 仓库）</li>
+</ul>
+<p>引导一次：</p>
+<pre><code class="language-bash"># 运行设置
+openclaw setup
+</code></pre>
+<p>从此仓库内部，使用本地 CLI 入口：</p>
+<pre><code class="language-bash">openclaw setup
+</code></pre>
+<p>如果你还没有全局安装，通过 <code>pnpm openclaw setup</code> 运行。</p>
+<h2>稳定工作流（macOS 应用优先）</h2>
+<ol>
+<li>安装 + 启动 <strong>OpenClaw.app</strong>（菜单栏）。</li>
+<li>完成配置/权限检查清单（TCC 提示）。</li>
+<li>确保 Gateway 是<strong>本地</strong>且正在运行（应用管理它）。</li>
+<li>连接界面（示例：WhatsApp）：</li>
+</ol>
+<pre><code class="language-bash"># 登录频道
+openclaw channels login
+</code></pre>
+<ol start="5">
+<li>健全检查：</li>
+</ol>
+<pre><code class="language-bash"># 检查健康状态
+openclaw health
+</code></pre>
+<p>如果你的构建中没有配置：</p>
+<ul>
+<li>运行 <code>openclaw setup</code>，然后 <code>openclaw channels login</code>，然后手动启动 Gateway（<code>openclaw gateway</code>）。</li>
+</ul>
+<h2>前沿工作流（终端中的 Gateway）</h2>
+<p>目标：在 TypeScript Gateway 上工作，获得热重载，让 macOS 应用 UI 保持连接。</p>
+<h3>0)（可选）也从源码运行 macOS 应用</h3>
+<p>如果你也想让 macOS 应用保持前沿：</p>
+<pre><code class="language-bash"># 重启 macOS 应用
+./scripts/restart-mac.sh
+</code></pre>
+<h3>1) 启动开发 Gateway</h3>
+<pre><code class="language-bash"># 安装依赖
+pnpm install
+# 启动 Gateway 监视模式
+pnpm gateway:watch
+</code></pre>
+<p><code>gateway:watch</code> 以监视模式运行 Gateway，在 TypeScript 更改时重新加载。</p>
+<h3>2) 让 macOS 应用指向你运行的 Gateway</h3>
+<p>在 <strong>OpenClaw.app</strong> 中：</p>
+<ul>
+<li>连接模式：<strong>本地</strong><br>应用将连接到配置的端口上运行的 Gateway。</li>
+</ul>
+<h3>3) 验证</h3>
+<ul>
+<li>应用内 Gateway 状态应显示**&quot;Using existing gateway …&quot;**</li>
+<li>或通过 CLI：</li>
+</ul>
+<pre><code class="language-bash">openclaw health
+</code></pre>
+<h3>常见陷阱</h3>
+<ul>
+<li><strong>端口错误：</strong> Gateway WS 默认 <code>ws://127.0.0.1:18789</code>；保持应用 + CLI 在同一端口。</li>
+<li><strong>状态存储位置：</strong><ul>
+<li>凭据：<code>~/.openclaw/credentials/</code></li>
+<li>会话：<code>~/.openclaw/agents/&lt;agentId&gt;/sessions/</code></li>
+<li>日志：<code>/tmp/openclaw/</code></li>
+</ul>
+</li>
+</ul>
+<h2>凭据存储地图</h2>
+<p>调试认证或决定备份什么时使用：</p>
+<ul>
+<li><strong>WhatsApp</strong>：<code>~/.openclaw/credentials/whatsapp/&lt;accountId&gt;/creds.json</code></li>
+<li><strong>Telegram bot token</strong>：配置/env 或 <code>channels.telegram.tokenFile</code></li>
+<li><strong>Discord bot token</strong>：配置/env（尚不支持 token 文件）</li>
+<li><strong>Slack tokens</strong>：配置/env (<code>channels.slack.*</code>)</li>
+<li><strong>配对白名单</strong>：<code>~/.openclaw/credentials/&lt;channel&gt;-allowFrom.json</code></li>
+<li><strong>模型认证配置</strong>：<code>~/.openclaw/agents/&lt;agentId&gt;/agent/auth-profiles.json</code></li>
+<li><strong>旧版 OAuth 导入</strong>：<code>~/.openclaw/credentials/oauth.json</code><br>更多详情：<a href="/gateway/security#credential-storage-map">安全</a>。</li>
+</ul>
+<h2>更新（不破坏你的设置）</h2>
+<ul>
+<li>保持 <code>~/.openclaw/workspace</code> 和 <code>~/.openclaw/</code> 作为&quot;你的东西&quot;；不要把个人 prompts/config 放进 <code>openclaw</code> 仓库。</li>
+<li>更新源码：<code>git pull</code> + <code>pnpm install</code>（当 lockfile 改变时）+ 继续使用 <code>pnpm gateway:watch</code>。</li>
+</ul>
+<h2>Linux（systemd 用户服务）</h2>
+<p>Linux 安装使用 systemd <strong>用户</strong>服务。默认情况下，systemd 在登出/空闲时停止用户<br>服务，这会杀死 Gateway。配置尝试为你启用持久化（可能会提示输入 sudo）。如果还是关闭，运行：</p>
+<pre><code class="language-bash"># 为用户启用持久化，这样服务在登出后继续运行
+sudo loginctl enable-linger $USER
+</code></pre>
+<p>对于始终在线或多用户服务器，考虑使用<strong>系统</strong>服务而不是<br>用户服务（不需要持久化）。参见 <a href="/gateway">Gateway 手册</a> 了解 systemd 说明。</p>
+<h2>相关文档</h2>
+<ul>
+<li><a href="/gateway">Gateway 手册</a>（标志、监督、端口）</li>
+<li><a href="/gateway/configuration">Gateway 配置</a>（配置模式 + 示例）</li>
+<li><a href="/channels/discord">Discord</a> 和 <a href="/channels/telegram">Telegram</a>（回复标签 + replyToMode 设置）</li>
+<li><a href="/start/openclaw">OpenClaw 助手设置</a></li>
+<li><a href="/platforms/macos">macOS 应用</a>（Gateway 生命周期）</li>
+</ul>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/start/setup" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

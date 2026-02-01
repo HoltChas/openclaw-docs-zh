@@ -121,11 +121,263 @@
     <main class="main-content">
         <div class="content">
             <h1>定时任务</h1>
+<h1>定时任务 (Gateway 调度器)</h1>
+<blockquote>
+<p><strong>Cron 还是 Heartbeat？</strong> 不确定用哪个？看看 <a href="/automation/cron-vs-heartbeat">Cron vs Heartbeat</a> 了解如何选择。</p>
+</blockquote>
+<p>Cron 是 Gateway 内置的调度器。它会持久化存储任务，在正确的时间唤醒 Agent，还可以选择将输出返回到聊天中。</p>
+<p>如果你想实现&quot;每天早上运行&quot;或者&quot;20分钟后提醒我&quot;，Cron 就是你要用的机制。</p>
+<h2>快速了解</h2>
+<ul>
+<li>Cron 在 <strong>Gateway 内部</strong>运行（不是在模型内部）。</li>
+<li>任务存储在 <code>~/.openclaw/cron/</code> 下，重启也不会丢失。</li>
+<li>两种执行方式：<ul>
+<li><strong>主会话</strong>：将系统事件加入队列，在下次 Heartbeat 时运行。</li>
+<li><strong>独立模式</strong>：在 <code>cron:&lt;jobId&gt;</code> 中运行一个专门的 Agent 轮次，可选择输出到聊天。</li>
+</ul>
+</li>
+<li>唤醒是一等公民：任务可以请求&quot;立即唤醒&quot;或&quot;下次 Heartbeat 唤醒&quot;。</li>
+</ul>
+<h2>新手指南</h2>
+<p>把 Cron 任务想象成：<strong>什么时候</strong>运行 + <strong>做什么</strong>。</p>
+<ol>
+<li><p><strong>选择调度方式</strong></p>
+<ul>
+<li>一次性提醒 → <code>schedule.kind = &quot;at&quot;</code> (CLI: <code>--at</code>)</li>
+<li>重复任务 → <code>schedule.kind = &quot;every&quot;</code> 或 <code>schedule.kind = &quot;cron&quot;</code></li>
+<li>如果你的 ISO 时间戳省略了时区，会按 <strong>UTC</strong> 处理。</li>
+</ul>
+</li>
+<li><p><strong>选择运行位置</strong></p>
+<ul>
+<li><code>sessionTarget: &quot;main&quot;</code> → 在下次 Heartbeat 中使用主上下文运行。</li>
+<li><code>sessionTarget: &quot;isolated&quot;</code> → 在 <code>cron:&lt;jobId&gt;</code> 中运行专门的 Agent 轮次。</li>
+</ul>
+</li>
+<li><p><strong>选择负载内容</strong></p>
+<ul>
+<li>主会话 → <code>payload.kind = &quot;systemEvent&quot;</code></li>
+<li>独立会话 → <code>payload.kind = &quot;agentTurn&quot;</code></li>
+</ul>
+</li>
+</ol>
+<p>可选：<code>deleteAfterRun: true</code> 在一次性任务成功运行后从存储中删除。</p>
+<h2>核心概念</h2>
+<h3>任务</h3>
+<p>Cron 任务是一个存储记录，包含：</p>
+<ul>
+<li><strong>调度</strong>（什么时候运行）</li>
+<li><strong>负载</strong>（做什么）</li>
+<li>可选的 <strong>传递</strong>（输出到哪里）</li>
+<li>可选的 <strong>Agent 绑定</strong> (<code>agentId</code>)：在特定 Agent 下运行任务；如果缺失或未知，Gateway 会回退到默认 Agent。</li>
+</ul>
+<p>任务由稳定的 <code>jobId</code> 标识（CLI/Gateway API 使用）。在 Agent 工具调用中，<code>jobId</code> 是标准格式；为了兼容也接受旧的 <code>id</code>。<br>任务可以通过 <code>deleteAfterRun: true</code> 在成功运行一次性任务后自动删除。</p>
+<h3>调度</h3>
+<p>Cron 支持三种调度类型：</p>
+<ul>
+<li><code>at</code>：一次性时间戳（毫秒）。Gateway 接受 ISO 8601 并转换为 UTC。</li>
+<li><code>every</code>：固定间隔（毫秒）。</li>
+<li><code>cron</code>：5 字段 Cron 表达式，可选 IANA 时区。</li>
+</ul>
+<p>Cron 表达式使用 <code>croner</code>。如果省略时区，使用 Gateway 主机的本地时区。</p>
+<h3>主会话 vs 独立执行</h3>
+<h4>主会话任务（系统事件）</h4>
+<p>主任务将一个系统事件加入队列，并可选地唤醒 Heartbeat 运行器。它们必须使用 <code>payload.kind = &quot;systemEvent&quot;</code>。</p>
+<ul>
+<li><code>wakeMode: &quot;next-heartbeat&quot;</code>（默认）：事件等待下一次计划的 Heartbeat。</li>
+<li><code>wakeMode: &quot;now&quot;</code>：事件触发立即的 Heartbeat。</li>
+</ul>
+<p>这是最适合使用正常 Heartbeat 提示 + 主会话上下文的场景。<br>参见 <a href="/gateway/heartbeat">Heartbeat</a>。</p>
+<h4>独立任务（专门的 Cron 会话）</h4>
+<p>独立任务在会话 <code>cron:&lt;jobId&gt;</code> 中运行一个专门的 Agent 轮次。</p>
+<p>主要行为：</p>
+<ul>
+<li>提示词前缀为 <code>[cron:&lt;jobId&gt; &lt;任务名称&gt;]</code> 以便追踪。</li>
+<li>每次运行启动一个 <strong>新的会话 ID</strong>（不保留之前的对话）。</li>
+<li>摘要会发布到主会话（前缀 <code>Cron</code>，可配置）。</li>
+<li><code>wakeMode: &quot;now&quot;</code> 在发布摘要后触发立即的 Heartbeat。</li>
+<li>如果 <code>payload.deliver: true</code>，输出会传递到频道；否则保持内部。</li>
+</ul>
+<p>对嘈杂的、频繁的或&quot;后台杂务&quot;使用独立任务，这样不会干扰你的主聊天历史。</p>
+<h3>负载格式（做什么）</h3>
+<p>支持两种负载类型：</p>
+<ul>
+<li><code>systemEvent</code>：仅主会话，通过 Heartbeat 提示路由。</li>
+<li><code>agentTurn</code>：仅独立会话，运行专门的 Agent 轮次。</li>
+</ul>
+<p>常见的 <code>agentTurn</code> 字段：</p>
+<ul>
+<li><code>message</code>：必需的文本提示。</li>
+<li><code>model</code> / <code>thinking</code>：可选覆盖（见下文）。</li>
+<li><code>timeoutSeconds</code>：可选超时覆盖。</li>
+<li><code>deliver</code>：<code>true</code> 将输出发送到频道目标。</li>
+<li><code>channel</code>：<code>last</code> 或特定频道。</li>
+<li><code>to</code>：频道特定的目标（电话/聊天/频道 ID）。</li>
+<li><code>bestEffortDeliver</code>：如果传递失败，避免任务失败。</li>
+</ul>
+<p>隔离选项（仅用于 <code>session=isolated</code>）：</p>
+<ul>
+<li><code>postToMainPrefix</code> (CLI: <code>--post-prefix</code>)：主会话中系统事件的前缀。</li>
+<li><code>postToMainMode</code>：<code>summary</code>（默认）或 <code>full</code>。</li>
+<li><code>postToMainMaxChars</code>：<code>postToMainMode=full</code> 时的最大字符数（默认 8000）。</li>
+</ul>
+<h3>模型和思考级别覆盖</h3>
+<p>独立任务 (<code>agentTurn</code>) 可以覆盖模型和思考级别：</p>
+<ul>
+<li><code>model</code>：Provider/模型字符串（如 <code>anthropic/claude-sonnet-4-20250514</code>）或别名（如 <code>opus</code>）</li>
+<li><code>thinking</code>：思考级别（<code>off</code>、<code>minimal</code>、<code>low</code>、<code>medium</code>、<code>high</code>、<code>xhigh</code>；仅 GPT-5.2 + Codex 模型）</li>
+</ul>
+<p>注意：你也可以在主会话任务上设置 <code>model</code>，但这会改变共享主会话的模型。我们建议仅在独立任务上使用模型覆盖，以避免意外的上下文切换。</p>
+<p>解析优先级：</p>
+<ol>
+<li>任务负载覆盖（最高）</li>
+<li>Hook 特定默认值（如 <code>hooks.gmail.model</code>）</li>
+<li>Agent 配置默认值</li>
+</ol>
+<h3>传递（频道 + 目标）</h3>
+<p>独立任务可以将输出传递到频道。任务负载可以指定：</p>
+<ul>
+<li><code>channel</code>：<code>whatsapp</code> / <code>telegram</code> / <code>discord</code> / <code>slack</code> / <code>mattermost</code>（插件） / <code>signal</code> / <code>imessage</code> / <code>last</code></li>
+<li><code>to</code>：频道特定的接收目标</li>
+</ul>
+<p>如果省略 <code>channel</code> 或 <code>to</code>，Cron 可以回退到主会话的&quot;最后路由&quot;（Agent 最后回复的地方）。</p>
+<p>传递说明：</p>
+<ul>
+<li>如果设置了 <code>to</code>，即使没有显式的 <code>deliver</code>，Cron 也会自动传递 Agent 的最终输出。</li>
+<li>当你想要最后路由传递而不需要显式 <code>to</code> 时，使用 <code>deliver: true</code>。</li>
+<li>使用 <code>deliver: false</code> 即使有 <code>to</code> 也保持输出内部。</li>
+</ul>
+<p>目标格式提醒：</p>
+<ul>
+<li>Slack/Discord/Mattermost（插件）目标应该使用显式前缀（如 <code>channel:&lt;id&gt;</code>、<code>user:&lt;id&gt;</code>）以避免歧义。</li>
+<li>Telegram 主题应该使用 <code>:topic:</code> 形式（见下文）。</li>
+</ul>
+<h4>Telegram 传递目标（主题 / 论坛线程）</h4>
+<p>Telegram 通过 <code>message_thread_id</code> 支持论坛主题。对于 Cron 传递，你可以将主题/线程编码到 <code>to</code> 字段：</p>
+<ul>
+<li><code>-1001234567890</code>（仅聊天 ID）</li>
+<li><code>-1001234567890:topic:123</code>（推荐：显式主题标记）</li>
+<li><code>-1001234567890:123</code>（简写：数字后缀）</li>
+</ul>
+<p>带前缀的目标如 <code>telegram:...</code> / <code>telegram:group:...</code> 也被接受：</p>
+<ul>
+<li><code>telegram:group:-1001234567890:topic:123</code></li>
+</ul>
+<h2>存储和历史</h2>
+<ul>
+<li>任务存储：<code>~/.openclaw/cron/jobs.json</code>（Gateway 管理的 JSON）。</li>
+<li>运行历史：<code>~/.openclaw/cron/runs/&lt;jobId&gt;.jsonl</code>（JSONL，自动清理）。</li>
+<li>覆盖存储路径：配置中的 <code>cron.store</code>。</li>
+</ul>
+<h2>配置</h2>
+<pre><code class="language-json5">{
+  cron: {
+    enabled: true, // 默认 true
+    store: &quot;~/.openclaw/cron/jobs.json&quot;,
+    maxConcurrentRuns: 1 // 默认 1
+  }
+}
+</code></pre>
+<p>完全禁用 Cron：</p>
+<ul>
+<li><code>cron.enabled: false</code>（配置）</li>
+<li><code>OPENCLAW_SKIP_CRON=1</code>（环境变量）</li>
+</ul>
+<h2>CLI 快速开始</h2>
+<p>一次性提醒（UTC ISO，成功后自动删除）：</p>
+<pre><code class="language-bash">openclaw cron add \
+  --name &quot;发送提醒&quot; \
+  --at &quot;2026-01-12T18:00:00Z&quot; \
+  --session main \
+  --system-event &quot;提醒：提交费用报告。&quot; \
+  --wake now \
+  --delete-after-run
+</code></pre>
+<p>一次性提醒（主会话，立即唤醒）：</p>
+<pre><code class="language-bash">openclaw cron add \
+  --name &quot;日历检查&quot; \
+  --at &quot;20m&quot; \
+  --session main \
+  --system-event &quot;下次 Heartbeat：检查日历。&quot; \
+  --wake now
+</code></pre>
+<p>重复独立任务（传递到 WhatsApp）：</p>
+<pre><code class="language-bash">openclaw cron add \
+  --name &quot;早间状态&quot; \
+  --cron &quot;0 7 * * *&quot; \
+  --tz &quot;America/Los_Angeles&quot; \
+  --session isolated \
+  --message &quot;总结今天的收件箱 + 日历。&quot; \
+  --deliver \
+  --channel whatsapp \
+  --to &quot;+15551234567&quot;
+</code></pre>
+<p>重复独立任务（传递到 Telegram 主题）：</p>
+<pre><code class="language-bash">openclaw cron add \
+  --name &quot;夜间摘要（主题）&quot; \
+  --cron &quot;0 22 * * *&quot; \
+  --tz &quot;America/Los_Angeles&quot; \
+  --session isolated \
+  --message &quot;总结今天；发送到夜间主题。&quot; \
+  --deliver \
+  --channel telegram \
+  --to &quot;-1001234567890:topic:123&quot;
+</code></pre>
+<p>带模型和思考覆盖的独立任务：</p>
+<pre><code class="language-bash">openclaw cron add \
+  --name &quot;深度分析&quot; \
+  --cron &quot;0 6 * * 1&quot; \
+  --tz &quot;America/Los_Angeles&quot; \
+  --session isolated \
+  --message &quot;每周对项目进度进行深度分析。&quot; \
+  --model &quot;opus&quot; \
+  --thinking high \
+  --deliver \
+  --channel whatsapp \
+  --to &quot;+15551234567&quot;
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/automation/cron-jobs" target="_blank">查看原始英文文档</a></p>
-        
+Agent 选择（多 Agent 设置）：
+```bash
+# 将任务绑定到 Agent &quot;ops&quot;（如果该 Agent 缺失则回退到默认）
+openclaw cron add --name &quot;Ops 扫描&quot; --cron &quot;0 6 * * *&quot; --session isolated --message &quot;检查 Ops 队列&quot; --agent ops
+
+# 在现有任务上切换或清除 Agent
+openclaw cron edit &lt;jobId&gt; --agent ops
+openclaw cron edit &lt;jobId&gt; --clear-agent
+</code></pre>
+<p>手动运行（调试）：</p>
+<pre><code class="language-bash">openclaw cron run &lt;jobId&gt; --force
+</code></pre>
+<p>编辑现有任务（修补字段）：</p>
+<pre><code class="language-bash">openclaw cron edit &lt;jobId&gt; \
+  --message &quot;更新的提示&quot; \
+  --model &quot;opus&quot; \
+  --thinking low
+</code></pre>
+<p>运行历史：</p>
+<pre><code class="language-bash">openclaw cron runs --id &lt;jobId&gt; --limit 50
+</code></pre>
+<p>无需创建任务的立即系统事件：</p>
+<pre><code class="language-bash">openclaw system event --mode now --text &quot;下次 Heartbeat：检查电池。&quot;
+</code></pre>
+<h2>Gateway API 接口</h2>
+<ul>
+<li><code>cron.list</code>, <code>cron.status</code>, <code>cron.add</code>, <code>cron.update</code>, <code>cron.remove</code></li>
+<li><code>cron.run</code>（强制或到期运行）, <code>cron.runs</code><br>对于无需任务的立即系统事件，使用 <a href="/cli/system"><code>openclaw system event</code></a>。</li>
+</ul>
+<h2>故障排查</h2>
+<h3>&quot;什么都没运行&quot;</h3>
+<ul>
+<li>检查 Cron 是否启用：<code>cron.enabled</code> 和 <code>OPENCLAW_SKIP_CRON</code>。</li>
+<li>检查 Gateway 是否持续运行（Cron 在 Gateway 进程内部运行）。</li>
+<li>对于 <code>cron</code> 调度：确认时区（<code>--tz</code>）与主机时区。</li>
+</ul>
+<h3>Telegram 传递到错误的地方</h3>
+<ul>
+<li>对于论坛主题，使用 <code>-100…:topic:&lt;id&gt;</code> 使其明确无歧义。</li>
+<li>如果你在日志或存储的&quot;最后路由&quot;目标中看到 <code>telegram:...</code> 前缀，这是正常的；Cron 传递接受它们并仍能正确解析主题 ID。</li>
+</ul>
+
         </div>
     </main>
 

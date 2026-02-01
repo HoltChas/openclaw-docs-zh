@@ -121,11 +121,129 @@
     <main class="main-content">
         <div class="content">
             <h1>Webhooks</h1>
+<h1>Webhooks</h1>
+<p>Gateway 可以暴露一个简单的 HTTP Webhook 端点供外部触发。</p>
+<h2>启用</h2>
+<pre><code class="language-json5">{
+  hooks: {
+    enabled: true,
+    token: &quot;shared-secret&quot;,
+    path: &quot;/hooks&quot;
+  }
+}
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>当 <code>hooks.enabled=true</code> 时，<code>hooks.token</code> 是必需的。</li>
+<li><code>hooks.path</code> 默认为 <code>/hooks</code>。</li>
+</ul>
+<h2>认证</h2>
+<p>每个请求必须包含 hook token。推荐使用 headers：</p>
+<ul>
+<li><code>Authorization: Bearer &lt;token&gt;</code>（推荐）</li>
+<li><code>x-openclaw-token: &lt;token&gt;</code></li>
+<li><code>?token=&lt;token&gt;</code>（已弃用；会记录警告，将在未来的主要版本中移除）</li>
+</ul>
+<h2>端点</h2>
+<h3><code>POST /hooks/wake</code></h3>
+<p>负载：</p>
+<pre><code class="language-json">{ &quot;text&quot;: &quot;系统行&quot;, &quot;mode&quot;: &quot;now&quot; }
+</code></pre>
+<ul>
+<li><code>text</code> <strong>必需</strong>（字符串）：事件描述（如&quot;收到新邮件&quot;）。</li>
+<li><code>mode</code> 可选（<code>now</code> | <code>next-heartbeat</code>）：是否触发立即的 Heartbeat（默认 <code>now</code>）或等待下一次定期检查。</li>
+</ul>
+<p>效果：</p>
+<ul>
+<li>为 <strong>主</strong>会话加入系统事件队列</li>
+<li>如果 <code>mode=now</code>，触发立即的 Heartbeat</li>
+</ul>
+<h3><code>POST /hooks/agent</code></h3>
+<p>负载：</p>
+<pre><code class="language-json">{
+  &quot;message&quot;: &quot;运行这个&quot;,
+  &quot;name&quot;: &quot;Email&quot;,
+  &quot;sessionKey&quot;: &quot;hook:email:msg-123&quot;,
+  &quot;wakeMode&quot;: &quot;now&quot;,
+  &quot;deliver&quot;: true,
+  &quot;channel&quot;: &quot;last&quot;,
+  &quot;to&quot;: &quot;+15551234567&quot;,
+  &quot;model&quot;: &quot;openai/gpt-5.2-mini&quot;,
+  &quot;thinking&quot;: &quot;low&quot;,
+  &quot;timeoutSeconds&quot;: 120
+}
+</code></pre>
+<ul>
+<li><code>message</code> <strong>必需</strong>（字符串）：Agent 处理的提示或消息。</li>
+<li><code>name</code> 可选（字符串）：Hook 的可读名称（如&quot;GitHub&quot;），在会话摘要中用作前缀。</li>
+<li><code>sessionKey</code> 可选（字符串）：用于标识 Agent 会话的键。默认为随机的 <code>hook:&lt;uuid&gt;</code>。使用一致的键可以在 Hook 上下文中实现多轮对话。</li>
+<li><code>wakeMode</code> 可选（<code>now</code> | <code>next-heartbeat</code>）：是否触发立即的 Heartbeat（默认 <code>now</code>）或等待下一次定期检查。</li>
+<li><code>deliver</code> 可选（布尔值）：如果为 <code>true</code>，Agent 的响应将发送到消息频道。默认为 <code>true</code>。仅 Heartbeat 确认的响应会自动跳过。</li>
+<li><code>channel</code> 可选（字符串）：传递的消息频道。可选值：<code>last</code>、<code>whatsapp</code>、<code>telegram</code>、<code>discord</code>、<code>slack</code>、<code>mattermost</code>（插件）、<code>signal</code>、<code>imessage</code>、<code>msteams</code>。默认为 <code>last</code>。</li>
+<li><code>to</code> 可选（字符串）：频道的接收者标识符（如 WhatsApp/Signal 的电话号码，Telegram 的聊天 ID，Discord/Slack/Mattermost（插件）的频道 ID，MS Teams 的对话 ID）。默认为主会话中的最后接收者。</li>
+<li><code>model</code> 可选（字符串）：模型覆盖（如 <code>anthropic/claude-3-5-sonnet</code> 或别名）。如果在限制模型列表中，则必须被包含。</li>
+<li><code>thinking</code> 可选（字符串）：思考级别覆盖（如 <code>low</code>、<code>medium</code>、<code>high</code>）。</li>
+<li><code>timeoutSeconds</code> 可选（数字）：Agent 运行的最大持续时间（秒）。</li>
+</ul>
+<p>效果：</p>
+<ul>
+<li>运行 <strong>独立</strong> Agent 轮次（自己的会话键）</li>
+<li>总是向 <strong>主</strong>会话发布摘要</li>
+<li>如果 <code>wakeMode=now</code>，触发立即的 Heartbeat</li>
+</ul>
+<h3><code>POST /hooks/&lt;name&gt;</code>（映射）</h3>
+<p>自定义 Hook 名称通过 <code>hooks.mappings</code> 解析（见配置）。映射可以将任意负载转换为 <code>wake</code> 或 <code>agent</code> 动作，可选模板或代码转换。</p>
+<p>映射选项（摘要）：</p>
+<ul>
+<li><code>hooks.presets: [&quot;gmail&quot;]</code> 启用内置 Gmail 映射。</li>
+<li><code>hooks.mappings</code> 允许你在配置中定义 <code>match</code>、<code>action</code> 和模板。</li>
+<li><code>hooks.transformsDir</code> + <code>transform.module</code> 加载 JS/TS 模块进行自定义逻辑。</li>
+<li>使用 <code>match.source</code> 保持通用入口点（由负载驱动的路由）。</li>
+<li>TS 转换需要 TS 加载器（如 <code>bun</code> 或 <code>tsx</code>）或运行时的预编译 <code>.js</code>。</li>
+<li>在映射上设置 <code>deliver: true</code> + <code>channel</code>/<code>to</code> 将回复路由到聊天界面<br>（<code>channel</code> 默认为 <code>last</code> 并回退到 WhatsApp）。</li>
+<li><code>allowUnsafeExternalContent: true</code> 禁用该 Hook 的外部内容安全包装器<br>（危险；仅用于受信任的内部源）。</li>
+<li><code>openclaw webhooks gmail setup</code> 为 <code>openclaw webhooks gmail run</code> 写入 <code>hooks.gmail</code> 配置。<br>参见 <a href="/automation/gmail-pubsub">Gmail Pub/Sub</a> 了解完整的 Gmail 监视流程。</li>
+</ul>
+<h2>响应</h2>
+<ul>
+<li><code>/hooks/wake</code> 返回 <code>200</code></li>
+<li><code>/hooks/agent</code> 返回 <code>202</code>（异步运行已开始）</li>
+<li>认证失败返回 <code>401</code></li>
+<li>无效负载返回 <code>400</code></li>
+<li>超大负载返回 <code>413</code></li>
+</ul>
+<h2>示例</h2>
+<pre><code class="language-bash">curl -X POST http://127.0.0.1:18789/hooks/wake \
+  -H &#39;Authorization: Bearer SECRET&#39; \
+  -H &#39;Content-Type: application/json&#39; \
+  -d &#39;{&quot;text&quot;:&quot;收到新邮件&quot;,&quot;mode&quot;:&quot;now&quot;}&#39;
+</code></pre>
+<pre><code class="language-bash">curl -X POST http://127.0.0.1:18789/hooks/agent \
+  -H &#39;x-openclaw-token: SECRET&#39; \
+  -H &#39;Content-Type: application/json&#39; \
+  -d &#39;{&quot;message&quot;:&quot;总结收件箱&quot;,&quot;name&quot;:&quot;Email&quot;,&quot;wakeMode&quot;:&quot;next-heartbeat&quot;}&#39;
+</code></pre>
+<h3>使用不同模型</h3>
+<p>在 Agent 负载（或映射）中添加 <code>model</code> 以覆盖该运行的模型：</p>
+<pre><code class="language-bash">curl -X POST http://127.0.0.1:18789/hooks/agent \
+  -H &#39;x-openclaw-token: SECRET&#39; \
+  -H &#39;Content-Type: application/json&#39; \
+  -d &#39;{&quot;message&quot;:&quot;总结收件箱&quot;,&quot;name&quot;:&quot;Email&quot;,&quot;model&quot;:&quot;openai/gpt-5.2-mini&quot;}&#39;
+</code></pre>
+<p>如果你强制执行 <code>agents.defaults.models</code>，请确保覆盖模型包含在其中。</p>
+<pre><code class="language-bash">curl -X POST http://127.0.0.1:18789/hooks/gmail \
+  -H &#39;Authorization: Bearer SECRET&#39; \
+  -H &#39;Content-Type: application/json&#39; \
+  -d &#39;{&quot;source&quot;:&quot;gmail&quot;,&quot;messages&quot;:[{&quot;from&quot;:&quot;Ada&quot;,&quot;subject&quot;:&quot;Hello&quot;,&quot;snippet&quot;:&quot;Hi&quot;}]}&#39;
+</code></pre>
+<h2>安全</h2>
+<ul>
+<li>将 Hook 端点保留在环回、tailnet 或受信任的反向代理后面。</li>
+<li>使用专用的 Hook token；不要重用 Gateway 认证 token。</li>
+<li>避免在 Webhook 日志中包含敏感原始负载。</li>
+<li>Hook 负载默认被视为不可信，并用安全边界包装。<br>如果必须为特定 Hook 禁用此功能，在该 Hook 的映射中设置 <code>allowUnsafeExternalContent: true</code><br>（危险）。</li>
+</ul>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/automation/webhook" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

@@ -5,79 +5,81 @@ const path = require('path');
 const { marked } = require('marked');
 
 // Page definitions with titles and parent categories
+// Page definitions with titles and parent categories
 const pages = [
     // Start section
-    { path: 'start/wizard.html', title: '向导', category: '入门指南', mdPath: null },
-    { path: 'start/pairing.html', title: '配对', category: '入门指南', mdPath: null },
-    { path: 'start/setup.html', title: '设置', category: '入门指南', mdPath: null },
-    { path: 'start/openclaw.html', title: 'OpenClaw 助手设置', category: '入门指南', mdPath: null },
-    { path: 'start/hubs.html', title: '文档中心', category: '入门指南', mdPath: null },
+    { path: 'start/getting-started.html', title: '快速入门', category: '入门指南', mdPath: 'start/getting-started.md' },
+    { path: 'start/wizard.html', title: '向导', category: '入门指南', mdPath: 'start/wizard.md' },
+    { path: 'start/pairing.html', title: '配对', category: '入门指南', mdPath: 'start/pairing.md' },
+    { path: 'start/setup.html', title: '设置', category: '入门指南', mdPath: 'start/setup.md' },
+    { path: 'start/openclaw.html', title: 'OpenClaw 助手设置', category: '入门指南', mdPath: 'start/openclaw.md' },
+    { path: 'start/hubs.html', title: '文档中心', category: '入门指南', mdPath: 'start/hubs.md' },
     
     // Gateway section
-    { path: 'gateway/configuration.html', title: '网关配置', category: '网关配置', mdPath: null },
-    { path: 'gateway/configuration-examples.html', title: '配置示例', category: '网关配置', mdPath: null },
-    { path: 'gateway/security.html', title: '安全', category: '网关配置', mdPath: null },
-    { path: 'gateway/remote.html', title: '远程访问', category: '网关配置', mdPath: null },
-    { path: 'gateway/tailscale.html', title: 'Tailscale', category: '网关配置', mdPath: null },
-    { path: 'gateway/multiple-gateways.html', title: '多网关', category: '网关配置', mdPath: null },
-    { path: 'gateway/discovery.html', title: '发现机制', category: '网关配置', mdPath: null },
+    { path: 'gateway/configuration.html', title: '网关配置', category: '网关配置', mdPath: 'gateway/configuration.md' },
+    { path: 'gateway/configuration-examples.html', title: '配置示例', category: '网关配置', mdPath: 'gateway/configuration-examples.md' },
+    { path: 'gateway/security.html', title: '安全', category: '网关配置', mdPath: 'gateway/security.md' },
+    { path: 'gateway/remote.html', title: '远程访问', category: '网关配置', mdPath: 'gateway/remote.md' },
+    { path: 'gateway/tailscale.html', title: 'Tailscale', category: '网关配置', mdPath: 'gateway/tailscale.md' },
+    { path: 'gateway/multiple-gateways.html', title: '多网关', category: '网关配置', mdPath: 'gateway/multiple-gateways.md' },
+    { path: 'gateway/discovery.html', title: '发现机制', category: '网关配置', mdPath: 'gateway/discovery.md' },
     { path: 'environment.html', title: '环境变量', category: '网关配置', mdPath: 'environment.md' },
     { path: 'logging.html', title: '日志配置', category: '网关配置', mdPath: 'logging.md' },
     { path: 'network.html', title: '网络配置', category: '网关配置', mdPath: 'network.md' },
     
     // Channels section
-    { path: 'channels/whatsapp.html', title: 'WhatsApp', category: '消息渠道', mdPath: null },
-    { path: 'channels/telegram.html', title: 'Telegram', category: '消息渠道', mdPath: null },
-    { path: 'channels/discord.html', title: 'Discord', category: '消息渠道', mdPath: null },
-    { path: 'channels/mattermost.html', title: 'Mattermost', category: '消息渠道', mdPath: null },
-    { path: 'channels/imessage.html', title: 'iMessage', category: '消息渠道', mdPath: null },
+    { path: 'channels/whatsapp.html', title: 'WhatsApp', category: '消息渠道', mdPath: 'channels/whatsapp.md' },
+    { path: 'channels/telegram.html', title: 'Telegram', category: '消息渠道', mdPath: 'channels/telegram.md' },
+    { path: 'channels/discord.html', title: 'Discord', category: '消息渠道', mdPath: 'channels/discord.md' },
+    { path: 'channels/mattermost.html', title: 'Mattermost', category: '消息渠道', mdPath: 'channels/mattermost.md' },
+    { path: 'channels/imessage.html', title: 'iMessage', category: '消息渠道', mdPath: 'channels/imessage.md' },
     
     // Web section
-    { path: 'web/webchat.html', title: 'WebChat', category: 'Web 界面', mdPath: null },
-    { path: 'web/control-ui.html', title: '控制界面', category: 'Web 界面', mdPath: null },
-    { path: 'web/dashboard.html', title: '控制台', category: 'Web 界面', mdPath: null },
+    { path: 'web/webchat.html', title: 'WebChat', category: 'Web 界面', mdPath: 'web/webchat.md' },
+    { path: 'web/control-ui.html', title: '控制界面', category: 'Web 界面', mdPath: 'web/control-ui.md' },
+    { path: 'web/dashboard.html', title: '控制台', category: 'Web 界面', mdPath: 'web/dashboard.md' },
     
     // Concepts section
-    { path: 'concepts/streaming.html', title: '流式传输', category: '核心概念', mdPath: null },
-    { path: 'concepts/groups.html', title: '群组', category: '核心概念', mdPath: null },
-    { path: 'concepts/group-messages.html', title: '群组消息', category: '核心概念', mdPath: null },
-    { path: 'concepts/multi-agent.html', title: '多代理路由', category: '核心概念', mdPath: null },
-    { path: 'concepts/session.html', title: '会话', category: '核心概念', mdPath: null },
+    { path: 'concepts/streaming.html', title: '流式传输', category: '核心概念', mdPath: 'concepts/streaming.md' },
+    { path: 'concepts/groups.html', title: '群组', category: '核心概念', mdPath: 'concepts/groups.md' },
+    { path: 'concepts/group-messages.html', title: '群组消息', category: '核心概念', mdPath: 'concepts/group-messages.md' },
+    { path: 'concepts/multi-agent.html', title: '多代理路由', category: '核心概念', mdPath: 'concepts/multi-agent.md' },
+    { path: 'concepts/session.html', title: '会话', category: '核心概念', mdPath: 'concepts/session.md' },
     { path: 'broadcast-groups.html', title: '广播群组', category: '核心概念', mdPath: 'broadcast-groups.md' },
     { path: 'multi-agent-sandbox-tools.html', title: '多代理沙盒', category: '核心概念', mdPath: 'multi-agent-sandbox-tools.md' },
     { path: 'date-time.html', title: '日期时间', category: '核心概念', mdPath: 'date-time.md' },
     
     // Automation section
-    { path: 'automation/cron-jobs.html', title: '定时任务', category: '自动化', mdPath: null },
-    { path: 'automation/webhook.html', title: 'Webhooks', category: '自动化', mdPath: null },
-    { path: 'automation/gmail-pubsub.html', title: 'Gmail Pub/Sub', category: '自动化', mdPath: null },
+    { path: 'automation/cron-jobs.html', title: '定时任务', category: '自动化', mdPath: 'automation/cron-jobs.md' },
+    { path: 'automation/webhook.html', title: 'Webhooks', category: '自动化', mdPath: 'automation/webhook.md' },
+    { path: 'automation/gmail-pubsub.html', title: 'Gmail Pub/Sub', category: '自动化', mdPath: 'automation/gmail-pubsub.md' },
     { path: 'hooks.html', title: '钩子系统', category: '自动化', mdPath: 'hooks.md' },
     
     // Tools section
-    { path: 'tools/slash-commands.html', title: '斜杠命令', category: '工具与技能', mdPath: null },
-    { path: 'tools/skills.html', title: '技能', category: '工具与技能', mdPath: null },
-    { path: 'tools/skills-config.html', title: '技能配置', category: '工具与技能', mdPath: null },
-    { path: 'tools/web.html', title: 'Web 工具', category: '工具与技能', mdPath: null },
+    { path: 'tools/slash-commands.html', title: '斜杠命令', category: '工具与技能', mdPath: 'tools/slash-commands.md' },
+    { path: 'tools/skills.html', title: '技能', category: '工具与技能', mdPath: 'tools/skills.md' },
+    { path: 'tools/skills-config.html', title: '技能配置', category: '工具与技能', mdPath: 'tools/skills-config.md' },
+    { path: 'tools/web.html', title: 'Web 工具', category: '工具与技能', mdPath: 'tools/web.md' },
     { path: 'brave-search.html', title: 'Brave 搜索', category: '工具与技能', mdPath: 'brave-search.md' },
     { path: 'perplexity.html', title: 'Perplexity', category: '工具与技能', mdPath: 'perplexity.md' },
     
     // Install section
-    { path: 'install/updating.html', title: '更新', category: '安装与平台', mdPath: null },
-    { path: 'install/nix.html', title: 'Nix 模式', category: '安装与平台', mdPath: null },
+    { path: 'install/updating.html', title: '更新', category: '安装与平台', mdPath: 'install/updating.md' },
+    { path: 'install/nix.html', title: 'Nix 模式', category: '安装与平台', mdPath: 'install/nix.md' },
     
     // Platforms section
-    { path: 'platforms/macos.html', title: 'macOS', category: '安装与平台', mdPath: null },
-    { path: 'platforms/ios.html', title: 'iOS', category: '安装与平台', mdPath: null },
-    { path: 'platforms/android.html', title: 'Android', category: '安装与平台', mdPath: null },
-    { path: 'platforms/windows.html', title: 'Windows (WSL2)', category: '安装与平台', mdPath: null },
-    { path: 'platforms/linux.html', title: 'Linux', category: '安装与平台', mdPath: null },
+    { path: 'platforms/macos.html', title: 'macOS', category: '安装与平台', mdPath: 'platforms/macos.md' },
+    { path: 'platforms/ios.html', title: 'iOS', category: '安装与平台', mdPath: 'platforms/ios.md' },
+    { path: 'platforms/android.html', title: 'Android', category: '安装与平台', mdPath: 'platforms/android.md' },
+    { path: 'platforms/windows.html', title: 'Windows (WSL2)', category: '安装与平台', mdPath: 'platforms/windows.md' },
+    { path: 'platforms/linux.html', title: 'Linux', category: '安装与平台', mdPath: 'platforms/linux.md' },
     { path: 'northflank.html', title: 'Northflank 部署', category: '安装与平台', mdPath: 'northflank.md' },
     { path: 'bedrock.html', title: 'AWS Bedrock', category: '安装与平台', mdPath: 'bedrock.md' },
     
     // Nodes section
-    { path: 'nodes/index.html', title: '节点', category: '节点与媒体', mdPath: null },
-    { path: 'nodes/images.html', title: '图片', category: '节点与媒体', mdPath: null },
-    { path: 'nodes/audio.html', title: '音频', category: '节点与媒体', mdPath: null },
+    { path: 'nodes/index.html', title: '节点', category: '节点与媒体', mdPath: 'nodes/index.md' },
+    { path: 'nodes/images.html', title: '图片', category: '节点与媒体', mdPath: 'nodes/images.md' },
+    { path: 'nodes/audio.html', title: '音频', category: '节点与媒体', mdPath: 'nodes/audio.md' },
     
     // CLI + Debug
     { path: 'cli/index.html', title: 'CLI 参考', category: 'CLI 与调试', mdPath: 'cli/index.md' },

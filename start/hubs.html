@@ -121,11 +121,183 @@
     <main class="main-content">
         <div class="content">
             <h1>文档中心</h1>
+<h1>文档中心</h1>
+<p>使用这些中心来发现每个页面，包括不出现在左侧导航中的深入探讨和参考文档。</p>
+<h2>从这里开始</h2>
+<ul>
+<li><a href="/">首页</a></li>
+<li><a href="/start/getting-started">入门指南</a></li>
+<li><a href="/start/onboarding">配置</a></li>
+<li><a href="/start/wizard">向导</a></li>
+<li><a href="/start/setup">设置</a></li>
+<li><a href="http://127.0.0.1:18789/">Dashboard（本地 Gateway）</a></li>
+<li><a href="/help">帮助</a></li>
+<li><a href="/gateway/configuration">配置</a></li>
+<li><a href="/gateway/configuration-examples">配置示例</a></li>
+<li><a href="/start/openclaw">OpenClaw 助手</a></li>
+<li><a href="/start/showcase">展示</a></li>
+<li><a href="/start/lore">背景</a></li>
+</ul>
+<h2>安装 + 更新</h2>
+<ul>
+<li><a href="/install/docker">Docker</a></li>
+<li><a href="/install/nix">Nix</a></li>
+<li><a href="/install/updating">更新 / 回滚</a></li>
+<li><a href="/install/bun">Bun 工作流（实验性）</a></li>
+</ul>
+<h2>核心概念</h2>
+<ul>
+<li><a href="/concepts/architecture">架构</a></li>
+<li><a href="/network">网络中心</a></li>
+<li><a href="/concepts/agent">Agent 运行时</a></li>
+<li><a href="/concepts/agent-workspace">Agent 工作空间</a></li>
+<li><a href="/concepts/memory">记忆</a></li>
+<li><a href="/concepts/agent-loop">Agent 循环</a></li>
+<li><a href="/concepts/streaming">流式传输 + 分块</a></li>
+<li><a href="/concepts/multi-agent">多 Agent 路由</a></li>
+<li><a href="/concepts/compaction">压缩</a></li>
+<li><a href="/concepts/session">会话</a></li>
+<li><a href="/concepts/sessions">会话（别名）</a></li>
+<li><a href="/concepts/session-pruning">会话修剪</a></li>
+<li><a href="/concepts/session-tool">会话工具</a></li>
+<li><a href="/concepts/queue">队列</a></li>
+<li><a href="/tools/slash-commands">斜杠命令</a></li>
+<li><a href="/reference/rpc">RPC 适配器</a></li>
+<li><a href="/concepts/typebox">TypeBox 模式</a></li>
+<li><a href="/concepts/timezone">时区处理</a></li>
+<li><a href="/concepts/presence">在线状态</a></li>
+<li><a href="/gateway/discovery">发现 + 传输</a></li>
+<li><a href="/gateway/bonjour">Bonjour</a></li>
+<li><a href="/concepts/channel-routing">频道路由</a></li>
+<li><a href="/concepts/groups">群组</a></li>
+<li><a href="/concepts/group-messages">群组消息</a></li>
+<li><a href="/concepts/model-failover">模型故障转移</a></li>
+<li><a href="/concepts/oauth">OAuth</a></li>
+</ul>
+<h2>Provider + 入口</h2>
+<ul>
+<li><a href="/channels">聊天频道中心</a></li>
+<li><a href="/providers/models">模型 Provider 中心</a></li>
+<li><a href="/channels/whatsapp">WhatsApp</a></li>
+<li><a href="/channels/telegram">Telegram</a></li>
+<li><a href="/channels/grammy">Telegram（grammY 说明）</a></li>
+<li><a href="/channels/slack">Slack</a></li>
+<li><a href="/channels/discord">Discord</a></li>
+<li><a href="/channels/mattermost">Mattermost</a>（插件）</li>
+<li><a href="/channels/signal">Signal</a></li>
+<li><a href="/channels/imessage">iMessage</a></li>
+<li><a href="/channels/location">位置解析</a></li>
+<li><a href="/web/webchat">WebChat</a></li>
+<li><a href="/automation/webhook">Webhooks</a></li>
+<li><a href="/automation/gmail-pubsub">Gmail Pub/Sub</a></li>
+</ul>
+<h2>Gateway + 操作</h2>
+<ul>
+<li><a href="/gateway">Gateway 手册</a></li>
+<li><a href="/gateway/pairing">Gateway 配对</a></li>
+<li><a href="/gateway/gateway-lock">Gateway 锁定</a></li>
+<li><a href="/gateway/background-process">后台进程</a></li>
+<li><a href="/gateway/health">健康</a></li>
+<li><a href="/gateway/heartbeat">心跳</a></li>
+<li><a href="/gateway/doctor">Doctor</a></li>
+<li><a href="/gateway/logging">日志</a></li>
+<li><a href="/gateway/sandboxing">沙盒</a></li>
+<li><a href="/web/dashboard">Dashboard</a></li>
+<li><a href="/web/control-ui">Control UI</a></li>
+<li><a href="/gateway/remote">远程访问</a></li>
+<li><a href="/gateway/remote-gateway-readme">远程 Gateway README</a></li>
+<li><a href="/gateway/tailscale">Tailscale</a></li>
+<li><a href="/gateway/security">安全</a></li>
+<li><a href="/gateway/troubleshooting">故障排除</a></li>
+</ul>
+<h2>工具 + 自动化</h2>
+<ul>
+<li><a href="/tools">工具界面</a></li>
+<li><a href="/prose">OpenProse</a></li>
+<li><a href="/cli">CLI 参考</a></li>
+<li><a href="/tools/exec">Exec 工具</a></li>
+<li><a href="/tools/elevated">提升模式</a></li>
+<li><a href="/automation/cron-jobs">Cron 任务</a></li>
+<li><a href="/automation/cron-vs-heartbeat">Cron vs 心跳</a></li>
+<li><a href="/tools/thinking">思考 + 详细</a></li>
+<li><a href="/concepts/models">模型</a></li>
+<li><a href="/tools/subagents">子 Agent</a></li>
+<li><a href="/tools/agent-send">Agent 发送 CLI</a></li>
+<li><a href="/tui">终端 UI</a></li>
+<li><a href="/tools/browser">浏览器控制</a></li>
+<li><a href="/tools/browser-linux-troubleshooting">浏览器（Linux 故障排除）</a></li>
+<li><a href="/automation/poll">投票</a></li>
+</ul>
+<h2>节点、媒体、语音</h2>
+<ul>
+<li><a href="/nodes">节点概览</a></li>
+<li><a href="/nodes/camera">相机</a></li>
+<li><a href="/nodes/images">图片</a></li>
+<li><a href="/nodes/audio">音频</a></li>
+<li><a href="/nodes/location-command">位置命令</a></li>
+<li><a href="/nodes/voicewake">语音唤醒</a></li>
+<li><a href="/nodes/talk">对讲模式</a></li>
+</ul>
+<h2>平台</h2>
+<ul>
+<li><a href="/platforms">平台概览</a></li>
+<li><a href="/platforms/macos">macOS</a></li>
+<li><a href="/platforms/ios">iOS</a></li>
+<li><a href="/platforms/android">Android</a></li>
+<li><a href="/platforms/windows">Windows (WSL2)</a></li>
+<li><a href="/platforms/linux">Linux</a></li>
+<li><a href="/web">Web 界面</a></li>
+</ul>
+<h2>macOS 伴侣应用（高级）</h2>
+<ul>
+<li><a href="/platforms/mac/dev-setup">macOS 开发设置</a></li>
+<li><a href="/platforms/mac/menu-bar">macOS 菜单栏</a></li>
+<li><a href="/platforms/mac/voicewake">macOS 语音唤醒</a></li>
+<li><a href="/platforms/mac/voice-overlay">macOS 语音覆盖</a></li>
+<li><a href="/platforms/mac/webchat">macOS WebChat</a></li>
+<li><a href="/platforms/mac/canvas">macOS Canvas</a></li>
+<li><a href="/platforms/mac/child-process">macOS 子进程</a></li>
+<li><a href="/platforms/mac/health">macOS 健康</a></li>
+<li><a href="/platforms/mac/icon">macOS 图标</a></li>
+<li><a href="/platforms/mac/logging">macOS 日志</a></li>
+<li><a href="/platforms/mac/permissions">macOS 权限</a></li>
+<li><a href="/platforms/mac/remote">macOS 远程</a></li>
+<li><a href="/platforms/mac/signing">macOS 签名</a></li>
+<li><a href="/platforms/mac/release">macOS 发布</a></li>
+<li><a href="/platforms/mac/bundled-gateway">macOS Gateway（launchd）</a></li>
+<li><a href="/platforms/mac/xpc">macOS XPC</a></li>
+<li><a href="/platforms/mac/skills">macOS Skills</a></li>
+<li><a href="/platforms/mac/peekaboo">macOS Peekaboo</a></li>
+</ul>
+<h2>工作空间 + 模板</h2>
+<ul>
+<li><a href="/tools/skills">Skills</a></li>
+<li><a href="/tools/clawdhub">ClawdHub</a></li>
+<li><a href="/tools/skills-config">Skills 配置</a></li>
+<li><a href="/reference/AGENTS.default">默认 AGENTS</a></li>
+<li><a href="/reference/templates/AGENTS">模板：AGENTS</a></li>
+<li><a href="/reference/templates/BOOTSTRAP">模板：BOOTSTRAP</a></li>
+<li><a href="/reference/templates/HEARTBEAT">模板：HEARTBEAT</a></li>
+<li><a href="/reference/templates/IDENTITY">模板：IDENTITY</a></li>
+<li><a href="/reference/templates/SOUL">模板：SOUL</a></li>
+<li><a href="/reference/templates/TOOLS">模板：TOOLS</a></li>
+<li><a href="/reference/templates/USER">模板：USER</a></li>
+</ul>
+<h2>实验（探索性）</h2>
+<ul>
+<li><a href="/experiments/onboarding-config-protocol">配置协议</a></li>
+<li><a href="/experiments/plans/cron-add-hardening">Cron 加固说明</a></li>
+<li><a href="/experiments/plans/group-policy-hardening">群组策略加固说明</a></li>
+<li><a href="/experiments/research/memory">研究：记忆</a></li>
+<li><a href="/experiments/proposals/model-config">模型配置探索</a></li>
+</ul>
+<h2>测试 + 发布</h2>
+<ul>
+<li><a href="/reference/test">测试</a></li>
+<li><a href="/reference/RELEASING">发布检查清单</a></li>
+<li><a href="/reference/device-models">设备模型</a></li>
+</ul>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/start/hubs" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

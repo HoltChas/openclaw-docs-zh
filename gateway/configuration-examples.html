@@ -121,11 +121,92 @@
     <main class="main-content">
         <div class="content">
             <h1>配置示例</h1>
+<h1>配置示例</h1>
+<p>下面的示例与当前配置模式一致。对于详尽参考和每个字段的说明，参见 <a href="/gateway/configuration">配置</a>。</p>
+<h2>快速开始</h2>
+<h3>绝对最小配置</h3>
+<pre><code class="language-json5">{
+  agent: { workspace: &quot;~/.openclaw/workspace&quot; },
+  channels: { whatsapp: { allowFrom: [&quot;+15555550123&quot;] } }
+}
+</code></pre>
+<p>保存到 <code>~/.openclaw/openclaw.json</code>，然后你可以从该号码私聊 Bot。</p>
+<h3>推荐入门配置</h3>
+<pre><code class="language-json5">{
+  identity: {
+    name: &quot;Clawd&quot;,
+    theme: &quot;helpful assistant&quot;,
+    emoji: &quot;🦞&quot;
+  },
+  agent: {
+    workspace: &quot;~/.openclaw/workspace&quot;,
+    model: { primary: &quot;anthropic/claude-sonnet-4-5&quot; }
+  },
+  channels: {
+    whatsapp: {
+      allowFrom: [&quot;+15555550123&quot;],
+      groups: { &quot;*&quot;: { requireMention: true } }
+    }
+  }
+}
+</code></pre>
+<h2>扩展示例（主要选项）</h2>
+<blockquote>
+<p>JSON5 允许你使用注释和尾随逗号。普通 JSON 也可以。</p>
+</blockquote>
+<pre><code class="language-json5">{
+  // 环境 + shell
+  env: {
+    OPENROUTER_API_KEY: &quot;sk-or-...&quot;,
+    vars: {
+      GROQ_API_KEY: &quot;gsk-...&quot;
+    },
+    shellEnv: {
+      enabled: true,
+      timeoutMs: 15000
+    }
+  },
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/gateway/configuration-examples" target="_blank">查看原始英文文档</a></p>
-        
+  // 认证配置元数据（密钥存储在 auth-profiles.json）
+  auth: {
+    profiles: {
+      &quot;anthropic:me@example.com&quot;: { provider: &quot;anthropic&quot;, mode: &quot;oauth&quot;, email: &quot;me@example.com&quot; },
+      &quot;anthropic:work&quot;: { provider: &quot;anthropic&quot;, mode: &quot;api_key&quot; },
+      &quot;openai:default&quot;: { provider: &quot;openai&quot;, mode: &quot;api_key&quot; },
+      &quot;openai-codex:default&quot;: { provider: &quot;openai-codex&quot;, mode: &quot;oauth&quot; }
+    },
+    order: {
+      anthropic: [&quot;anthropic:me@example.com&quot;, &quot;anthropic:work&quot;],
+      openai: [&quot;openai:default&quot;],
+      &quot;openai-codex&quot;: [&quot;openai-codex:default&quot;]
+    }
+  },
+
+  // 身份
+  identity: {
+    name: &quot;Samantha&quot;,
+    theme: &quot;helpful sloth&quot;,
+    emoji: &quot;🦥&quot;
+  },
+
+  // 日志
+  logging: {
+    level: &quot;info&quot;,
+    file: &quot;/tmp/openclaw/openclaw.log&quot;,
+    consoleLevel: &quot;info&quot;,
+    consoleStyle: &quot;pretty&quot;,
+    redactSensitive: &quot;tools&quot;
+  },
+
+  // 消息格式
+  messages: {
+    messagePrefix: &quot;[openclaw]&quot;,
+    responsePrefix: &quot;&gt;&quot;,
+    ackReaction: &quot;👀&quot;,
+    ackReactionScope: &quot;group-mentions&quot;
+  },
+</code></pre>
+
         </div>
     </main>
 

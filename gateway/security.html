@@ -121,11 +121,120 @@
     <main class="main-content">
         <div class="content">
             <h1>安全</h1>
+<h1>安全 🔒</h1>
+<h2>快速检查：<code>openclaw security audit</code></h2>
+<p>另见：<a href="/security/formal-verification/">形式验证（安全模型）</a></p>
+<p>定期运行（特别是在更改配置或暴露网络接口后）：</p>
+<pre><code class="language-bash"># 基础安全审计
+openclaw security audit
+# 深度审计
+openclaw security audit --deep
+# 自动修复安全问题
+openclaw security audit --fix
+</code></pre>
+<p>它会标记常见的陷阱（Gateway 认证暴露、浏览器控制暴露、提升权限白名单、文件系统权限）。</p>
+<p><code>--fix</code> 应用安全护栏：</p>
+<ul>
+<li>将 <code>groupPolicy=&quot;open&quot;</code> 收紧为 <code>groupPolicy=&quot;allowlist&quot;</code>（以及每账户变体）用于常见频道。</li>
+<li>将 <code>logging.redactSensitive=&quot;off&quot;</code> 改回 <code>&quot;tools&quot;</code>。</li>
+<li>收紧本地权限（<code>~/.openclaw</code> → <code>700</code>，配置文件 → <code>600</code>，以及常见状态文件如 <code>credentials/*.json</code>、<code>agents/*/agent/auth-profiles.json</code> 和 <code>agents/*/sessions/sessions.json</code>）。</li>
+</ul>
+<p>在你的机器上运行具有 shell 访问权限的 AI Agent 是……<em>刺激的</em>。以下是如何避免被攻击。</p>
+<p>OpenClaw 既是产品也是实验：你将前沿模型行为接入真实消息界面和真实工具。<strong>没有&quot;完美安全&quot;的设置。</strong> 目标是慎重考虑：</p>
+<ul>
+<li>谁可以与你的 Bot 对话</li>
+<li>Bot 被允许在哪里行动</li>
+<li>Bot 可以触碰什么</li>
+</ul>
+<p>从仍然有效的最小访问开始，然后在获得信心后逐步放宽。</p>
+<h3>审计检查什么（高层次）</h3>
+<ul>
+<li><strong>入站访问</strong>（私聊策略、群组策略、白名单）：陌生人可以触发 Bot 吗？</li>
+<li><strong>工具爆炸半径</strong>（提升权限工具 + 开放房间）：提示注入会变成 shell/文件/网络操作吗？</li>
+<li><strong>网络暴露</strong>（Gateway 绑定/认证、Tailscale Serve/Funnel）。</li>
+<li><strong>浏览器控制暴露</strong>（远程节点、中继端口、远程 CDP 端点）。</li>
+<li><strong>本地磁盘卫生</strong>（权限、符号链接、配置包含、&quot;同步文件夹&quot;路径）。</li>
+<li><strong>插件</strong>（扩展存在而没有显式白名单）。</li>
+<li><strong>模型卫生</strong>（当配置的模型看起来是旧版时警告；不是硬阻塞）。</li>
+</ul>
+<p>如果你运行 <code>--deep</code>，OpenClaw 还会尝试尽力实时的 Gateway 探测。</p>
+<h2>凭据存储地图</h2>
+<p>审计访问或决定备份什么时使用：</p>
+<ul>
+<li><strong>WhatsApp</strong>：<code>~/.openclaw/credentials/whatsapp/&lt;accountId&gt;/creds.json</code></li>
+<li><strong>Telegram bot token</strong>：配置/env 或 <code>channels.telegram.tokenFile</code></li>
+<li><strong>Discord bot token</strong>：配置/env（尚不支持 token 文件）</li>
+<li><strong>Slack tokens</strong>：配置/env (<code>channels.slack.*</code>)</li>
+<li><strong>配对白名单</strong>：<code>~/.openclaw/credentials/&lt;channel&gt;-allowFrom.json</code></li>
+<li><strong>模型认证配置</strong>：<code>~/.openclaw/agents/&lt;agentId&gt;/agent/auth-profiles.json</code></li>
+<li><strong>旧版 OAuth 导入</strong>：<code>~/.openclaw/credentials/oauth.json</code></li>
+</ul>
+<h2>安全审计检查清单</h2>
+<p>当审计打印发现时，按此优先顺序处理：</p>
+<ol>
+<li><strong>任何&quot;开放&quot; + 启用的工具</strong>：首先锁定私聊/群组（配对/白名单），然后收紧工具策略/沙盒。</li>
+<li><strong>公共网络暴露</strong>（LAN 绑定、Funnel、缺失认证）：立即修复。</li>
+<li><strong>浏览器控制远程暴露</strong>：像操作员访问一样对待（仅限 tailnet、慎重配对节点、避免公共暴露）。</li>
+<li><strong>权限</strong>：确保状态/配置/凭据/认证不是组/世界可读的。</li>
+<li><strong>插件/扩展</strong>：只加载你明确信任的。</li>
+<li><strong>模型选择</strong>：对于任何带工具的 Bot，优先选择现代、指令加固的模型。</li>
+</ol>
+<h2>Control UI over HTTP</h2>
+<p>Control UI 需要<strong>安全上下文</strong>（HTTPS 或 localhost）来生成设备<br>身份。如果你启用 <code>gateway.controlUi.allowInsecureAuth</code>，UI 回退到<br><strong>仅 token 认证</strong> 并在设备身份被省略时跳过设备配对。这是安全<br>降级——优先选择 HTTPS（Tailscale Serve）或在 <code>127.0.0.1</code> 上打开 UI。</p>
+<p>仅用于紧急情况的 <code>gateway.controlUi.dangerouslyDisableDeviceAuth</code><br>完全禁用设备身份检查。这是严重的安全降级；<br>保持关闭，除非你正在积极调试并能快速恢复。</p>
+<p><code>openclaw security audit</code> 在启用此设置时发出警告。</p>
+<h2>反向代理配置</h2>
+<p>如果你在反向代理（nginx、Caddy、Traefik 等）后运行 Gateway，你应该配置 <code>gateway.trustedProxies</code> 以进行正确的客户端 IP 检测。</p>
+<p>当 Gateway 检测到来自<strong>不在</strong> <code>trustedProxies</code> 中的地址的代理头（<code>X-Forwarded-For</code> 或 <code>X-Real-IP</code>）时，它<strong>不会</strong>将连接视为本地客户端。如果 Gateway 认证被禁用，这些连接会被拒绝。这防止了代理连接否则会显示为来自 localhost 并获得自动信任的认证绕过。</p>
+<pre><code class="language-yaml">gateway:
+  trustedProxies:
+    - &quot;127.0.0.1&quot;  # 如果你的代理在 localhost 上运行
+  auth:
+    mode: password
+    password: ${OPENCLAW_GATEWAY_PASSWORD}
+</code></pre>
+<p>配置 <code>trustedProxies</code> 时，Gateway 将使用 <code>X-Forwarded-For</code> 头来确定本地客户端检测的真实客户端 IP。确保你的代理覆盖（而不是追加到）传入的 <code>X-Forwarded-For</code> 头以防止欺骗。</p>
+<h2>本地会话日志存储在磁盘上</h2>
+<p>OpenClaw 将会话记录存储在磁盘上 <code>~/.openclaw/agents/&lt;agentId&gt;/sessions/*.jsonl</code>。<br>这是会话连续性和（可选）会话记忆索引所必需的，但也意味着<br><strong>任何具有文件系统访问权限的进程/用户都可以读取这些日志</strong>。将磁盘访问视为信任<br>边界并锁定 <code>~/.openclaw</code> 的权限（见下面的审计部分）。如果你需要<br>Agent 之间的更强隔离，在单独的 OS 用户或单独的主机上运行它们。</p>
+<h2>节点执行（system.run）</h2>
+<p>如果 macOS 节点已配对，Gateway 可以在该节点上调用 <code>system.run</code>。这是 Mac 上的<strong>远程代码执行</strong>：</p>
+<ul>
+<li>需要节点配对（批准 + token）。</li>
+<li>在 Mac 上通过<strong>设置 → Exec 批准</strong>控制（安全 + 询问 + 白名单）。</li>
+<li>如果你不想远程执行，将安全设置为<strong>拒绝</strong>并移除该 Mac 的节点配对。</li>
+</ul>
+<h2>动态 Skills（监视器 / 远程节点）</h2>
+<p>OpenClaw 可以在会话中途刷新 Skills 列表：</p>
+<ul>
+<li><strong>Skills 监视器</strong>：对 <code>SKILL.md</code> 的更改可以在下次 Agent 轮次更新 Skills 快照。</li>
+<li><strong>远程节点</strong>：连接 macOS 节点可以使仅限 macOS 的 Skills 符合条件（基于二进制探测）。</li>
+</ul>
+<p>将 Skills 文件夹视为<strong>受信任代码</strong>并限制谁可以修改它们。</p>
+<h2>威胁模型</h2>
+<p>你的 AI 助手可以：</p>
+<ul>
+<li>执行任意 shell 命令</li>
+<li>读/写文件</li>
+<li>访问网络服务</li>
+<li>向任何人发送消息（如果你给它 WhatsApp 访问权限）</li>
+</ul>
+<p>给你发消息的人可以：</p>
+<ul>
+<li>试图欺骗你的 AI 做坏事</li>
+<li>社会工程访问你的数据</li>
+<li>探测基础设施细节</li>
+</ul>
+<h2>核心概念：访问控制优先于智能</h2>
+<p>这里的大多数失败不是花哨的利用——它们是&quot;有人给 Bot 发消息，Bot 就照做了&quot;。</p>
+<p>OpenClaw 的立场：</p>
+<ul>
+<li><strong>身份优先：</strong> 决定谁可以与 Bot 对话（私聊配对 / 白名单 / 显式&quot;开放&quot;）。</li>
+<li><strong>范围其次：</strong> 决定 Bot 被允许在哪里行动（群组白名单 + 提及门控、工具、沙盒、设备权限）。</li>
+<li><strong>模型最后：</strong> 假设模型可以被操纵；设计使操纵的爆炸半径有限。</li>
+</ul>
+<h2>命令授权模型</h2>
+<p>斜杠命令和指令只对<strong>授权发送者</strong>有效。授权来自<br>频道白名单/配对加上 <code>commands.useAccessGroups</code>（参见 <a href="/gateway/configuration">配置</a></p>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/gateway/security" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 
