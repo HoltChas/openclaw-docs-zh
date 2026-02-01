@@ -30,7 +30,7 @@ requireMention? 是 -> 提及？否 -> 仅存储用于上下文
 否则 -> 回复
 ```
 
-![群组消息流程](/images/groups-flow.svg)
+![群组消息流程](../images/groups-flow.svg)
 
 如果你想要...
 | 目标 | 设置什么 |
@@ -56,7 +56,7 @@ requireMention? 是 -> 提及？否 -> 仅存储用于上下文
 - **私聊**：完整工具（主机）
 - **群组**：沙盒 + 受限工具（Docker）
 
-> 如果你需要真正独立的工作空间/人物（"个人"和"公共"必须永不混合），使用第二个 Agent + 绑定。参见 [多 Agent 路由](/concepts/multi-agent)。
+> 如果你需要真正独立的工作空间/人物（"个人"和"公共"必须永不混合），使用第二个 Agent + 绑定。参见 [多 Agent 路由(../concepts/multi-agent.html)。
 
 示例（主机上的私聊，沙盒群组 + 仅消息工具）：
 

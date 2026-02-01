@@ -12,13 +12,13 @@ CLI + Gateway 在 Linux 内部运行，这保持运行时一致并使工具更�
 计划推出原生 Windows 配套应用。
 
 ## 安装（WSL2）
-- [入门](/start/getting-started)（在 WSL 内部使用）
-- [安装和更新](/install/updating)
+- [入门](../start/getting-started.html)（在 WSL 内部使用）
+- [安装和更新(../install/updating.html)
 - 官方 WSL2 指南（Microsoft）：https://learn.microsoft.com/windows/wsl/install
 
 ## Gateway
-- [Gateway 运行手册](/gateway)
-- [Gateway 配置](/gateway/configuration)
+- [Gateway 运行手册](../gateway/index.html)
+- [Gateway 配置(../gateway/configuration.html)
 
 ## Gateway 服务安装（CLI）
 
@@ -139,7 +139,7 @@ pnpm build
 openclaw onboard
 ```
 
-完整指南：[入门](/start/getting-started)
+完整指南：[入门](../start/getting-started.html)
 
 ## Windows 配套应用
 

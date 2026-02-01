@@ -164,7 +164,7 @@ openclaw gateway call node.list --params &quot;{}&quot;
 <h3>Bonjour（LAN）</h3>
 <p>Gateway 在 <code>local.</code> 上广播 <code>_openclaw-gw._tcp</code>。iOS 应用自动列出这些。</p>
 <h3>Tailnet（跨网络）</h3>
-<p>如果 mDNS 被阻止，使用单播 DNS-SD 区域（选择域；示例：<code>openclaw.internal.</code>）和 Tailscale 分割 DNS。<br>参见 <a href="/gateway/bonjour">Bonjour</a> 了解 CoreDNS 示例。</p>
+<p>如果 mDNS 被阻止，使用单播 DNS-SD 区域（选择域；示例：<code>openclaw.internal.</code>）和 Tailscale 分割 DNS。<br>参见 [Bonjour(../gateway/bonjour.html) 了解 CoreDNS 示例。</p>
 <h3>手动主机/端口</h3>
 <p>在设置中，启用 <strong>手动主机</strong> 并输入 Gateway 主机 + 端口（默认 <code>18789</code>）。</p>
 <h2>Canvas + A2UI</h2>
@@ -190,15 +190,15 @@ openclaw gateway call node.list --params &quot;{}&quot;
 <h2>常见错误</h2>
 <ul>
 <li><code>NODE_BACKGROUND_UNAVAILABLE</code>：将 iOS 应用带到前台（Canvas/相机/屏幕命令需要它）。</li>
-<li><code>A2UI_HOST_NOT_CONFIGURED</code>：Gateway 没有广告 Canvas 主机 URL；检查 <a href="/gateway/configuration">Gateway 配置</a> 中的 <code>canvasHost</code>。</li>
+<li><code>A2UI_HOST_NOT_CONFIGURED</code>：Gateway 没有广告 Canvas 主机 URL；检查 [Gateway 配置(../gateway/configuration.html) 中的 <code>canvasHost</code>。</li>
 <li>配对提示从未出现：运行 <code>openclaw nodes pending</code> 并手动批准。</li>
 <li>重新安装后重新连接失败：Keychain 配对令牌已清除；重新配对节点。</li>
 </ul>
 <h2>相关文档</h2>
 <ul>
-<li><a href="/gateway/pairing">配对</a></li>
-<li><a href="/gateway/discovery">发现</a></li>
-<li><a href="/gateway/bonjour">Bonjour</a></li>
+<li>[配对(../gateway/pairing.html)</li>
+<li>[发现(../gateway/discovery.html)</li>
+<li>[Bonjour(../gateway/bonjour.html)</li>
 </ul>
 
         </div>

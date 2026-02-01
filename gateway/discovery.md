@@ -20,11 +20,11 @@ OpenClaw 有两个看起来相似但实际不同的问题：
 - **Gateway WS（控制平面）**：默认 `127.0.0.1:18789` 的 WebSocket 端点；可通过 `gateway.bind` 绑定到 LAN/tailnet。
 - **直连 WS 传输**：LAN/tailnet 可达的 Gateway WS 端点（无需 SSH）。
 - **SSH 传输（回退）**：通过 SSH 转发 `127.0.0.1:18789`。
-- **遗留 TCP bridge（已弃用/移除）**：旧节点传输（见 [桥接协议](/gateway/bridge-protocol)）；不再广告。
+- **遗留 TCP bridge（已弃用/移除）**：旧节点传输（见 [桥接协议(../gateway/bridge-protocol.html)）；不再广告。
 
 协议详情：
-- [Gateway 协议](/gateway/protocol)
-- [桥接协议（遗留）](/gateway/bridge-protocol)
+- [Gateway 协议(../gateway/protocol.html)
+- [桥接协议（遗留）(../gateway/bridge-protocol.html)
 
 ## 为什么同时保留直连和 SSH
 
@@ -47,7 +47,7 @@ Bonjour 是尽力而为，不跨网络，仅用于"同一 LAN"的便利性。
 - **Gateway** 广播其 WS 端点 via Bonjour。
 - 客户端浏览并显示“选择 Gateway”的列表，然后保存所选端点。
 
-排查与 beacon 详情：[Bonjour](/gateway/bonjour)。
+排查与 beacon 详情：[Bonjour(../gateway/bonjour.html)。
 
 #### 服务 beacon 详情
 
@@ -82,7 +82,7 @@ Bonjour 是尽力而为，不跨网络，仅用于"同一 LAN"的便利性。
 
 当没有直连路由（或直连被禁用），客户端总可以通过 SSH 转发 loopback Gateway 端口。
 
-参见 [远程访问](/gateway/remote)。
+参见 [远程访问(../gateway/remote.html)。
 
 ## 传输选择（客户端策略）
 
@@ -97,7 +97,7 @@ Bonjour 是尽力而为，不跨网络，仅用于"同一 LAN"的便利性。
 
 Gateway 是节点/客户端接入的真相来源。
 
-- 配对请求在 Gateway 中创建/批准/拒绝（见 [Gateway 配对](/gateway/pairing)）。
+- 配对请求在 Gateway 中创建/批准/拒绝（见 [Gateway 配对(../gateway/pairing.html)）。
 - Gateway 强制：
   - 认证（token / keypair）
   - 范围/ACL（Gateway 不是无差别代理）

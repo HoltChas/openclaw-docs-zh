@@ -71,7 +71,7 @@ read_when:
 - `/config show|get|set|unset`（持久化配置到磁盘，仅所有者；需要 `commands.config: true`）
 - `/debug show|set|unset|reset`（运行时覆盖，仅所有者；需要 `commands.debug: true`）
 - `/usage off|tokens|full|cost`（每响应使用页脚或本地成本摘要）
-- `/tts off|always|inbound|tagged|status|provider|limit|summary|audio`（控制 TTS；参见 [/tts](/tts)）
+- `/tts off|always|inbound|tagged|status|provider|limit|summary|audio`（控制 TTS；参见 [/tts](../tts.html)）
   - Discord：原生命令是 `/voice`（Discord 保留 `/tts`）；文本 `/tts` 仍然有效。
 - `/stop`
 - `/restart`
@@ -91,7 +91,7 @@ read_when:
 - `/bash <command>`（仅主机；`! <command>` 的别名；需要 `commands.bash: true` + `tools.elevated` 允许列表）
 
 仅文本：
-- `/compact [instructions]`（参见 [/concepts/compaction](/concepts/compaction)）
+- `/compact [instructions]`（参见 [/concepts/compaction(../concepts/compaction.html)）
 - `! <command>`（仅主机；一次一个；长时间运行作业使用 `!poll` + `!stop`）
 - `!poll`（检查输出/状态；接受可选 `sessionId`；`/bash poll` 也有效）
 - `!stop`（停止正在运行的 Bash 作业；接受可选 `sessionId`；`/bash stop` 也有效）
@@ -115,7 +115,7 @@ read_when:
   - `/skill <name> [input]` 按名称运行技能（当原生命令限制阻止每个技能命令时有用）。
   - 默认情况下，技能命令作为正常请求转发给模型。
   - 技能可以可选声明 `command-dispatch: tool` 直接将命令路由到工具（确定性，无模型）。
-  - 示例：`/prose`（OpenProse 插件）— 参见 [OpenProse](/prose)。
+  - 示例：`/prose`（OpenProse 插件）— 参见 [OpenProse](../prose.html)。
 - **原生命令参数**：Discord 对动态选项使用自动完成（当你省略必需参数时使用按钮菜单）。Telegram 和 Slack 在命令支持选项且你省略参数时显示按钮菜单。
 
 ## 使用界面（哪里显示什么）

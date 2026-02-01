@@ -63,7 +63,7 @@ read_when:
 环境变量选项：`TELEGRAM_BOT_TOKEN=...`（适用于默认账户）。
 如果环境变量和配置都设置，配置优先。
 
-多账户支持：使用 `channels.telegram.accounts` 和每账户 token 及可选的 `name`。参见 [`gateway/configuration`](/gateway/configuration#telegramaccounts--discordaccounts--slackaccounts--signalaccounts--imessageaccounts) 了解共享模式。
+多账户支持：使用 `channels.telegram.accounts` 和每账户 token 及可选的 `name`。参见 [`gateway/configuration`(../gateway/configuration#telegramaccounts--discordaccounts--slackaccounts--signalaccounts--imessageaccounts.html) 了解共享模式。
 
 3) 启动 Gateway。Telegram 在 token 解析时启动（配置优先，环境变量回退）。
 4) 私聊访问默认为配对。Bot 首次被联系时批准代码。

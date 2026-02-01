@@ -134,12 +134,12 @@
 <li><strong>Gateway WS（控制平面）</strong>：默认 <code>127.0.0.1:18789</code> 的 WebSocket 端点；可通过 <code>gateway.bind</code> 绑定到 LAN/tailnet。</li>
 <li><strong>直连 WS 传输</strong>：LAN/tailnet 可达的 Gateway WS 端点（无需 SSH）。</li>
 <li><strong>SSH 传输（回退）</strong>：通过 SSH 转发 <code>127.0.0.1:18789</code>。</li>
-<li><strong>遗留 TCP bridge（已弃用/移除）</strong>：旧节点传输（见 <a href="/gateway/bridge-protocol">桥接协议</a>）；不再广告。</li>
+<li><strong>遗留 TCP bridge（已弃用/移除）</strong>：旧节点传输（见 [桥接协议(../gateway/bridge-protocol.html)）；不再广告。</li>
 </ul>
 <p>协议详情：</p>
 <ul>
-<li><a href="/gateway/protocol">Gateway 协议</a></li>
-<li><a href="/gateway/bridge-protocol">桥接协议（遗留）</a></li>
+<li>[Gateway 协议(../gateway/protocol.html)</li>
+<li>[桥接协议（遗留）(../gateway/bridge-protocol.html)</li>
 </ul>
 <h2>为什么同时保留直连和 SSH</h2>
 <ul>
@@ -164,7 +164,7 @@
 <li><strong>Gateway</strong> 广播其 WS 端点 via Bonjour。</li>
 <li>客户端浏览并显示“选择 Gateway”的列表，然后保存所选端点。</li>
 </ul>
-<p>排查与 beacon 详情：<a href="/gateway/bonjour">Bonjour</a>。</p>
+<p>排查与 beacon 详情：[Bonjour(../gateway/bonjour.html)。</p>
 <h4>服务 beacon 详情</h4>
 <ul>
 <li>服务类型：<ul>
@@ -200,7 +200,7 @@
 <p>如果 Gateway 检测到运行在 Tailscale 下，它会发布 <code>tailnetDns</code> 作为可选提示（包括广域 beacon）。</p>
 <h3>3) 手动 / SSH 目标</h3>
 <p>当没有直连路由（或直连被禁用），客户端总可以通过 SSH 转发 loopback Gateway 端口。</p>
-<p>参见 <a href="/gateway/remote">远程访问</a>。</p>
+<p>参见 [远程访问(../gateway/remote.html)。</p>
 <h2>传输选择（客户端策略）</h2>
 <p>推荐客户端行为：</p>
 <ol>
@@ -212,7 +212,7 @@
 <h2>配对 + 认证（直连传输）</h2>
 <p>Gateway 是节点/客户端接入的真相来源。</p>
 <ul>
-<li>配对请求在 Gateway 中创建/批准/拒绝（见 <a href="/gateway/pairing">Gateway 配对</a>）。</li>
+<li>配对请求在 Gateway 中创建/批准/拒绝（见 [Gateway 配对(../gateway/pairing.html)）。</li>
 <li>Gateway 强制：<ul>
 <li>认证（token / keypair）</li>
 <li>范围/ACL（Gateway 不是无差别代理）</li>

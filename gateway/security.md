@@ -7,7 +7,7 @@ read_when:
 
 ## 快速检查：`openclaw security audit`
 
-另见：[形式验证（安全模型）](/security/formal-verification/)
+另见：[形式验证（安全模型）](../security/formal-verification.html)
 
 定期运行（特别是在更改配置或暴露网络接口后）：
 
@@ -150,5 +150,5 @@ OpenClaw 的立场：
 ## 命令授权模型
 
 斜杠命令和指令只对**授权发送者**有效。授权来自
-频道白名单/配对加上 `commands.useAccessGroups`（参见 [配置](/gateway/configuration)
+频道白名单/配对加上 `commands.useAccessGroups`（参见 [配置(../gateway/configuration.html)
 

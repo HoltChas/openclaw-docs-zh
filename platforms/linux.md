@@ -19,16 +19,16 @@ Gateway 在 Linux 上完全支持。**Node 是推荐的运行时**。
 4) 从你的笔记本电脑：`ssh -N -L 18789:127.0.0.1:18789 <user>@<host>`  
 5) 打开 `http://127.0.0.1:18789/` 并粘贴你的令牌
 
-分步 VPS 指南：[exe.dev](/platforms/exe-dev)
+分步 VPS 指南：[exe.dev(../platforms/exe-dev.html)
 
 ## 安装
-- [入门](/start/getting-started)
-- [安装和更新](/install/updating)
-- 可选流程：[Bun（实验性）](/install/bun)、[Nix](/install/nix)、[Docker](/install/docker)
+- [入门](../start/getting-started.html)
+- [安装和更新(../install/updating.html)
+- 可选流程：[Bun（实验性）(../install/bun.html)、[Nix(../install/nix.html)、[Docker(../install/docker.html)
 
 ## Gateway
-- [Gateway 运行手册](/gateway)
-- [Gateway 配置](/gateway/configuration)
+- [Gateway 运行手册](../gateway/index.html)
+- [Gateway 配置(../gateway/configuration.html)
 
 ## Gateway 服务安装（CLI）
 
@@ -59,7 +59,7 @@ openclaw doctor
 ```
 
 ## 系统控制（systemd 用户单元）
-OpenClaw 默认安装 systemd **用户** 服务。对共享或始终在线的服务器使用 **系统** 服务。完整单元示例和指导在 [Gateway 运行手册](/gateway) 中。
+OpenClaw 默认安装 systemd **用户** 服务。对共享或始终在线的服务器使用 **系统** 服务。完整单元示例和指导在 [Gateway 运行手册](../gateway/index.html) 中。
 
 最小设置：
 

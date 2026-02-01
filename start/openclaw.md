@@ -110,8 +110,8 @@ OpenClaw 从其工作空间目录读取操作说明和"记忆"。
 openclaw setup
 ```
 
-完整的工作空间布局 + 备份指南：[Agent 工作空间](/concepts/agent-workspace)
-记忆工作流：[记忆](/concepts/memory)
+完整的工作空间布局 + 备份指南：[Agent 工作空间](../concepts/agent-workspace.html)
+记忆工作流：[记忆](../concepts/memory.html)
 
 可选：使用 `agents.defaults.workspace` 选择不同的工作空间（支持 `~`）。
 
@@ -237,12 +237,12 @@ openclaw health --json
 
 ## 后续步骤
 
-- WebChat：[WebChat](/web/webchat)
-- Gateway 操作：[Gateway 手册](/gateway)
-- Cron + 唤醒：[Cron 任务](/automation/cron-jobs)
-- macOS 菜单栏伴侣：[OpenClaw macOS 应用](/platforms/macos)
-- iOS 节点应用：[iOS 应用](/platforms/ios)
-- Android 节点应用：[Android 应用](/platforms/android)
-- Windows 状态：[Windows (WSL2)](/platforms/windows)
-- Linux 状态：[Linux 应用](/platforms/linux)
-- 安全：[安全](/gateway/security)
+- WebChat：[WebChat](../web/webchat.html)
+- Gateway 操作：[Gateway 手册](../gateway/index.html)
+- Cron + 唤醒：[Cron 任务](../automation/cron-jobs.html)
+- macOS 菜单栏伴侣：[OpenClaw macOS 应用](../platforms/macos.html)
+- iOS 节点应用：[iOS 应用](../platforms/ios.html)
+- Android 节点应用：[Android 应用](../platforms/android.html)
+- Windows 状态：[Windows (WSL2)](../platforms/windows.html)
+- Linux 状态：[Linux 应用](../platforms/linux.html)
+- 安全：[安全](../gateway/security.html)

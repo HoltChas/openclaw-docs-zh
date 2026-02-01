@@ -12,7 +12,7 @@ read_when:
 
 - 已安装并登录 `gcloud`（[安装指南](https://docs.cloud.google.com/sdk/docs/install-sdk)）。
 - 已安装并授权 `gog`（gogcli）用于 Gmail 账户（[gogcli.sh](https://gogcli.sh/)）。
-- OpenClaw Hooks 已启用（参见 [Webhooks](/automation/webhook)）。
+- OpenClaw Hooks 已启用（参见 [Webhooks(../automation/webhook.html)）。
 - 已登录 `tailscale`（[tailscale.com](https://tailscale.com/)）。支持的设置使用 Tailscale Funnel 作为公共 HTTPS 端点。
   其他隧道服务也可以工作，但需要 DIY/不支持，需要手动接线。
   目前，Tailscale 是我们支持的。
@@ -82,7 +82,7 @@ read_when:
   要禁用（危险），设置 `hooks.gmail.allowUnsafeExternalContent: true`。
 
 要进一步自定义负载处理，添加 `hooks.mappings` 或 `hooks.transformsDir` 下的 JS/TS 转换模块
-（参见 [Webhooks](/automation/webhook)）。
+（参见 [Webhooks(../automation/webhook.html)）。
 
 ## 向导（推荐）
 

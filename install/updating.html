@@ -160,7 +160,7 @@ openclaw update --channel dev
 openclaw update --channel stable
 </code></pre>
 <p>使用 <code>--tag &lt;dist-tag|version&gt;</code> 进行一次性安装标签/版本。</p>
-<p>参见 <a href="/install/development-channels">开发通道</a> 了解通道语义和发布说明。</p>
+<p>参见 [开发通道(../install/development-channels.html) 了解通道语义和发布说明。</p>
 <p>注意：在 npm 安装上，Gateway 在启动时记录更新提示（检查当前通道标签）。通过 <code>update.checkOnStart: false</code> 禁用。</p>
 <p>然后：</p>
 <pre><code class="language-bash">openclaw doctor
@@ -224,7 +224,7 @@ openclaw health
 <li>检测并将旧 Gateway 服务（launchd/systemd；遗留 schtasks）迁移到当前 OpenClaw 服务。</li>
 <li>在 Linux 上，确保 systemd 用户驻留（以便 Gateway 在注销后存活）。</li>
 </ul>
-<p>详情：<a href="/gateway/doctor">Doctor</a></p>
+<p>详情：[Doctor(../gateway/doctor.html)</p>
 <h2>启动 / 停止 / 重启 Gateway</h2>
 <p>CLI（适用于任何 OS）：</p>
 <pre><code class="language-bash">openclaw gateway status
@@ -242,7 +242,7 @@ openclaw logs --follow
 </ul>
 </li>
 </ul>
-<p>运行手册 + 精确服务标签：<a href="/gateway">Gateway 运行手册</a></p>
+<p>运行手册 + 精确服务标签：<a href="../gateway/index.html">Gateway 运行手册</a></p>
 <h2>回滚 / 固定（当出现问题时）</h2>
 <h3>固定（全局安装）</h3>
 <p>安装已知良好的版本（将 <code>&lt;version&gt;</code> 替换为最后一个工作的版本）：</p>
@@ -272,7 +272,7 @@ git pull
 <h2>如果你卡住</h2>
 <ul>
 <li>再次运行 <code>openclaw doctor</code> 并仔细阅读输出（它通常会告诉你修复方法）。</li>
-<li>检查：<a href="/gateway/troubleshooting">故障排查</a></li>
+<li>检查：[故障排查(../gateway/troubleshooting.html)</li>
 <li>在 Discord 提问：<a href="https://channels.discord.gg/clawd">https://channels.discord.gg/clawd</a></li>
 </ul>
 

@@ -256,15 +256,15 @@ swift run openclaw-mac discover --timeout 3000 --json
 <li><strong>远程端口：</strong> 远程主机上的相同 Gateway 端口。</li>
 <li><strong>行为：</strong> 没有随机本地端口；应用重用现有健康隧道或根据需要重启它。</li>
 <li><strong>SSH 形状：</strong> <code>ssh -N -L &lt;local&gt;:127.0.0.1:&lt;remote&gt;</code>，带有 BatchMode +<br>ExitOnForwardFailure + keepalive 选项。</li>
-<li><strong>IP 报告：</strong> SSH 隧道使用环回，因此 Gateway 会将节点 IP 视为 <code>127.0.0.1</code>。如果你希望显示真实客户端 IP，使用 <strong>直接（ws/wss）</strong> 传输<br>（参见 <a href="/platforms/mac/remote">macOS 远程访问</a>）。</li>
+<li><strong>IP 报告：</strong> SSH 隧道使用环回，因此 Gateway 会将节点 IP 视为 <code>127.0.0.1</code>。如果你希望显示真实客户端 IP，使用 <strong>直接（ws/wss）</strong> 传输<br>（参见 [macOS 远程访问(../platforms/mac/remote.html)）。</li>
 </ul>
-<p>设置步骤，参见 <a href="/platforms/mac/remote">macOS 远程访问</a>。协议详情，参见 <a href="/gateway/protocol">Gateway 协议</a>。</p>
+<p>设置步骤，参见 [macOS 远程访问(../platforms/mac/remote.html)。协议详情，参见 [Gateway 协议(../gateway/protocol.html)。</p>
 <h2>相关文档</h2>
 <ul>
-<li><a href="/gateway">Gateway 运行手册</a></li>
-<li><a href="/platforms/mac/bundled-gateway">Gateway（macOS）</a></li>
-<li><a href="/platforms/mac/permissions">macOS 权限</a></li>
-<li><a href="/platforms/mac/canvas">Canvas</a></li>
+<li><a href="../gateway/index.html">Gateway 运行手册</a></li>
+<li>[Gateway（macOS）(../platforms/mac/bundled-gateway.html)</li>
+<li>[macOS 权限(../platforms/mac/permissions.html)</li>
+<li>[Canvas(../platforms/mac/canvas.html)</li>
 </ul>
 
         </div>

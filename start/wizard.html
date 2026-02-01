@@ -127,12 +127,12 @@
 <pre><code class="language-bash"># 启动配置向导
 openclaw onboard
 </code></pre>
-<p>最快的首次聊天：打开 Control UI（无需设置频道）。运行<br><code>openclaw dashboard</code> 然后在浏览器中聊天。文档：<a href="/web/dashboard">Dashboard</a>。</p>
+<p>最快的首次聊天：打开 Control UI（无需设置频道）。运行<br><code>openclaw dashboard</code> 然后在浏览器中聊天。文档：<a href="../web/dashboard.html">Dashboard</a>。</p>
 <p>后续重新配置：</p>
 <pre><code class="language-bash"># 修改配置
 openclaw configure
 </code></pre>
-<p>推荐：设置 Brave Search API 密钥，让 Agent 可以使用 <code>web_search</code><br>（<code>web_fetch</code> 无需密钥即可工作）。最简单的方式：<code>openclaw configure --section web</code><br>它会存储 <code>tools.web.search.apiKey</code>。文档：<a href="/tools/web">Web 工具</a>。</p>
+<p>推荐：设置 Brave Search API 密钥，让 Agent 可以使用 <code>web_search</code><br>（<code>web_fetch</code> 无需密钥即可工作）。最简单的方式：<code>openclaw configure --section web</code><br>它会存储 <code>tools.web.search.apiKey</code>。文档：<a href="../tools/web.html">Web 工具</a>。</p>
 <h2>快速开始 vs 高级设置</h2>
 <p>向导以<strong>快速开始</strong>（默认）vs <strong>高级</strong>（完全控制）开始。</p>
 <p><strong>快速开始</strong>保持默认：</p>
@@ -191,14 +191,14 @@ openclaw agents add &lt;name&gt;
 <li><strong>OpenCode Zen（多模型代理）</strong>：提示输入 <code>OPENCODE_API_KEY</code>（或 <code>OPENCODE_ZEN_API_KEY</code>，在 <a href="https://opencode.ai/auth">https://opencode.ai/auth</a> 获取）。</li>
 <li><strong>API key</strong>：为你存储密钥。</li>
 <li><strong>Vercel AI Gateway（多模型代理）</strong>：提示输入 <code>AI_GATEWAY_API_KEY</code>。</li>
-<li>更多详情：<a href="/providers/vercel-ai-gateway">Vercel AI Gateway</a></li>
+<li>更多详情：<a href="../providers/vercel-ai-gateway.html">Vercel AI Gateway</a></li>
 <li><strong>MiniMax M2.1</strong>：配置自动写入。</li>
-<li>更多详情：<a href="/providers/minimax">MiniMax</a></li>
+<li>更多详情：<a href="../providers/minimax.html">MiniMax</a></li>
 <li><strong>Synthetic（Anthropic 兼容）</strong>：提示输入 <code>SYNTHETIC_API_KEY</code>。</li>
-<li>更多详情：<a href="/providers/synthetic">Synthetic</a></li>
+<li>更多详情：<a href="../providers/synthetic.html">Synthetic</a></li>
 <li><strong>Moonshot (Kimi K2)</strong>：配置自动写入。</li>
 <li><strong>Kimi Code</strong>：配置自动写入。</li>
-<li>更多详情：<a href="/providers/moonshot">Moonshot AI (Kimi + Kimi Code)</a></li>
+<li>更多详情：<a href="../providers/moonshot.html">Moonshot AI (Kimi + Kimi Code)</a></li>
 <li><strong>跳过</strong>：尚未配置认证。</li>
 <li>从检测到的选项中选择默认模型（或手动输入 provider/model）。</li>
 <li>向导运行模型检查，如果配置的模型未知或缺少认证会警告。</li>
@@ -207,14 +207,14 @@ openclaw agents add &lt;name&gt;
 </ol>
 <ul>
 <li>OAuth 凭据存储在 <code>~/.openclaw/credentials/oauth.json</code>；认证配置存储在 <code>~/.openclaw/agents/&lt;agentId&gt;/agent/auth-profiles.json</code>（API 密钥 + OAuth）。</li>
-<li>更多详情：<a href="/concepts/oauth">/concepts/oauth</a></li>
+<li>更多详情：<a href="../concepts/oauth.html">/concepts/oauth</a></li>
 </ul>
 <ol start="3">
 <li><p><strong>工作空间</strong></p>
 <ul>
 <li>默认 <code>~/.openclaw/workspace</code>（可配置）。</li>
 <li>植入 Agent 引导仪式所需的文件。</li>
-<li>完整的工作空间布局 + 备份指南：<a href="/concepts/agent-workspace">Agent 工作空间</a></li>
+<li>完整的工作空间布局 + 备份指南：<a href="../concepts/agent-workspace.html">Agent 工作空间</a></li>
 </ul>
 </li>
 <li><p><strong>Gateway</strong></p>
@@ -413,9 +413,9 @@ openclaw onboard --non-interactive \
 <h2>相关文档</h2>
 <ul>
 <li>macOS 应用配置：<a href="./onboarding.html">配置</a></li>
-<li>配置参考：<a href="/gateway/configuration">Gateway 配置</a></li>
-<li>Provider：<a href="/channels/whatsapp">WhatsApp</a>、<a href="/channels/telegram">Telegram</a>、<a href="/channels/discord">Discord</a>、<a href="/channels/googlechat">Google Chat</a>、<a href="/channels/signal">Signal</a>、<a href="/channels/imessage">iMessage</a></li>
-<li>Skills：<a href="/tools/skills">Skills</a>、<a href="/tools/skills-config">Skills 配置</a></li>
+<li>配置参考：<a href="../gateway/configuration.html">Gateway 配置</a></li>
+<li>Provider：<a href="../channels/whatsapp.html">WhatsApp</a>、<a href="../channels/telegram.html">Telegram</a>、<a href="../channels/discord.html">Discord</a>、<a href="../channels/googlechat.html">Google Chat</a>、<a href="../channels/signal.html">Signal</a>、<a href="../channels/imessage.html">iMessage</a></li>
+<li>Skills：<a href="../tools/skills.html">Skills</a>、<a href="../tools/skills-config.html">Skills 配置</a></li>
 </ul>
 
         </div>

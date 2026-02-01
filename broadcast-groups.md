@@ -402,6 +402,6 @@ interface OpenClawConfig {
 
 ## 另见
 
-- [多 Agent 配置](/multi-agent-sandbox-tools)
-- [路由配置](/concepts/channel-routing)
-- [会话管理](/concepts/sessions)
+- [多 Agent 配置](multi-agent-sandbox-tools.html)
+- [路由配置](concepts/channel-routing.html)
+- [会话管理](concepts/sessions.html)

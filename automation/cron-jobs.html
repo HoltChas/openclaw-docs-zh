@@ -123,7 +123,7 @@
             <h1>定时任务</h1>
 <h1>定时任务 (Gateway 调度器)</h1>
 <blockquote>
-<p><strong>Cron 还是 Heartbeat？</strong> 不确定用哪个？看看 <a href="/automation/cron-vs-heartbeat">Cron vs Heartbeat</a> 了解如何选择。</p>
+<p><strong>Cron 还是 Heartbeat？</strong> 不确定用哪个？看看 [Cron vs Heartbeat(../automation/cron-vs-heartbeat.html) 了解如何选择。</p>
 </blockquote>
 <p>Cron 是 Gateway 内置的调度器。它会持久化存储任务，在正确的时间唤醒 Agent，还可以选择将输出返回到聊天中。</p>
 <p>如果你想实现&quot;每天早上运行&quot;或者&quot;20分钟后提醒我&quot;，Cron 就是你要用的机制。</p>
@@ -187,7 +187,7 @@
 <li><code>wakeMode: &quot;next-heartbeat&quot;</code>（默认）：事件等待下一次计划的 Heartbeat。</li>
 <li><code>wakeMode: &quot;now&quot;</code>：事件触发立即的 Heartbeat。</li>
 </ul>
-<p>这是最适合使用正常 Heartbeat 提示 + 主会话上下文的场景。<br>参见 <a href="/gateway/heartbeat">Heartbeat</a>。</p>
+<p>这是最适合使用正常 Heartbeat 提示 + 主会话上下文的场景。<br>参见 [Heartbeat(../gateway/heartbeat.html)。</p>
 <h4>独立任务（专门的 Cron 会话）</h4>
 <p>独立任务在会话 <code>cron:&lt;jobId&gt;</code> 中运行一个专门的 Agent 轮次。</p>
 <p>主要行为：</p>
@@ -363,7 +363,7 @@ openclaw cron edit &lt;jobId&gt; --clear-agent
 <h2>Gateway API 接口</h2>
 <ul>
 <li><code>cron.list</code>, <code>cron.status</code>, <code>cron.add</code>, <code>cron.update</code>, <code>cron.remove</code></li>
-<li><code>cron.run</code>（强制或到期运行）, <code>cron.runs</code><br>对于无需任务的立即系统事件，使用 <a href="/cli/system"><code>openclaw system event</code></a>。</li>
+<li><code>cron.run</code>（强制或到期运行）, <code>cron.runs</code><br>对于无需任务的立即系统事件，使用 [<code>openclaw system event</code>(../cli/system.html)。</li>
 </ul>
 <h2>故障排查</h2>
 <h3>&quot;什么都没运行&quot;</h3>

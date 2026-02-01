@@ -126,14 +126,14 @@
 <ul>
 <li>角色：配套节点应用（Android 不托管 Gateway）。</li>
 <li>需要 Gateway：是（在 macOS、Linux 或 Windows via WSL2 上运行它）。</li>
-<li>安装：<a href="/start/getting-started">入门</a> + <a href="/gateway/pairing">配对</a>。</li>
-<li>Gateway：<a href="/gateway">运行手册</a> + <a href="/gateway/configuration">配置</a>。<ul>
-<li>协议：<a href="/gateway/protocol">Gateway 协议</a>（节点 + 控制平面）。</li>
+<li>安装：<a href="../start/getting-started.html">入门</a> + [配对(../gateway/pairing.html)。</li>
+<li>Gateway：<a href="../gateway/index.html">运行手册</a> + [配置(../gateway/configuration.html)。<ul>
+<li>协议：[Gateway 协议(../gateway/protocol.html)（节点 + 控制平面）。</li>
 </ul>
 </li>
 </ul>
 <h2>系统控制</h2>
-<p>系统控制（launchd/systemd）位于 Gateway 主机上。参见 <a href="/gateway">Gateway</a>。</p>
+<p>系统控制（launchd/systemd）位于 Gateway 主机上。参见 <a href="../gateway/index.html">Gateway</a>。</p>
 <h2>连接运行手册</h2>
 <p>Android 节点应用 ⇄（mDNS/NSD + WebSocket）⇄ <strong>Gateway</strong></p>
 <p>Android 直接连接到 Gateway WebSocket（默认 <code>ws://&lt;host&gt;:18789</code>）并使用 Gateway 拥有的配对。</p>
@@ -164,14 +164,14 @@
 <p>从 Gateway 机器：</p>
 <pre><code class="language-bash">dns-sd -B _openclaw-gw._tcp local.
 </code></pre>
-<p>更多调试说明：<a href="/gateway/bonjour">Bonjour</a>。</p>
+<p>更多调试说明：[Bonjour(../gateway/bonjour.html)。</p>
 <h4>Tailnet（Vienna ⇄ London）通过单播 DNS-SD 发现</h4>
 <p>Android NSD/mDNS 发现不会跨网络。如果你的 Android 节点和 Gateway 在不同网络但通过 Tailscale 连接，改用 Wide-Area Bonjour / 单播 DNS-SD：</p>
 <ol>
 <li>在 Gateway 主机上设置 DNS-SD 区域（示例 <code>openclaw.internal.</code>）并发布 <code>_openclaw-gw._tcp</code> 记录。</li>
 <li>配置 Tailscale 分割 DNS 为你选择的域指向该 DNS 服务器。</li>
 </ol>
-<p>详情和示例 CoreDNS 配置：<a href="/gateway/bonjour">Bonjour</a>。</p>
+<p>详情和示例 CoreDNS 配置：[Bonjour(../gateway/bonjour.html)。</p>
 <h3>3) 从 Android 连接</h3>
 <p>在 Android 应用中：</p>
 <ul>
@@ -190,7 +190,7 @@
 <pre><code class="language-bash">openclaw nodes pending
 openclaw nodes approve &lt;requestId&gt;
 </code></pre>
-<p>配对详情：<a href="/gateway/pairing">Gateway 配对</a>。</p>
+<p>配对详情：[Gateway 配对(../gateway/pairing.html)。</p>
 <h3>5) 验证节点已连接</h3>
 <ul>
 <li>通过节点状态：<pre><code class="language-bash">openclaw nodes status
@@ -231,7 +231,7 @@ openclaw nodes approve &lt;requestId&gt;
 <li><code>camera.snap</code> (jpg)</li>
 <li><code>camera.clip</code> (mp4)</li>
 </ul>
-<p>参见 <a href="/nodes/camera">相机节点</a> 了解参数和 CLI 助手。</p>
+<p>参见 [相机节点(../nodes/camera.html) 了解参数和 CLI 助手。</p>
 
         </div>
     </main>

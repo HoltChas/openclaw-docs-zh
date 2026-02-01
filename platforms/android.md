@@ -10,12 +10,12 @@ read_when:
 ## 支持快照
 - 角色：配套节点应用（Android 不托管 Gateway）。
 - 需要 Gateway：是（在 macOS、Linux 或 Windows via WSL2 上运行它）。
-- 安装：[入门](/start/getting-started) + [配对](/gateway/pairing)。
-- Gateway：[运行手册](/gateway) + [配置](/gateway/configuration)。
-  - 协议：[Gateway 协议](/gateway/protocol)（节点 + 控制平面）。
+- 安装：[入门](../start/getting-started.html) + [配对(../gateway/pairing.html)。
+- Gateway：[运行手册](../gateway/index.html) + [配置(../gateway/configuration.html)。
+  - 协议：[Gateway 协议(../gateway/protocol.html)（节点 + 控制平面）。
 
 ## 系统控制
-系统控制（launchd/systemd）位于 Gateway 主机上。参见 [Gateway](/gateway)。
+系统控制（launchd/systemd）位于 Gateway 主机上。参见 [Gateway](../gateway/index.html)。
 
 ## 连接运行手册
 
@@ -54,7 +54,7 @@ openclaw gateway --port 18789 --verbose
 dns-sd -B _openclaw-gw._tcp local.
 ```
 
-更多调试说明：[Bonjour](/gateway/bonjour)。
+更多调试说明：[Bonjour(../gateway/bonjour.html)。
 
 #### Tailnet（Vienna ⇄ London）通过单播 DNS-SD 发现
 
@@ -63,7 +63,7 @@ Android NSD/mDNS 发现不会跨网络。如果你的 Android 节点和 Gateway 
 1) 在 Gateway 主机上设置 DNS-SD 区域（示例 `openclaw.internal.`）并发布 `_openclaw-gw._tcp` 记录。
 2) 配置 Tailscale 分割 DNS 为你选择的域指向该 DNS 服务器。
 
-详情和示例 CoreDNS 配置：[Bonjour](/gateway/bonjour)。
+详情和示例 CoreDNS 配置：[Bonjour(../gateway/bonjour.html)。
 
 ### 3) 从 Android 连接
 
@@ -87,7 +87,7 @@ openclaw nodes pending
 openclaw nodes approve <requestId>
 ```
 
-配对详情：[Gateway 配对](/gateway/pairing)。
+配对详情：[Gateway 配对(../gateway/pairing.html)。
 
 ### 5) 验证节点已连接
 
@@ -137,4 +137,4 @@ Canvas 命令（仅前台）：
 - `camera.snap` (jpg)
 - `camera.clip` (mp4)
 
-参见 [相机节点](/nodes/camera) 了解参数和 CLI 助手。
+参见 [相机节点(../nodes/camera.html) 了解参数和 CLI 助手。

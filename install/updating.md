@@ -58,7 +58,7 @@ openclaw update --channel stable
 
 使用 `--tag <dist-tag|version>` 进行一次性安装标签/版本。
 
-参见 [开发通道](/install/development-channels) 了解通道语义和发布说明。
+参见 [开发通道(../install/development-channels.html) 了解通道语义和发布说明。
 
 注意：在 npm 安装上，Gateway 在启动时记录更新提示（检查当前通道标签）。通过 `update.checkOnStart: false` 禁用。
 
@@ -140,7 +140,7 @@ Doctor 是"安全更新"命令。它有意设计得无聊：修复 + 迁移 + �
 - 检测并将旧 Gateway 服务（launchd/systemd；遗留 schtasks）迁移到当前 OpenClaw 服务。
 - 在 Linux 上，确保 systemd 用户驻留（以便 Gateway 在注销后存活）。
 
-详情：[Doctor](/gateway/doctor)
+详情：[Doctor(../gateway/doctor.html)
 
 ## 启动 / 停止 / 重启 Gateway
 
@@ -160,7 +160,7 @@ openclaw logs --follow
 - Windows（WSL2）：`systemctl --user restart openclaw-gateway[-<profile>].service`
   - `launchctl`/`systemctl` 仅在服务安装时有效；否则运行 `openclaw gateway install`。
 
-运行手册 + 精确服务标签：[Gateway 运行手册](/gateway)
+运行手册 + 精确服务标签：[Gateway 运行手册](../gateway/index.html)
 
 ## 回滚 / 固定（当出现问题时）
 
@@ -212,5 +212,5 @@ git pull
 ## 如果你卡住
 
 - 再次运行 `openclaw doctor` 并仔细阅读输出（它通常会告诉你修复方法）。
-- 检查：[故障排查](/gateway/troubleshooting)
+- 检查：[故障排查(../gateway/troubleshooting.html)
 - 在 Discord 提问：https://channels.discord.gg/clawd

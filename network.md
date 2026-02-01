@@ -11,17 +11,17 @@ read_when:
 
 ## 核心模型
 
-- [Gateway 架构](/concepts/architecture)
-- [Gateway 协议](/gateway/protocol)
-- [Gateway 运行手册](/gateway)
-- [Web 界面 + 绑定模式](/web)
+- [Gateway 架构](concepts/architecture.html)
+- [Gateway 协议](gateway/protocol.html)
+- [Gateway 运行手册](gateway/index.html)
+- [Web 界面 + 绑定模式](web/index.html)
 
 ## 配对 + 身份
 
-- [配对概览（DM + 节点）](/start/pairing)
-- [Gateway 拥有的节点配对](/gateway/pairing)
-- [设备 CLI（配对 + 令牌轮换）](/cli/devices)
-- [配对 CLI（DM 批准）](/cli/pairing)
+- [配对概览（DM + 节点）](start/pairing.html)
+- [Gateway 拥有的节点配对](gateway/pairing.html)
+- [设备 CLI（配对 + 令牌轮换）](cli/devices.html)
+- [配对 CLI（DM 批准）](cli/pairing.html)
 
 本地信任：
 - 本地连接（回环或 Gateway 主机自己的 tailnet 地址）可以
@@ -30,21 +30,21 @@ read_when:
 
 ## 发现 + 传输
 
-- [发现与传输](/gateway/discovery)
-- [Bonjour / mDNS](/gateway/bonjour)
-- [远程访问（SSH）](/gateway/remote)
-- [Tailscale](/gateway/tailscale)
+- [发现与传输](gateway/discovery.html)
+- [Bonjour / mDNS](gateway/bonjour.html)
+- [远程访问（SSH）](gateway/remote.html)
+- [Tailscale](gateway/tailscale.html)
 
 ## 节点 + 传输
 
-- [节点概览](/nodes)
-- [桥接协议（旧版节点）](/gateway/bridge-protocol)
-- [节点运行手册：iOS](/platforms/ios)
-- [节点运行手册：Android](/platforms/android)
+- [节点概览](nodes/index.html)
+- [桥接协议（旧版节点）](gateway/bridge-protocol.html)
+- [节点运行手册：iOS](platforms/ios.html)
+- [节点运行手册：Android](platforms/android.html)
 
 ## 安全
 
-- [安全概览](/gateway/security)
-- [Gateway 配置参考](/gateway/configuration)
-- [故障排除](/gateway/troubleshooting)
-- [Doctor](/gateway/doctor)
+- [安全概览](gateway/security.html)
+- [Gateway 配置参考](gateway/configuration.html)
+- [故障排除](gateway/troubleshooting.html)
+- [Doctor](gateway/doctor.html)

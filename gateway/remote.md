@@ -26,7 +26,7 @@ read_when:
 
 - **最佳体验：** 保持 `gateway.bind: "loopback"`，并使用 **Tailscale Serve** 暴露 Control UI。
 - **回退：** 仍使用 loopback + SSH 隧道（需要访问的机器都开隧道）。
-- **示例：** [exe.dev](/platforms/exe-dev)（易用 VM）或 [Hetzner](/platforms/hetzner)（生产 VPS）。
+- **示例：** [exe.dev(../platforms/exe-dev.html)（易用 VM）或 [Hetzner(../platforms/hetzner.html)（生产 VPS）。
 
 这适合笔记本经常休眠但你希望 Agent 始终在线的场景。
 
@@ -37,7 +37,7 @@ read_when:
 - 使用 macOS 应用的 **Remote over SSH** 模式（设置 → 通用 → “OpenClaw runs”）。
 - 应用会打开并管理隧道，因此 WebChat + 健康检查“即插即用”。
 
-运行手册：[macOS 远程访问](/platforms/mac/remote)。
+运行手册：[macOS 远程访问(../platforms/mac/remote.html)。
 
 ### 3) 笔记本运行 Gateway，其他机器远程访问
 
@@ -46,7 +46,7 @@ read_when:
 - 从其他机器通过 SSH 隧道连接，或
 - 使用 Tailscale Serve 暴露 Control UI，同时保持 Gateway 仅 loopback。
 
-指南：[Tailscale](/gateway/tailscale) 与 [Web 概览](/web)。
+指南：[Tailscale(../gateway/tailscale.html) 与 [Web 概览](../web/index.html)。
 
 ## 命令流（什么在什么地方运行）
 
@@ -59,7 +59,7 @@ read_when:
 - 节点返回结果；Gateway 再回复 Telegram。
 
 说明：
-- **节点不运行 Gateway 服务。** 除非你刻意运行隔离 profile，否则每台主机只运行一个 Gateway（见 [多 Gateway](/gateway/multiple-gateways)）。
+- **节点不运行 Gateway 服务。** 除非你刻意运行隔离 profile，否则每台主机只运行一个 Gateway（见 [多 Gateway(../gateway/multiple-gateways.html)）。
 - macOS 应用的“节点模式”只是一个通过 Gateway WebSocket 的节点客户端。
 
 ## SSH 隧道（CLI + 工具）
@@ -105,7 +105,7 @@ WebChat 不再使用独立 HTTP 端口。SwiftUI Chat UI 直接连接 Gateway We
 
 macOS 菜单栏应用可以端到端驱动该设置（远程状态检查、WebChat 和 Voice Wake 转发）。
 
-运行手册：[macOS 远程访问](/platforms/mac/remote)。
+运行手册：[macOS 远程访问(../platforms/mac/remote.html)。
 
 ## 安全规则（远程/VPN）
 
@@ -119,4 +119,4 @@ macOS 菜单栏应用可以端到端驱动该设置（远程状态检查、WebCh
   设为 `false` 或强制 `gateway.auth.mode: "password"` 可要求显式凭证。
 - 将浏览器控制视为操作员访问：仅 tailnet + 谨慎节点配对。
 
-深入了解：[安全](/gateway/security)。
+深入了解：[安全(../gateway/security.html)。

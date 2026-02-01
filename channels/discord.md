@@ -51,10 +51,10 @@ read_when:
 8. 群组私聊默认被忽略；通过 `channels.discord.dm.groupEnabled` 启用，并可选择通过 `channels.discord.dm.groupChannels` 限制。
 9. 可选公会规则：通过公会 id（首选）或 slug 设置 `channels.discord.guilds`，带有每频道规则。
 10. 可选原生命令：`commands.native` 默认为 `"auto"`（Discord/Telegram 开启，Slack 关闭）。使用 `channels.discord.commands.native: true|false|"auto"` 覆盖；`false` 清除先前注册的命令。文本命令由 `commands.text` 控制，必须作为独立的 `/...` 消息发送。使用 `commands.useAccessGroups: false` 绕过命令的访问组检查。
-    - 完整命令列表 + 配置：[斜杠命令](/tools/slash-commands)
+    - 完整命令列表 + 配置：[斜杠命令(../tools/slash-commands.html)
 11. 可选公会上下文历史：设置 `channels.discord.historyLimit`（默认 20，回退到 `messages.groupChat.historyLimit`）以在回复提及时包含最后 N 条公会消息作为上下文。设置 `0` 禁用。
 12. 反应：Agent 可以通过 `discord` 工具触发反应（由 `channels.discord.actions.*` 门控）。
-    - 反应移除语义：参见 [/tools/reactions](/tools/reactions)。
+    - 反应移除语义：参见 [/tools/reactions(../tools/reactions.html)。
     - `discord` 工具仅在当前频道是 Discord 时暴露。
 13. 原生命令使用隔离的会话键（`agent:<agentId>:discord:slash:<userId>`）而不是共享的 `main` 会话。
 

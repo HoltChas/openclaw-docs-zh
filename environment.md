@@ -69,10 +69,10 @@ OpenClaw 从多个来源提取环境变量。规则是**绝不覆盖现有值**�
 }
 ```
 
-完整详情参见 [配置：配置中的环境变量替换](/gateway/configuration#env-var-substitution-in-config)。
+完整详情参见 [配置：配置中的环境变量替换](gateway/configuration#env-var-substitution-in-config.html)。
 
 ## 相关文档
 
-- [Gateway 配置](/gateway/configuration)
-- [FAQ：环境变量和 .env 加载](/help/faq#env-vars-and-env-loading)
-- [模型概览](/concepts/models)
+- [Gateway 配置](gateway/configuration.html)
+- [FAQ：环境变量和 .env 加载](../help.html)
+- [模型概览](concepts/models.html)

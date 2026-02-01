@@ -31,10 +31,10 @@ OpenClaw 将 **每个 Agent 的一个直聊会话** 视为主会话。直聊会�
 
 ## 会话修剪
 OpenClaw 在 LLM 调用前默认会**修剪旧工具结果**，减少上下文。
-这 **不会** 重写 JSONL 历史。参见 [/concepts/session-pruning](/concepts/session-pruning)。
+这 **不会** 重写 JSONL 历史。参见 [/concepts/session-pruning(../concepts/session-pruning.html)。
 
 ## 预压缩内存刷新
-当会话接近自动压缩时，OpenClaw 可运行一个 **静默内存刷新** 轮次，提醒模型将持久笔记写入磁盘。仅在工作区可写时运行。参见 [记忆](/concepts/memory) 和 [压缩](/concepts/compaction)。
+当会话接近自动压缩时，OpenClaw 可运行一个 **静默内存刷新** 轮次，提醒模型将持久笔记写入磁盘。仅在工作区可写时运行。参见 [记忆(../concepts/memory.html) 和 [压缩(../concepts/compaction.html)。
 
 ## 传输 → 会话键映射
 - 直聊遵循 `session.dmScope`（默认 `main`）。
@@ -127,7 +127,7 @@ OpenClaw 在 LLM 调用前默认会**修剪旧工具结果**，减少上下文�
 - 在聊天中单独发送 `/status` 查看 Agent 是否可用、会话上下文占用、当前 thinking/verbose 开关、WhatsApp web 凭证最近刷新时间（用于识别重连需求）。
 - 发送 `/context list` 或 `/context detail` 查看系统提示和注入的工作区文件（最大上下文贡献者）。
 - 发送 `/stop` 作为独立消息以中止当前运行、清除该会话的队列跟进，并停止由该会话启动的子 Agent 运行（回复包含停止数量）。
-- 发送 `/compact`（可选说明）作为独立消息以总结旧上下文并释放窗口空间。参见 [/concepts/compaction](/concepts/compaction)。
+- 发送 `/compact`（可选说明）作为独立消息以总结旧上下文并释放窗口空间。参见 [/concepts/compaction(../concepts/compaction.html)。
 - 可直接打开 JSONL 转录查看完整轮次。
 
 ## 小贴士

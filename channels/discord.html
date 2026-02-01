@@ -174,12 +174,12 @@
 <li>群组私聊默认被忽略；通过 <code>channels.discord.dm.groupEnabled</code> 启用，并可选择通过 <code>channels.discord.dm.groupChannels</code> 限制。</li>
 <li>可选公会规则：通过公会 id（首选）或 slug 设置 <code>channels.discord.guilds</code>，带有每频道规则。</li>
 <li>可选原生命令：<code>commands.native</code> 默认为 <code>&quot;auto&quot;</code>（Discord/Telegram 开启，Slack 关闭）。使用 <code>channels.discord.commands.native: true|false|&quot;auto&quot;</code> 覆盖；<code>false</code> 清除先前注册的命令。文本命令由 <code>commands.text</code> 控制，必须作为独立的 <code>/...</code> 消息发送。使用 <code>commands.useAccessGroups: false</code> 绕过命令的访问组检查。<ul>
-<li>完整命令列表 + 配置：<a href="/tools/slash-commands">斜杠命令</a></li>
+<li>完整命令列表 + 配置：[斜杠命令(../tools/slash-commands.html)</li>
 </ul>
 </li>
 <li>可选公会上下文历史：设置 <code>channels.discord.historyLimit</code>（默认 20，回退到 <code>messages.groupChat.historyLimit</code>）以在回复提及时包含最后 N 条公会消息作为上下文。设置 <code>0</code> 禁用。</li>
 <li>反应：Agent 可以通过 <code>discord</code> 工具触发反应（由 <code>channels.discord.actions.*</code> 门控）。<ul>
-<li>反应移除语义：参见 <a href="/tools/reactions">/tools/reactions</a>。</li>
+<li>反应移除语义：参见 [/tools/reactions(../tools/reactions.html)。</li>
 <li><code>discord</code> 工具仅在当前频道是 Discord 时暴露。</li>
 </ul>
 </li>

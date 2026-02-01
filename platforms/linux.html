@@ -132,17 +132,17 @@
 <li>从你的笔记本电脑：<code>ssh -N -L 18789:127.0.0.1:18789 &lt;user&gt;@&lt;host&gt;</code>  </li>
 <li>打开 <code>http://127.0.0.1:18789/</code> 并粘贴你的令牌</li>
 </ol>
-<p>分步 VPS 指南：<a href="/platforms/exe-dev">exe.dev</a></p>
+<p>分步 VPS 指南：[exe.dev(../platforms/exe-dev.html)</p>
 <h2>安装</h2>
 <ul>
-<li><a href="/start/getting-started">入门</a></li>
-<li><a href="/install/updating">安装和更新</a></li>
-<li>可选流程：<a href="/install/bun">Bun（实验性）</a>、<a href="/install/nix">Nix</a>、<a href="/install/docker">Docker</a></li>
+<li><a href="../start/getting-started.html">入门</a></li>
+<li>[安装和更新(../install/updating.html)</li>
+<li>可选流程：[Bun（实验性）(../install/bun.html)、[Nix(../install/nix.html)、[Docker(../install/docker.html)</li>
 </ul>
 <h2>Gateway</h2>
 <ul>
-<li><a href="/gateway">Gateway 运行手册</a></li>
-<li><a href="/gateway/configuration">Gateway 配置</a></li>
+<li><a href="../gateway/index.html">Gateway 运行手册</a></li>
+<li>[Gateway 配置(../gateway/configuration.html)</li>
 </ul>
 <h2>Gateway 服务安装（CLI）</h2>
 <p>使用以下之一：</p>
@@ -159,7 +159,7 @@
 <pre><code>openclaw doctor
 </code></pre>
 <h2>系统控制（systemd 用户单元）</h2>
-<p>OpenClaw 默认安装 systemd <strong>用户</strong> 服务。对共享或始终在线的服务器使用 <strong>系统</strong> 服务。完整单元示例和指导在 <a href="/gateway">Gateway 运行手册</a> 中。</p>
+<p>OpenClaw 默认安装 systemd <strong>用户</strong> 服务。对共享或始终在线的服务器使用 <strong>系统</strong> 服务。完整单元示例和指导在 <a href="../gateway/index.html">Gateway 运行手册</a> 中。</p>
 <p>最小设置：</p>
 <p>创建 <code>~/.config/systemd/user/openclaw-gateway[-&lt;profile&gt;].service</code>：</p>
 <pre><code>[Unit]

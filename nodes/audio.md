@@ -94,7 +94,7 @@ OpenClaw 按此顺序自动检测并在第一个可用选项处停止：
 ## 说明和限制
 - Provider 认证遵循标准模型认证顺序（认证配置文件、环境变量、`models.providers.*.apiKey`）。
 - 使用 `provider: "deepgram"` 时，Deepgram 拾取 `DEEPGRAM_API_KEY`。
-- Deepgram 设置详情：[Deepgram（音频转录）](/providers/deepgram)。
+- Deepgram 设置详情：[Deepgram（音频转录）(../providers/deepgram.html)。
 - 音频 Provider 可以通过 `tools.media.audio` 覆盖 `baseUrl`、`headers` 和 `providerOptions`。
 - 默认大小上限为 20MB（`tools.media.audio.maxBytes`）。超大音频跳过该模型并尝试下一个条目。
 - 音频的默认 `maxChars` 为 **未设置**（完整转录）。设置 `tools.media.audio.maxChars` 或每个条目的 `maxChars` 以修剪输出。

@@ -139,7 +139,7 @@
 <pre><code>~/.openclaw/agents/&lt;agentId&gt;/agent/auth-profiles.json
 </code></pre>
 <p><strong>凭证不在 Agent 之间共享。</strong> 永远不要跨 Agent 重用 <code>agentDir</code>。<br>如果你想共享凭证，将 <code>auth-profiles.json</code> 复制到其他 Agent 的 <code>agentDir</code> 中。</p>
-<p>运行时沙盒行为详见 <a href="/gateway/sandboxing">沙盒</a>。<br>调试&quot;为什么被阻止？&quot;详见 <a href="/gateway/sandbox-vs-tool-policy-vs-elevated">沙盒 vs 工具策略 vs 特权</a> 和 <code>openclaw sandbox explain</code>。</p>
+<p>运行时沙盒行为详见 <a href="gateway/sandboxing.html">沙盒</a>。<br>调试&quot;为什么被阻止？&quot;详见 <a href="gateway/sandbox-vs-tool-policy-vs-elevated.html">沙盒 vs 工具策略 vs 特权</a> 和 <code>openclaw sandbox explain</code>。</p>
 <hr>
 <h2>配置示例</h2>
 <h3>示例 1：个人 + 受限制的家庭 Agent</h3>
@@ -430,9 +430,9 @@ agents.list[].sandbox.prune.* &gt; agents.defaults.sandbox.prune.*
 <hr>
 <h2>另见</h2>
 <ul>
-<li><a href="/concepts/multi-agent">多 Agent 路由</a></li>
-<li><a href="/gateway/configuration#agentsdefaults-sandbox">沙盒配置</a></li>
-<li><a href="/concepts/session">会话管理</a></li>
+<li><a href="concepts/multi-agent.html">多 Agent 路由</a></li>
+<li><a href="gateway/configuration#agentsdefaults-sandbox.html">沙盒配置</a></li>
+<li><a href="concepts/session.html">会话管理</a></li>
 </ul>
 
         </div>

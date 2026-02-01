@@ -139,7 +139,7 @@
 <ul>
 <li><strong>最佳体验：</strong> 保持 <code>gateway.bind: &quot;loopback&quot;</code>，并使用 <strong>Tailscale Serve</strong> 暴露 Control UI。</li>
 <li><strong>回退：</strong> 仍使用 loopback + SSH 隧道（需要访问的机器都开隧道）。</li>
-<li><strong>示例：</strong> <a href="/platforms/exe-dev">exe.dev</a>（易用 VM）或 <a href="/platforms/hetzner">Hetzner</a>（生产 VPS）。</li>
+<li><strong>示例：</strong> [exe.dev(../platforms/exe-dev.html)（易用 VM）或 [Hetzner(../platforms/hetzner.html)（生产 VPS）。</li>
 </ul>
 <p>这适合笔记本经常休眠但你希望 Agent 始终在线的场景。</p>
 <h3>2) 家用桌面运行 Gateway，笔记本远程控制</h3>
@@ -148,14 +148,14 @@
 <li>使用 macOS 应用的 <strong>Remote over SSH</strong> 模式（设置 → 通用 → “OpenClaw runs”）。</li>
 <li>应用会打开并管理隧道，因此 WebChat + 健康检查“即插即用”。</li>
 </ul>
-<p>运行手册：<a href="/platforms/mac/remote">macOS 远程访问</a>。</p>
+<p>运行手册：[macOS 远程访问(../platforms/mac/remote.html)。</p>
 <h3>3) 笔记本运行 Gateway，其他机器远程访问</h3>
 <p>保持 Gateway 本地但安全暴露：</p>
 <ul>
 <li>从其他机器通过 SSH 隧道连接，或</li>
 <li>使用 Tailscale Serve 暴露 Control UI，同时保持 Gateway 仅 loopback。</li>
 </ul>
-<p>指南：<a href="/gateway/tailscale">Tailscale</a> 与 <a href="/web">Web 概览</a>。</p>
+<p>指南：[Tailscale(../gateway/tailscale.html) 与 <a href="../web/index.html">Web 概览</a>。</p>
 <h2>命令流（什么在什么地方运行）</h2>
 <p>一个 Gateway 服务拥有状态 + 频道。节点是外围设备。</p>
 <p>示例流程（Telegram → 节点）：</p>
@@ -167,7 +167,7 @@
 </ul>
 <p>说明：</p>
 <ul>
-<li><strong>节点不运行 Gateway 服务。</strong> 除非你刻意运行隔离 profile，否则每台主机只运行一个 Gateway（见 <a href="/gateway/multiple-gateways">多 Gateway</a>）。</li>
+<li><strong>节点不运行 Gateway 服务。</strong> 除非你刻意运行隔离 profile，否则每台主机只运行一个 Gateway（见 [多 Gateway(../gateway/multiple-gateways.html)）。</li>
 <li>macOS 应用的“节点模式”只是一个通过 Gateway WebSocket 的节点客户端。</li>
 </ul>
 <h2>SSH 隧道（CLI + 工具）</h2>
@@ -201,7 +201,7 @@
 </ul>
 <h2>macOS 应用“Remote over SSH”</h2>
 <p>macOS 菜单栏应用可以端到端驱动该设置（远程状态检查、WebChat 和 Voice Wake 转发）。</p>
-<p>运行手册：<a href="/platforms/mac/remote">macOS 远程访问</a>。</p>
+<p>运行手册：[macOS 远程访问(../platforms/mac/remote.html)。</p>
 <h2>安全规则（远程/VPN）</h2>
 <p>短版：<strong>保持 Gateway 仅 loopback</strong>，除非你确定需要绑定。</p>
 <ul>
@@ -212,7 +212,7 @@
 <li><strong>Tailscale Serve</strong> 可在 <code>gateway.auth.allowTailscale: true</code> 时通过身份 header 认证。<br>设为 <code>false</code> 或强制 <code>gateway.auth.mode: &quot;password&quot;</code> 可要求显式凭证。</li>
 <li>将浏览器控制视为操作员访问：仅 tailnet + 谨慎节点配对。</li>
 </ul>
-<p>深入了解：<a href="/gateway/security">安全</a>。</p>
+<p>深入了解：[安全(../gateway/security.html)。</p>
 
         </div>
     </main>

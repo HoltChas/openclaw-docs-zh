@@ -29,8 +29,8 @@ status: active
 **凭证不在 Agent 之间共享。** 永远不要跨 Agent 重用 `agentDir`。
 如果你想共享凭证，将 `auth-profiles.json` 复制到其他 Agent 的 `agentDir` 中。
 
-运行时沙盒行为详见 [沙盒](/gateway/sandboxing)。
-调试"为什么被阻止？"详见 [沙盒 vs 工具策略 vs 特权](/gateway/sandbox-vs-tool-policy-vs-elevated) 和 `openclaw sandbox explain`。
+运行时沙盒行为详见 [沙盒](gateway/sandboxing.html)。
+调试"为什么被阻止？"详见 [沙盒 vs 工具策略 vs 特权](gateway/sandbox-vs-tool-policy-vs-elevated.html) 和 `openclaw sandbox explain`。
 
 ---
 
@@ -366,6 +366,6 @@ agents.list[].sandbox.prune.* > agents.defaults.sandbox.prune.*
 
 ## 另见
 
-- [多 Agent 路由](/concepts/multi-agent)
-- [沙盒配置](/gateway/configuration#agentsdefaults-sandbox)
-- [会话管理](/concepts/session)
+- [多 Agent 路由](concepts/multi-agent.html)
+- [沙盒配置](gateway/configuration#agentsdefaults-sandbox.html)
+- [会话管理](concepts/session.html)

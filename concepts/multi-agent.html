@@ -134,9 +134,9 @@
 <pre><code>~/.openclaw/agents/&lt;agentId&gt;/agent/auth-profiles.json
 </code></pre>
 <p>主 Agent 的凭证不会自动共享。不要跨 Agent 共享 <code>agentDir</code>（会导致认证/会话冲突）。如果你要共享凭证，请复制 <code>auth-profiles.json</code> 到另一个 Agent 的 <code>agentDir</code>。</p>
-<p>技能是每个 Agent 的 <code>workspace/skills</code>，共享技能放在 <code>~/.openclaw/skills</code>。<br>参见 <a href="/tools/skills#per-agent-vs-shared-skills">技能：每个 Agent vs 共享</a>。</p>
+<p>技能是每个 Agent 的 <code>workspace/skills</code>，共享技能放在 <code>~/.openclaw/skills</code>。<br>参见 [技能：每个 Agent vs 共享(../tools/skills#per-agent-vs-shared-skills.html)。</p>
 <p>Gateway 可以同时托管 <strong>一个 Agent</strong>（默认）或 <strong>多个 Agent</strong>。</p>
-<p><strong>工作区说明：</strong> 每个 Agent 的工作区是 <strong>默认 cwd</strong>，不是硬隔离。相对路径解析在工作区内，但绝对路径可访问其他主机路径，除非开启沙盒。参见 <a href="/gateway/sandboxing">沙盒化</a>。</p>
+<p><strong>工作区说明：</strong> 每个 Agent 的工作区是 <strong>默认 cwd</strong>，不是硬隔离。相对路径解析在工作区内，但绝对路径可访问其他主机路径，除非开启沙盒。参见 [沙盒化(../gateway/sandboxing.html)。</p>
 <h2>路径速查</h2>
 <ul>
 <li>配置：<code>~/.openclaw/openclaw.json</code>（或 <code>OPENCLAW_CONFIG_PATH</code>）</li>
@@ -195,7 +195,7 @@
 <p>说明：</p>
 <ul>
 <li>DM 访问控制是 <strong>每个 WhatsApp 账号全局</strong>（配对/允许列表），不是每个 Agent。</li>
-<li>对共享群，绑定到一个 Agent 或使用 <a href="/broadcast-groups">广播群组</a>。</li>
+<li>对共享群，绑定到一个 Agent 或使用 <a href="../broadcast-groups.html">广播群组</a>。</li>
 </ul>
 <h2>路由规则（消息如何选择 Agent）</h2>
 <p>绑定是 <strong>确定性</strong> 且 <strong>最具体优先</strong>：</p>
@@ -404,7 +404,7 @@
 <li><strong>灵活策略</strong>：不同 Agent 不同权限</li>
 </ul>
 <p>注意：<code>tools.elevated</code> 是 <strong>全局</strong> 且基于发送者；不能按 Agent 配置。如果你需要每 Agent 的边界，使用 <code>agents.list[].tools</code> 禁用 <code>exec</code>。<br>针对群聊，使用 <code>agents.list[].groupChat.mentionPatterns</code> 以便 @mention 清晰映射到目标 Agent。</p>
-<p>参见 <a href="/multi-agent-sandbox-tools">多 Agent 沙盒与工具</a> 获取更多示例。</p>
+<p>参见 <a href="../multi-agent-sandbox-tools.html">多 Agent 沙盒与工具</a> 获取更多示例。</p>
 
         </div>
     </main>

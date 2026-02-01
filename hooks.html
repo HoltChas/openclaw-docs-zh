@@ -127,9 +127,9 @@
 <p>钩子是当某些事情发生时运行的小脚本。有两种：</p>
 <ul>
 <li><strong>钩子</strong>（本页）：当 Agent 事件触发时在 Gateway 内部运行，如 <code>/new</code>、<code>/reset</code>、<code>/stop</code> 或生命周期事件。</li>
-<li><strong>Webhooks</strong>：让其他系统触发 OpenClaw 工作的外部 HTTP webhook。参见 <a href="/automation/webhook">Webhook 钩子</a> 或使用 <code>openclaw webhooks</code> 获取 Gmail 助手命令。</li>
+<li><strong>Webhooks</strong>：让其他系统触发 OpenClaw 工作的外部 HTTP webhook。参见 <a href="automation/webhook.html">Webhook 钩子</a> 或使用 <code>openclaw webhooks</code> 获取 Gmail 助手命令。</li>
 </ul>
-<p>钩子也可以捆绑在插件内；参见 <a href="/plugin#plugin-hooks">插件</a>。</p>
+<p>钩子也可以捆绑在插件内；参见 <a href="plugin.html">插件</a>。</p>
 <p>常见用途：</p>
 <ul>
 <li>重置会话时保存记忆快照</li>
@@ -305,7 +305,7 @@ export default myHandler;
 <h3>工具结果钩子（插件 API）</h3>
 <p>这些钩子不是事件流监听器；它们让插件在 OpenClaw 持久化之前同步调整工具结果。</p>
 <ul>
-<li><strong><code>tool_result_persist</code></strong>：转换工具结果，在写入会话记录之前。必须是同步的；返回更新的工具结果负载或 <code>undefined</code> 保持不变。参见 <a href="/concepts/agent-loop">Agent 循环</a>。</li>
+<li><strong><code>tool_result_persist</code></strong>：转换工具结果，在写入会话记录之前。必须是同步的；返回更新的工具结果负载或 <code>undefined</code> 保持不变。参见 <a href="concepts/agent-loop.html">Agent 循环</a>。</li>
 </ul>
 <h3>未来事件</h3>
 <p>计划的事件类型：</p>
@@ -521,7 +521,7 @@ grep &#39;&quot;action&quot;:&quot;new&quot;&#39; ~/.openclaw/logs/commands.log 
 <h3>soul-evil</h3>
 <p>在清除窗口期间或随机机会将注入的 <code>SOUL.md</code> 内容替换为 <code>SOUL_EVIL.md</code>。</p>
 <p><strong>事件</strong>：<code>agent:bootstrap</code></p>
-<p><strong>文档</strong>：<a href="/hooks/soul-evil">SOUL Evil 钩子</a></p>
+<p><strong>文档</strong>：<a href="hooks/soul-evil.html">SOUL Evil 钩子</a></p>
 <p><strong>输出</strong>：不写入文件；交换只在内存中发生。</p>
 <p><strong>启用</strong>：</p>
 <pre><code class="language-bash">openclaw hooks enable soul-evil
@@ -799,10 +799,10 @@ metadata: {&quot;openclaw&quot;:{&quot;emoji&quot;:&quot;🎯&quot;,&quot;events
 </ul>
 <h2>另见</h2>
 <ul>
-<li><a href="/cli/hooks">CLI 参考：hooks</a></li>
+<li><a href="cli/hooks.html">CLI 参考：hooks</a></li>
 <li><a href="https://github.com/openclaw/openclaw/tree/main/src/hooks/bundled">捆绑钩子 README</a></li>
-<li><a href="/automation/webhook">Webhook 钩子</a></li>
-<li><a href="/gateway/configuration#hooks">配置</a></li>
+<li><a href="automation/webhook.html">Webhook 钩子</a></li>
+<li><a href="gateway/configuration#hooks.html">配置</a></li>
 </ul>
 
         </div>

@@ -122,8 +122,8 @@
         <div class="content">
             <h1>节点</h1>
 <h1>节点</h1>
-<p><strong>节点</strong> 是连接到 Gateway <strong>WebSocket</strong>（与操作员相同端口）的配套设备（macOS/iOS/Android/无头），带有 <code>role: &quot;node&quot;</code> 并通过 <code>node.invoke</code> 暴露命令表面（例如 <code>canvas.*</code>、<code>camera.*</code>、<code>system.*</code>）。协议详情：<a href="/gateway/protocol">Gateway 协议</a>。</p>
-<p>遗留传输：<a href="/gateway/bridge-protocol">桥接协议</a>（TCP JSONL；当前节点已弃用/移除）。</p>
+<p><strong>节点</strong> 是连接到 Gateway <strong>WebSocket</strong>（与操作员相同端口）的配套设备（macOS/iOS/Android/无头），带有 <code>role: &quot;node&quot;</code> 并通过 <code>node.invoke</code> 暴露命令表面（例如 <code>canvas.*</code>、<code>camera.*</code>、<code>system.*</code>）。协议详情：[Gateway 协议(../gateway/protocol.html)。</p>
+<p>遗留传输：[桥接协议(../gateway/bridge-protocol.html)（TCP JSONL；当前节点已弃用/移除）。</p>
 <p>macOS 也可以运行在 <strong>节点模式</strong>：菜单栏应用连接到 Gateway 的 WS 服务器并将其本地 Canvas/相机命令作为节点暴露（因此 <code>openclaw nodes …</code> 可以针对此 Mac 工作）。</p>
 <p>说明：</p>
 <ul>
@@ -189,9 +189,9 @@ openclaw config set tools.exec.node &quot;&lt;id-or-name&gt;&quot;
 <p>设置后，任何带有 <code>host=node</code> 的 <code>exec</code> 调用在节点主机上运行（受节点允许列表/批准约束）。</p>
 <p>相关：</p>
 <ul>
-<li><a href="/cli/node">节点主机 CLI</a></li>
-<li><a href="/tools/exec">Exec 工具</a></li>
-<li><a href="/tools/exec-approvals">Exec 批准</a></li>
+<li>[节点主机 CLI(../cli/node.html)</li>
+<li>[Exec 工具(../tools/exec.html)</li>
+<li>[Exec 批准(../tools/exec-approvals.html)</li>
 </ul>
 <h2>调用命令</h2>
 <p>低级（原始 RPC）：</p>
@@ -315,7 +315,7 @@ openclaw config unset agents.list[0].tools.exec.node
 <ul>
 <li>仍然需要配对（Gateway 会显示节点批准提示）。</li>
 <li>节点主机将其节点 ID、令牌、显示名称和 Gateway 连接信息存储在 <code>~/.openclaw/node.json</code> 中。</li>
-<li>Exec 批准通过 <code>~/.openclaw/exec-approvals.json</code> 在本地强制执行<br>（参见 <a href="/tools/exec-approvals">Exec 批准</a>）。</li>
+<li>Exec 批准通过 <code>~/.openclaw/exec-approvals.json</code> 在本地强制执行<br>（参见 [Exec 批准(../tools/exec-approvals.html)）。</li>
 <li>在 macOS 上，无头节点主机在可到达时优先使用配套应用 exec 主机，如果应用不可用则回退到本地执行。设置 <code>OPENCLAW_NODE_EXEC_HOST=app</code> 要求使用应用，或 <code>OPENCLAW_NODE_EXEC_FALLBACK=0</code> 禁用回退。</li>
 <li>当 Gateway WS 使用 TLS 时添加 <code>--tls</code> / <code>--tls-fingerprint</code>。</li>
 </ul>

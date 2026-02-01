@@ -7,7 +7,7 @@ read_when:
 ---
 # 定时任务 (Gateway 调度器)
 
-> **Cron 还是 Heartbeat？** 不确定用哪个？看看 [Cron vs Heartbeat](/automation/cron-vs-heartbeat) 了解如何选择。
+> **Cron 还是 Heartbeat？** 不确定用哪个？看看 [Cron vs Heartbeat(../automation/cron-vs-heartbeat.html) 了解如何选择。
 
 Cron 是 Gateway 内置的调度器。它会持久化存储任务，在正确的时间唤醒 Agent，还可以选择将输出返回到聊天中。
 
@@ -68,7 +68,7 @@ Cron 表达式使用 `croner`。如果省略时区，使用 Gateway 主机的本
 - `wakeMode: "now"`：事件触发立即的 Heartbeat。
 
 这是最适合使用正常 Heartbeat 提示 + 主会话上下文的场景。
-参见 [Heartbeat](/gateway/heartbeat)。
+参见 [Heartbeat(../gateway/heartbeat.html)。
 
 #### 独立任务（专门的 Cron 会话）
 独立任务在会话 `cron:<jobId>` 中运行一个专门的 Agent 轮次。
@@ -259,7 +259,7 @@ openclaw system event --mode now --text "下次 Heartbeat：检查电池。"
 ## Gateway API 接口
 - `cron.list`, `cron.status`, `cron.add`, `cron.update`, `cron.remove`
 - `cron.run`（强制或到期运行）, `cron.runs`
-对于无需任务的立即系统事件，使用 [`openclaw system event`](/cli/system)。
+对于无需任务的立即系统事件，使用 [`openclaw system event`(../cli/system.html)。
 
 ## 故障排查
 

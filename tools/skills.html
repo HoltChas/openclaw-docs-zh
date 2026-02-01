@@ -142,9 +142,9 @@
 </ul>
 <p>如果同一名称的技能存在于多个地方，应用通常的优先级规则：工作区获胜，然后是托管/本地，最后是捆绑。</p>
 <h2>插件 + 技能</h2>
-<p>插件可以通过在 <code>openclaw.plugin.json</code> 中列出 <code>skills</code> 目录来提供自己的技能（路径相对于插件根）。插件技能在插件启用时加载，并参与正常的技能优先级规则。<br>你可以通过插件配置条目上的 <code>metadata.openclaw.requires.config</code> 来门控它们。参见 <a href="/plugin">插件</a> 了解发现/配置，参见 <a href="/tools">工具</a> 了解这些技能教的工具表面。</p>
+<p>插件可以通过在 <code>openclaw.plugin.json</code> 中列出 <code>skills</code> 目录来提供自己的技能（路径相对于插件根）。插件技能在插件启用时加载，并参与正常的技能优先级规则。<br>你可以通过插件配置条目上的 <code>metadata.openclaw.requires.config</code> 来门控它们。参见 <a href="../plugin.html">插件</a> 了解发现/配置，参见 <a href="/tools">工具</a> 了解这些技能教的工具表面。</p>
 <h2>ClawdHub（安装 + 同步）</h2>
-<p>ClawdHub 是 OpenClaw 的公共技能注册表。在 <a href="https://clawdhub.com">https://clawdhub.com</a> 浏览。用它来发现、安装、更新和备份技能。<br>完整指南：<a href="/tools/clawdhub">ClawdHub</a>。</p>
+<p>ClawdHub 是 OpenClaw 的公共技能注册表。在 <a href="https://clawdhub.com">https://clawdhub.com</a> 浏览。用它来发现、安装、更新和备份技能。<br>完整指南：[ClawdHub(../tools/clawdhub.html)。</p>
 <p>常见流程：</p>
 <ul>
 <li>安装技能到工作区：<ul>
@@ -164,9 +164,9 @@
 <h2>安全说明</h2>
 <ul>
 <li>将第三方技能视为 <strong>可信代码</strong>。启用前阅读它们。</li>
-<li>对不可信输入和风险工具优先使用沙盒运行。参见 <a href="/gateway/sandboxing">沙盒化</a>。</li>
+<li>对不可信输入和风险工具优先使用沙盒运行。参见 [沙盒化(../gateway/sandboxing.html)。</li>
 <li><code>skills.entries.*.env</code> 和 <code>skills.entries.*.apiKey</code> 将 secrets 注入 <strong>主机</strong> 进程<br>用于该 Agent 轮次（非沙盒）。保持 secrets 不在提示和日志中。</li>
-<li>更广泛的威胁模型和检查表，参见 <a href="/gateway/security">安全</a>。</li>
+<li>更广泛的威胁模型和检查表，参见 [安全(../gateway/security.html)。</li>
 </ul>
 <h2>格式 (AgentSkills + Pi 兼容)</h2>
 <p><code>SKILL.md</code> 必须至少包含：</p>
@@ -316,7 +316,7 @@ metadata: {&quot;openclaw&quot;:{&quot;emoji&quot;:&quot;♊️&quot;,&quot;requ
 <h2>托管技能生命周期</h2>
 <p>OpenClaw 将一组基线技能作为 <strong>捆绑技能</strong> 随安装一起发布（npm 包或 OpenClaw.app）。<code>~/.openclaw/skills</code> 存在用于本地覆盖（例如，固定/修补技能而不更改捆绑副本）。工作区技能是用户拥有的，在名称冲突时覆盖两者。</p>
 <h2>配置参考</h2>
-<p>参见 <a href="/tools/skills-config">技能配置</a> 了解完整配置模式。</p>
+<p>参见 [技能配置(../tools/skills-config.html) 了解完整配置模式。</p>
 <h2>寻找更多技能？</h2>
 <p>浏览 <a href="https://clawdhub.com%E3%80%82">https://clawdhub.com。</a></p>
 

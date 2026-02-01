@@ -188,7 +188,7 @@
 <li><code>/config show|get|set|unset</code>（持久化配置到磁盘，仅所有者；需要 <code>commands.config: true</code>）</li>
 <li><code>/debug show|set|unset|reset</code>（运行时覆盖，仅所有者；需要 <code>commands.debug: true</code>）</li>
 <li><code>/usage off|tokens|full|cost</code>（每响应使用页脚或本地成本摘要）</li>
-<li><code>/tts off|always|inbound|tagged|status|provider|limit|summary|audio</code>（控制 TTS；参见 <a href="/tts">/tts</a>）<ul>
+<li><code>/tts off|always|inbound|tagged|status|provider|limit|summary|audio</code>（控制 TTS；参见 <a href="../tts.html">/tts</a>）<ul>
 <li>Discord：原生命令是 <code>/voice</code>（Discord 保留 <code>/tts</code>）；文本 <code>/tts</code> 仍然有效。</li>
 </ul>
 </li>
@@ -211,7 +211,7 @@
 </ul>
 <p>仅文本：</p>
 <ul>
-<li><code>/compact [instructions]</code>（参见 <a href="/concepts/compaction">/concepts/compaction</a>）</li>
+<li><code>/compact [instructions]</code>（参见 [/concepts/compaction(../concepts/compaction.html)）</li>
 <li><code>! &lt;command&gt;</code>（仅主机；一次一个；长时间运行作业使用 <code>!poll</code> + <code>!stop</code>）</li>
 <li><code>!poll</code>（检查输出/状态；接受可选 <code>sessionId</code>；<code>/bash poll</code> 也有效）</li>
 <li><code>!stop</code>（停止正在运行的 Bash 作业；接受可选 <code>sessionId</code>；<code>/bash stop</code> 也有效）</li>
@@ -238,7 +238,7 @@
 <li><code>/skill &lt;name&gt; [input]</code> 按名称运行技能（当原生命令限制阻止每个技能命令时有用）。</li>
 <li>默认情况下，技能命令作为正常请求转发给模型。</li>
 <li>技能可以可选声明 <code>command-dispatch: tool</code> 直接将命令路由到工具（确定性，无模型）。</li>
-<li>示例：<code>/prose</code>（OpenProse 插件）— 参见 <a href="/prose">OpenProse</a>。</li>
+<li>示例：<code>/prose</code>（OpenProse 插件）— 参见 <a href="../prose.html">OpenProse</a>。</li>
 </ul>
 </li>
 <li><strong>原生命令参数</strong>：Discord 对动态选项使用自动完成（当你省略必需参数时使用按钮菜单）。Telegram 和 Slack 在命令支持选项且你省略参数时显示按钮菜单。</li>

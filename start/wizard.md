@@ -18,7 +18,7 @@ openclaw onboard
 ```
 
 最快的首次聊天：打开 Control UI（无需设置频道）。运行
-`openclaw dashboard` 然后在浏览器中聊天。文档：[Dashboard](/web/dashboard)。
+`openclaw dashboard` 然后在浏览器中聊天。文档：[Dashboard](../web/dashboard.html)。
 
 后续重新配置：
 
@@ -29,7 +29,7 @@ openclaw configure
 
 推荐：设置 Brave Search API 密钥，让 Agent 可以使用 `web_search`
 （`web_fetch` 无需密钥即可工作）。最简单的方式：`openclaw configure --section web`
-它会存储 `tools.web.search.apiKey`。文档：[Web 工具](/tools/web)。
+它会存储 `tools.web.search.apiKey`。文档：[Web 工具](../tools/web.html)。
 
 ## 快速开始 vs 高级设置
 
@@ -92,24 +92,24 @@ openclaw agents add <name>
    - **OpenCode Zen（多模型代理）**：提示输入 `OPENCODE_API_KEY`（或 `OPENCODE_ZEN_API_KEY`，在 https://opencode.ai/auth 获取）。
    - **API key**：为你存储密钥。
    - **Vercel AI Gateway（多模型代理）**：提示输入 `AI_GATEWAY_API_KEY`。
-   - 更多详情：[Vercel AI Gateway](/providers/vercel-ai-gateway)
+   - 更多详情：[Vercel AI Gateway](../providers/vercel-ai-gateway.html)
    - **MiniMax M2.1**：配置自动写入。
-   - 更多详情：[MiniMax](/providers/minimax)
+   - 更多详情：[MiniMax](../providers/minimax.html)
    - **Synthetic（Anthropic 兼容）**：提示输入 `SYNTHETIC_API_KEY`。
-   - 更多详情：[Synthetic](/providers/synthetic)
+   - 更多详情：[Synthetic](../providers/synthetic.html)
    - **Moonshot (Kimi K2)**：配置自动写入。
    - **Kimi Code**：配置自动写入。
-   - 更多详情：[Moonshot AI (Kimi + Kimi Code)](/providers/moonshot)
+   - 更多详情：[Moonshot AI (Kimi + Kimi Code)](../providers/moonshot.html)
    - **跳过**：尚未配置认证。
    - 从检测到的选项中选择默认模型（或手动输入 provider/model）。
    - 向导运行模型检查，如果配置的模型未知或缺少认证会警告。
   - OAuth 凭据存储在 `~/.openclaw/credentials/oauth.json`；认证配置存储在 `~/.openclaw/agents/<agentId>/agent/auth-profiles.json`（API 密钥 + OAuth）。
-   - 更多详情：[/concepts/oauth](/concepts/oauth)
+   - 更多详情：[/concepts/oauth](../concepts/oauth.html)
 
 3) **工作空间**
    - 默认 `~/.openclaw/workspace`（可配置）。
    - 植入 Agent 引导仪式所需的文件。
-   - 完整的工作空间布局 + 备份指南：[Agent 工作空间](/concepts/agent-workspace)
+   - 完整的工作空间布局 + 备份指南：[Agent 工作空间](../concepts/agent-workspace.html)
 
 4) **Gateway**
    - 端口、绑定、认证模式、tailscale 暴露。
@@ -317,6 +317,6 @@ WhatsApp 凭据存储在 `~/.openclaw/credentials/whatsapp/<accountId>/`。
 ## 相关文档
 
 - macOS 应用配置：[配置](./onboarding.html)
-- 配置参考：[Gateway 配置](/gateway/configuration)
-- Provider：[WhatsApp](/channels/whatsapp)、[Telegram](/channels/telegram)、[Discord](/channels/discord)、[Google Chat](/channels/googlechat)、[Signal](/channels/signal)、[iMessage](/channels/imessage)
-- Skills：[Skills](/tools/skills)、[Skills 配置](/tools/skills-config)
+- 配置参考：[Gateway 配置](../gateway/configuration.html)
+- Provider：[WhatsApp](../channels/whatsapp.html)、[Telegram](../channels/telegram.html)、[Discord](../channels/discord.html)、[Google Chat](../channels/googlechat.html)、[Signal](../channels/signal.html)、[iMessage](../channels/imessage.html)
+- Skills：[Skills](../tools/skills.html)、[Skills 配置](../tools/skills-config.html)

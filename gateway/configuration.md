@@ -15,7 +15,7 @@ OpenClaw 从 `~/.openclaw/openclaw.json` 读取可选的 **JSON5** 配置（允�
 - 调整嵌入式 Agent 默认值（`agents.defaults`）和会话行为（`session`）
 - 设置每 Agent 身份（`agents.list[].identity`）
 
-> **刚接触配置？** 查看 [配置示例](/gateway/configuration-examples) 指南获取完整示例和详细说明！
+> **刚接触配置？** 查看 [配置示例(../gateway/configuration-examples.html) 指南获取完整示例和详细说明！
 
 ## 严格配置验证
 

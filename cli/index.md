@@ -11,45 +11,45 @@ read_when:
 
 ## 命令页面
 
-- [`setup`](/cli/setup) — 初始化配置
-- [`onboard`](/cli/onboard) — 引导式设置向导
-- [`configure`](/cli/configure) — 交互式配置
-- [`config`](/cli/config) — 非交互式配置管理
-- [`doctor`](/cli/doctor) — 健康检查与修复
-- [`dashboard`](/cli/dashboard) — 打开控制台
-- [`reset`](/cli/reset) — 重置本地状态
-- [`uninstall`](/cli/uninstall) — 卸载服务
-- [`update`](/cli/update) — 更新 OpenClaw
-- [`message`](/cli/message) — 统一的消息发送与频道操作
-- [`agent`](/cli/agent) — 运行单次 Agent 对话
-- [`agents`](/cli/agents) — 管理隔离的 Agent
-- [`acp`](/cli/acp) — 运行 ACP 桥接
-- [`status`](/cli/status) — 显示会话健康状态
-- [`health`](/cli/health) — 获取 Gateway 健康状态
-- [`sessions`](/cli/sessions) — 列出存储的会话
-- [`gateway`](/cli/gateway) — 管理 Gateway 服务
-- [`logs`](/cli/logs) — 查看 Gateway 日志
-- [`system`](/cli/system) — 系统事件与心跳
-- [`models`](/cli/models) — 模型管理
-- [`memory`](/cli/memory) — 向量搜索记忆
-- [`nodes`](/cli/nodes) — 管理节点
-- [`devices`](/cli/devices) — 设备管理
-- [`node`](/cli/node) — 节点主机管理
-- [`approvals`](/cli/approvals) — 管理审批
-- [`sandbox`](/cli/sandbox) — 沙盒管理
-- [`tui`](/cli/tui) — 终端 UI
-- [`browser`](/cli/browser) — 浏览器控制
-- [`cron`](/cli/cron) — 定时任务
-- [`dns`](/cli/dns) — DNS 配置
-- [`docs`](/cli/docs) — 文档搜索
-- [`hooks`](/cli/hooks) — 钩子管理
-- [`webhooks`](/cli/webhooks) — Webhook 管理
-- [`pairing`](/cli/pairing) — 配对管理
-- [`plugins`](/cli/plugins) — 插件管理
-- [`channels`](/cli/channels) — 频道管理
-- [`security`](/cli/security) — 安全审计
-- [`skills`](/cli/skills) — 技能管理
-- [`voicecall`](/cli/voicecall) — 语音通话（需安装插件）
+- [`setup`(../cli/setup.html) — 初始化配置
+- [`onboard`(../cli/onboard.html) — 引导式设置向导
+- [`configure`(../cli/configure.html) — 交互式配置
+- [`config`(../cli/config.html) — 非交互式配置管理
+- [`doctor`(../cli/doctor.html) — 健康检查与修复
+- [`dashboard`(../cli/dashboard.html) — 打开控制台
+- [`reset`(../cli/reset.html) — 重置本地状态
+- [`uninstall`(../cli/uninstall.html) — 卸载服务
+- [`update`(../cli/update.html) — 更新 OpenClaw
+- [`message`(../cli/message.html) — 统一的消息发送与频道操作
+- [`agent`(../cli/agent.html) — 运行单次 Agent 对话
+- [`agents`(../cli/agents.html) — 管理隔离的 Agent
+- [`acp`(../cli/acp.html) — 运行 ACP 桥接
+- [`status`(../cli/status.html) — 显示会话健康状态
+- [`health`(../cli/health.html) — 获取 Gateway 健康状态
+- [`sessions`(../cli/sessions.html) — 列出存储的会话
+- [`gateway`(../cli/gateway.html) — 管理 Gateway 服务
+- [`logs`(../cli/logs.html) — 查看 Gateway 日志
+- [`system`(../cli/system.html) — 系统事件与心跳
+- [`models`(../cli/models.html) — 模型管理
+- [`memory`(../cli/memory.html) — 向量搜索记忆
+- [`nodes`(../cli/nodes.html) — 管理节点
+- [`devices`(../cli/devices.html) — 设备管理
+- [`node`(../cli/node.html) — 节点主机管理
+- [`approvals`(../cli/approvals.html) — 管理审批
+- [`sandbox`(../cli/sandbox.html) — 沙盒管理
+- [`tui`(../cli/tui.html) — 终端 UI
+- [`browser`(../cli/browser.html) — 浏览器控制
+- [`cron`(../cli/cron.html) — 定时任务
+- [`dns`(../cli/dns.html) — DNS 配置
+- [`docs`(../cli/docs.html) — 文档搜索
+- [`hooks`(../cli/hooks.html) — 钩子管理
+- [`webhooks`(../cli/webhooks.html) — Webhook 管理
+- [`pairing`(../cli/pairing.html) — 配对管理
+- [`plugins`(../cli/plugins.html) — 插件管理
+- [`channels`(../cli/channels.html) — 频道管理
+- [`security`(../cli/security.html) — 安全审计
+- [`skills`(../cli/skills.html) — 技能管理
+- [`voicecall`(../cli/voicecall.html) — 语音通话（需安装插件）
 
 ## 全局标志
 
@@ -253,7 +253,7 @@ openclaw [--dev] [--profile <name>] <command>
 - `openclaw plugins enable <id>` / `disable <id>` — 切换 `plugins.entries.<id>.enabled`
 - `openclaw plugins doctor` — 报告插件加载错误
 
-大多数插件更改需要重启 Gateway。详见 [/plugin](/plugin)。
+大多数插件更改需要重启 Gateway。详见 [/plugin](../plugin.html)。
 
 ## 记忆（Memory）
 
@@ -265,7 +265,7 @@ openclaw [--dev] [--profile <name>] <command>
 
 ## 聊天斜杠命令
 
-聊天消息支持 `/...` 命令（文本和原生）。详见 [/tools/slash-commands](/tools/slash-commands)。
+聊天消息支持 `/...` 命令（文本和原生）。详见 [/tools/slash-commands(../tools/slash-commands.html)。
 
 亮点：
 - `/status` 快速诊断
@@ -388,7 +388,7 @@ openclaw [--dev] [--profile <name>] <command>
 - `--lines <n>`（默认 `200`）
 - `--json`
 
-更多详情：[/concepts/oauth](/concepts/oauth)
+更多详情：[/concepts/oauth(../concepts/oauth.html)
 
 示例：
 ```bash
@@ -429,14 +429,14 @@ openclaw status --deep
 - `pairing approve <channel> <code> [--notify]`
 
 ### `webhooks gmail`
-Gmail Pub/Sub 钩子设置 + 运行器。详见 [/automation/gmail-pubsub](/automation/gmail-pubsub)。
+Gmail Pub/Sub 钩子设置 + 运行器。详见 [/automation/gmail-pubsub(../automation/gmail-pubsub.html)。
 
 子命令：
 - `webhooks gmail setup`（需要 `--account <email>`；支持 `--project`, `--topic`, `--subscription`, `--label`, `--hook-url`, `--hook-token`, `--push-token`, `--bind`, `--port`, `--path`, `--include-body`, `--max-bytes`, `--renew-minutes`, `--tailscale`, `--tailscale-path`, `--tailscale-target`, `--push-endpoint`, `--json`）
 - `webhooks gmail run`（相同标志的运行时覆盖）
 
 ### `dns setup`
-广域发现 DNS 助手（CoreDNS + Tailscale）。详见 [/gateway/discovery](/gateway/discovery)。
+广域发现 DNS 助手（CoreDNS + Tailscale）。详见 [/gateway/discovery(../gateway/discovery.html)。
 
 选项：
 - `--apply`: 安装/更新 CoreDNS 配置（需要 sudo；仅 macOS）
@@ -446,7 +446,7 @@ Gmail Pub/Sub 钩子设置 + 运行器。详见 [/automation/gmail-pubsub](/auto
 ### `message`
 统一出站消息 + 频道操作。
 
-详见：[/cli/message](/cli/message)
+详见：[/cli/message(../cli/message.html)
 
 子命令：
 - `message send|poll|react|reactions|read|edit|delete|pin|unpin|pins|permissions|search|timeout|kick|ban`
@@ -518,7 +518,7 @@ openclaw message poll --channel discord --target channel:123 --poll-question "Sn
 ### `acp`
 运行连接 IDE 到 Gateway 的 ACP 桥接。
 
-详见 [`acp`](/cli/acp) 获取完整选项和示例。
+详见 [`acp`(../cli/acp.html) 获取完整选项和示例。
 
 ### `status`
 显示链接的会话健康和最近收件人。
@@ -547,7 +547,7 @@ OpenClaw 可以在 OAuth/API 凭证可用时显示提供者使用/配额。
 - 数据直接来自提供者使用端点（无估算）
 - 提供者：Anthropic、GitHub Copilot、OpenAI Codex OAuth，以及启用了相应提供者插件时的 Gemini CLI/Antigravity
 - 如果没有匹配的凭证，使用信息隐藏
-- 详情：参见 [使用跟踪](/concepts/usage-tracking)
+- 详情：参见 [使用跟踪(../concepts/usage-tracking.html)
 
 ### `health`
 从运行的 Gateway 获取健康状态。
@@ -677,7 +677,7 @@ Gateway CLI 助手（RPC 子命令使用 `--url`, `--token`, `--password`, `--ti
 
 ## 模型
 
-详见 [/concepts/models](/concepts/models) 了解回退行为和扫描策略。
+详见 [/concepts/models(../concepts/models.html) 了解回退行为和扫描策略。
 
 首选 Anthropic 认证（setup-token）：
 
@@ -799,7 +799,7 @@ openclaw models status
 
 ## Cron 定时任务
 
-管理计划任务（Gateway RPC）。详见 [/automation/cron-jobs](/automation/cron-jobs)。
+管理计划任务（Gateway RPC）。详见 [/automation/cron-jobs(../automation/cron-jobs.html)。
 
 子命令：
 - `cron status [--json]`
@@ -816,7 +816,7 @@ openclaw models status
 
 ## 节点主机
 
-`node` 运行**无头节点主机**或将其作为后台服务管理。详见 [`openclaw node`](/cli/node)。
+`node` 运行**无头节点主机**或将其作为后台服务管理。详见 [`openclaw node`(../cli/node.html)。
 
 子命令：
 - `node run --host <gateway-host> --port 18789`
@@ -828,7 +828,7 @@ openclaw models status
 
 ## 节点
 
-`nodes` 与 Gateway 通信并定位配对节点。详见 [/nodes](/nodes)。
+`nodes` 与 Gateway 通信并定位配对节点。详见 [/nodes](../nodes/index.html)。
 
 常用选项：
 - `--url`, `--token`, `--timeout`, `--json`
@@ -865,7 +865,7 @@ openclaw models status
 
 ## 浏览器
 
-浏览器控制 CLI（专用 Chrome/Brave/Edge/Chromium）。详见 [`openclaw browser`](/cli/browser) 和 [Browser 工具](/tools/browser)。
+浏览器控制 CLI（专用 Chrome/Brave/Edge/Chromium）。详见 [`openclaw browser`(../cli/browser.html) 和 [Browser 工具(../tools/browser.html)。
 
 常用选项：
 - `--url`, `--token`, `--timeout`, `--json`

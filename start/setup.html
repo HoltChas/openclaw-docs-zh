@@ -133,7 +133,7 @@
 <ul>
 <li>Node <code>&gt;=22</code></li>
 <li><code>pnpm</code></li>
-<li>Docker（可选；仅用于容器化设置/e2e —— 参见 <a href="/install/docker">Docker</a>）</li>
+<li>Docker（可选；仅用于容器化设置/e2e —— 参见 <a href="../install/docker.html">Docker</a>）</li>
 </ul>
 <h2>个性化策略（这样更新不会伤害你）</h2>
 <p>如果你想要&quot;100% 个性化&quot;<em>并且</em>轻松更新，将你的自定义放在：</p>
@@ -214,7 +214,7 @@ pnpm gateway:watch
 <li><strong>Slack tokens</strong>：配置/env (<code>channels.slack.*</code>)</li>
 <li><strong>配对白名单</strong>：<code>~/.openclaw/credentials/&lt;channel&gt;-allowFrom.json</code></li>
 <li><strong>模型认证配置</strong>：<code>~/.openclaw/agents/&lt;agentId&gt;/agent/auth-profiles.json</code></li>
-<li><strong>旧版 OAuth 导入</strong>：<code>~/.openclaw/credentials/oauth.json</code><br>更多详情：<a href="/gateway/security#credential-storage-map">安全</a>。</li>
+<li><strong>旧版 OAuth 导入</strong>：<code>~/.openclaw/credentials/oauth.json</code><br>更多详情：<a href="../gateway/security#credential-storage-map.html">安全</a>。</li>
 </ul>
 <h2>更新（不破坏你的设置）</h2>
 <ul>
@@ -226,14 +226,14 @@ pnpm gateway:watch
 <pre><code class="language-bash"># 为用户启用持久化，这样服务在登出后继续运行
 sudo loginctl enable-linger $USER
 </code></pre>
-<p>对于始终在线或多用户服务器，考虑使用<strong>系统</strong>服务而不是<br>用户服务（不需要持久化）。参见 <a href="/gateway">Gateway 手册</a> 了解 systemd 说明。</p>
+<p>对于始终在线或多用户服务器，考虑使用<strong>系统</strong>服务而不是<br>用户服务（不需要持久化）。参见 <a href="../gateway/index.html">Gateway 手册</a> 了解 systemd 说明。</p>
 <h2>相关文档</h2>
 <ul>
-<li><a href="/gateway">Gateway 手册</a>（标志、监督、端口）</li>
-<li><a href="/gateway/configuration">Gateway 配置</a>（配置模式 + 示例）</li>
-<li><a href="/channels/discord">Discord</a> 和 <a href="/channels/telegram">Telegram</a>（回复标签 + replyToMode 设置）</li>
-<li><a href="/start/openclaw">OpenClaw 助手设置</a></li>
-<li><a href="/platforms/macos">macOS 应用</a>（Gateway 生命周期）</li>
+<li><a href="../gateway/index.html">Gateway 手册</a>（标志、监督、端口）</li>
+<li><a href="../gateway/configuration.html">Gateway 配置</a>（配置模式 + 示例）</li>
+<li><a href="../channels/discord.html">Discord</a> 和 <a href="../channels/telegram.html">Telegram</a>（回复标签 + replyToMode 设置）</li>
+<li><a href="../start/openclaw.html">OpenClaw 助手设置</a></li>
+<li><a href="../platforms/macos.html">macOS 应用</a>（Gateway 生命周期）</li>
 </ul>
 
         </div>

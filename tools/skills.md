@@ -35,12 +35,12 @@ OpenClaw 使用 **[AgentSkills](https://agentskills.io) 兼容**的技能文件�
 ## 插件 + 技能
 
 插件可以通过在 `openclaw.plugin.json` 中列出 `skills` 目录来提供自己的技能（路径相对于插件根）。插件技能在插件启用时加载，并参与正常的技能优先级规则。
-你可以通过插件配置条目上的 `metadata.openclaw.requires.config` 来门控它们。参见 [插件](/plugin) 了解发现/配置，参见 [工具](/tools) 了解这些技能教的工具表面。
+你可以通过插件配置条目上的 `metadata.openclaw.requires.config` 来门控它们。参见 [插件](../plugin.html) 了解发现/配置，参见 [工具](/tools) 了解这些技能教的工具表面。
 
 ## ClawdHub（安装 + 同步）
 
 ClawdHub 是 OpenClaw 的公共技能注册表。在 https://clawdhub.com 浏览。用它来发现、安装、更新和备份技能。
-完整指南：[ClawdHub](/tools/clawdhub)。
+完整指南：[ClawdHub(../tools/clawdhub.html)。
 
 常见流程：
 
@@ -56,10 +56,10 @@ ClawdHub 是 OpenClaw 的公共技能注册表。在 https://clawdhub.com 浏览
 ## 安全说明
 
 - 将第三方技能视为 **可信代码**。启用前阅读它们。
-- 对不可信输入和风险工具优先使用沙盒运行。参见 [沙盒化](/gateway/sandboxing)。
+- 对不可信输入和风险工具优先使用沙盒运行。参见 [沙盒化(../gateway/sandboxing.html)。
 - `skills.entries.*.env` 和 `skills.entries.*.apiKey` 将 secrets 注入 **主机** 进程
   用于该 Agent 轮次（非沙盒）。保持 secrets 不在提示和日志中。
-- 更广泛的威胁模型和检查表，参见 [安全](/gateway/security)。
+- 更广泛的威胁模型和检查表，参见 [安全(../gateway/security.html)。
 
 ## 格式 (AgentSkills + Pi 兼容)
 
@@ -241,7 +241,7 @@ OpenClaw 将一组基线技能作为 **捆绑技能** 随安装一起发布（np
 
 ## 配置参考
 
-参见 [技能配置](/tools/skills-config) 了解完整配置模式。
+参见 [技能配置(../tools/skills-config.html) 了解完整配置模式。
 
 ## 寻找更多技能？
 

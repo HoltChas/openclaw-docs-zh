@@ -172,13 +172,13 @@ swift run openclaw-mac discover --timeout 3000 --json
 - **SSH 形状：** `ssh -N -L <local>:127.0.0.1:<remote>`，带有 BatchMode +
   ExitOnForwardFailure + keepalive 选项。
 - **IP 报告：** SSH 隧道使用环回，因此 Gateway 会将节点 IP 视为 `127.0.0.1`。如果你希望显示真实客户端 IP，使用 **直接（ws/wss）** 传输
-  （参见 [macOS 远程访问](/platforms/mac/remote)）。
+  （参见 [macOS 远程访问(../platforms/mac/remote.html)）。
 
-设置步骤，参见 [macOS 远程访问](/platforms/mac/remote)。协议详情，参见 [Gateway 协议](/gateway/protocol)。
+设置步骤，参见 [macOS 远程访问(../platforms/mac/remote.html)。协议详情，参见 [Gateway 协议(../gateway/protocol.html)。
 
 ## 相关文档
 
-- [Gateway 运行手册](/gateway)
-- [Gateway（macOS）](/platforms/mac/bundled-gateway)
-- [macOS 权限](/platforms/mac/permissions)
-- [Canvas](/platforms/mac/canvas)
+- [Gateway 运行手册](../gateway/index.html)
+- [Gateway（macOS）(../platforms/mac/bundled-gateway.html)
+- [macOS 权限(../platforms/mac/permissions.html)
+- [Canvas(../platforms/mac/canvas.html)

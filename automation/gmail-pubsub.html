@@ -127,7 +127,7 @@
 <ul>
 <li>已安装并登录 <code>gcloud</code>（<a href="https://docs.cloud.google.com/sdk/docs/install-sdk">安装指南</a>）。</li>
 <li>已安装并授权 <code>gog</code>（gogcli）用于 Gmail 账户（<a href="https://gogcli.sh/">gogcli.sh</a>）。</li>
-<li>OpenClaw Hooks 已启用（参见 <a href="/automation/webhook">Webhooks</a>）。</li>
+<li>OpenClaw Hooks 已启用（参见 [Webhooks(../automation/webhook.html)）。</li>
 <li>已登录 <code>tailscale</code>（<a href="https://tailscale.com/">tailscale.com</a>）。支持的设置使用 Tailscale Funnel 作为公共 HTTPS 端点。<br>其他隧道服务也可以工作，但需要 DIY/不支持，需要手动接线。<br>目前，Tailscale 是我们支持的。</li>
 </ul>
 <p>示例 Hook 配置（启用 Gmail 预设映射）：</p>
@@ -183,7 +183,7 @@
 <li>如果设置了 <code>agents.defaults.models</code>，Gmail 模型必须在允许列表中。</li>
 <li>Gmail Hook 内容默认用外部内容安全边界包装。<br>要禁用（危险），设置 <code>hooks.gmail.allowUnsafeExternalContent: true</code>。</li>
 </ul>
-<p>要进一步自定义负载处理，添加 <code>hooks.mappings</code> 或 <code>hooks.transformsDir</code> 下的 JS/TS 转换模块<br>（参见 <a href="/automation/webhook">Webhooks</a>）。</p>
+<p>要进一步自定义负载处理，添加 <code>hooks.mappings</code> 或 <code>hooks.transformsDir</code> 下的 JS/TS 转换模块<br>（参见 [Webhooks(../automation/webhook.html)）。</p>
 <h2>向导（推荐）</h2>
 <p>使用 OpenClaw 助手将所有内容连接在一起（在 macOS 上通过 brew 安装依赖）：</p>
 <pre><code class="language-bash">openclaw webhooks gmail setup \

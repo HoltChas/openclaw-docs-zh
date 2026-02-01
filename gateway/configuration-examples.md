@@ -7,7 +7,7 @@ read_when:
 ---
 # 配置示例
 
-下面的示例与当前配置模式一致。对于详尽参考和每个字段的说明，参见 [配置](/gateway/configuration)。
+下面的示例与当前配置模式一致。对于详尽参考和每个字段的说明，参见 [配置(../gateway/configuration.html)。
 
 ## 快速开始
 

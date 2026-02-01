@@ -14,9 +14,9 @@ read_when:
 钩子是当某些事情发生时运行的小脚本。有两种：
 
 - **钩子**（本页）：当 Agent 事件触发时在 Gateway 内部运行，如 `/new`、`/reset`、`/stop` 或生命周期事件。
-- **Webhooks**：让其他系统触发 OpenClaw 工作的外部 HTTP webhook。参见 [Webhook 钩子](/automation/webhook) 或使用 `openclaw webhooks` 获取 Gmail 助手命令。
+- **Webhooks**：让其他系统触发 OpenClaw 工作的外部 HTTP webhook。参见 [Webhook 钩子](automation/webhook.html) 或使用 `openclaw webhooks` 获取 Gmail 助手命令。
   
-钩子也可以捆绑在插件内；参见 [插件](/plugin#plugin-hooks)。
+钩子也可以捆绑在插件内；参见 [插件](plugin.html)。
 
 常见用途：
 - 重置会话时保存记忆快照
@@ -239,7 +239,7 @@ Gateway 启动时触发：
 
 这些钩子不是事件流监听器；它们让插件在 OpenClaw 持久化之前同步调整工具结果。
 
-- **`tool_result_persist`**：转换工具结果，在写入会话记录之前。必须是同步的；返回更新的工具结果负载或 `undefined` 保持不变。参见 [Agent 循环](/concepts/agent-loop)。
+- **`tool_result_persist`**：转换工具结果，在写入会话记录之前。必须是同步的；返回更新的工具结果负载或 `undefined` 保持不变。参见 [Agent 循环](concepts/agent-loop.html)。
 
 ### 未来事件
 
@@ -525,7 +525,7 @@ openclaw hooks enable command-logger
 
 **事件**：`agent:bootstrap`
 
-**文档**：[SOUL Evil 钩子](/hooks/soul-evil)
+**文档**：[SOUL Evil 钩子](hooks/soul-evil.html)
 
 **输出**：不写入文件；交换只在内存中发生。
 
@@ -890,7 +890,7 @@ node -e "import('./path/to/handler.ts').then(console.log)"
 
 ## 另见
 
-- [CLI 参考：hooks](/cli/hooks)
+- [CLI 参考：hooks](cli/hooks.html)
 - [捆绑钩子 README](https://github.com/openclaw/openclaw/tree/main/src/hooks/bundled)
-- [Webhook 钩子](/automation/webhook)
-- [配置](/gateway/configuration#hooks)
+- [Webhook 钩子](automation/webhook.html)
+- [配置](gateway/configuration#hooks.html)

@@ -127,7 +127,7 @@
 <li><code>web_search</code> — 通过 Brave Search API（默认）或 Perplexity Sonar（直接或通过 OpenRouter）搜索网页。</li>
 <li><code>web_fetch</code> — HTTP 获取 + 可读提取（HTML → Markdown/文本）。</li>
 </ul>
-<p>这些 <strong>不是</strong> 浏览器自动化。对于 JS 密集型站点或登录，使用<br><a href="/tools/browser">浏览器工具</a>。</p>
+<p>这些 <strong>不是</strong> 浏览器自动化。对于 JS 密集型站点或登录，使用<br>[浏览器工具(../tools/browser.html)。</p>
 <h2>工作原理</h2>
 <ul>
 <li><code>web_search</code> 调用你配置的 Provider 并返回结果。<ul>
@@ -162,7 +162,7 @@
 <td><code>OPENROUTER_API_KEY</code> 或 <code>PERPLEXITY_API_KEY</code></td>
 </tr>
 </tbody></table>
-<p>参见 <a href="/brave-search">Brave Search 设置</a> 和 <a href="/perplexity">Perplexity Sonar</a> 了解 Provider 特定详情。</p>
+<p>参见 <a href="../brave-search.html">Brave Search 设置</a> 和 <a href="../perplexity.html">Perplexity Sonar</a> 了解 Provider 特定详情。</p>
 <p>在配置中设置 Provider：</p>
 <pre><code class="language-json5">{
   tools: {
@@ -199,7 +199,7 @@
 <p>Brave 提供免费层加付费计划；查看 Brave API 门户了解当前限制和定价。</p>
 <h3>在哪里设置密钥（推荐）</h3>
 <p><strong>推荐：</strong> 运行 <code>openclaw configure --section web</code>。它将密钥存储在<br><code>~/.openclaw/openclaw.json</code> 的 <code>tools.web.search.apiKey</code> 下。</p>
-<p><strong>环境替代方案：</strong> 在 Gateway 进程中设置 <code>BRAVE_API_KEY</code> 环境变量。<br>对于 Gateway 安装，将其放在 <code>~/.openclaw/.env</code>（或你的服务环境）中。参见 <a href="/help/faq#how-does-openclaw-load-environment-variables">环境变量</a>。</p>
+<p><strong>环境替代方案：</strong> 在 Gateway 进程中设置 <code>BRAVE_API_KEY</code> 环境变量。<br>对于 Gateway 安装，将其放在 <code>~/.openclaw/.env</code>（或你的服务环境）中。参见 <a href="../help.html">环境变量</a>。</p>
 <h2>使用 Perplexity（直接或通过 OpenRouter）</h2>
 <p>Perplexity Sonar 模型具有内置网页搜索功能，并返回带引用的 AI 合成答案。你可以通过 OpenRouter 使用它们（无需信用卡 - 支持加密/预付）。</p>
 <h3>获取 OpenRouter API 密钥</h3>
@@ -363,7 +363,7 @@ await web_search({
 <li><code>web_fetch</code> 默认发送类 Chrome User-Agent 和 <code>Accept-Language</code>；如果需要覆盖 <code>userAgent</code>。</li>
 <li><code>web_fetch</code> 阻止私有/内部主机名并重新检查重定向（用 <code>maxRedirects</code> 限制）。</li>
 <li><code>web_fetch</code> 是尽力提取；某些站点需要浏览器工具。</li>
-<li>参见 <a href="/tools/firecrawl">Firecrawl</a> 了解密钥设置和服务详情。</li>
+<li>参见 [Firecrawl(../tools/firecrawl.html) 了解密钥设置和服务详情。</li>
 <li>响应被缓存（默认 15 分钟）以减少重复获取。</li>
 <li>如果你使用工具配置文件/允许列表，添加 <code>web_search</code>/<code>web_fetch</code> 或 <code>group:web</code>。</li>
 <li>如果缺少 Brave 密钥，<code>web_search</code> 返回带有文档链接的简短设置提示。</li>

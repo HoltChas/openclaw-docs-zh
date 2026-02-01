@@ -129,11 +129,11 @@
 </ul>
 <p>关键参考：</p>
 <ul>
-<li><a href="/web/control-ui">Control UI</a> 了解使用和 UI 功能。</li>
-<li><a href="/gateway/tailscale">Tailscale</a> 了解 Serve/Funnel 自动化。</li>
-<li><a href="/web">Web 界面</a> 了解绑定模式和安全说明。</li>
+<li>[Control UI(../web/control-ui.html) 了解使用和 UI 功能。</li>
+<li>[Tailscale(../gateway/tailscale.html) 了解 Serve/Funnel 自动化。</li>
+<li><a href="../web/index.html">Web 界面</a> 了解绑定模式和安全说明。</li>
 </ul>
-<p>认证通过 <code>connect.params.auth</code>（token 或密码）在 WebSocket 握手时强制执行。参见 <code>gateway.auth</code> 在 <a href="/gateway/configuration">Gateway 配置</a>。</p>
+<p>认证通过 <code>connect.params.auth</code>（token 或密码）在 WebSocket 握手时强制执行。参见 <code>gateway.auth</code> 在 [Gateway 配置(../gateway/configuration.html)。</p>
 <p>安全注意：Control UI 是<strong>管理界面</strong>（聊天、配置、执行批准）。<br>不要公开暴露它。UI 在首次加载后将 token 存储在 <code>localStorage</code> 中。<br>优先选择 localhost、Tailscale Serve 或 SSH 隧道。</p>
 <h2>快速路径（推荐）</h2>
 <ul>
@@ -145,7 +145,7 @@
 <ul>
 <li><strong>本地主机</strong>：打开 <code>http://127.0.0.1:18789/</code>。如果你看到&quot;未授权&quot;，运行 <code>openclaw dashboard</code> 并使用带 token 的链接（<code>?token=...</code>）。</li>
 <li><strong>Token 来源</strong>：<code>gateway.auth.token</code>（或 <code>OPENCLAW_GATEWAY_TOKEN</code>）；UI 在首次加载后存储它。</li>
-<li><strong>非本地主机</strong>：使用 Tailscale Serve（如果 <code>gateway.auth.allowTailscale: true</code> 则无 token），带 token 的 tailnet 绑定，或 SSH 隧道。参见 <a href="/web">Web 界面</a>。</li>
+<li><strong>非本地主机</strong>：使用 Tailscale Serve（如果 <code>gateway.auth.allowTailscale: true</code> 则无 token），带 token 的 tailnet 绑定，或 SSH 隧道。参见 <a href="../web/index.html">Web 界面</a>。</li>
 </ul>
 <h2>如果你看到&quot;未授权&quot; / 1008</h2>
 <ul>

@@ -14,13 +14,13 @@ read_when:
 1) **私聊配对**（谁被允许与 Bot 对话）
 2) **节点配对**（哪些设备/节点被允许加入 Gateway 网络）
 
-安全上下文：[安全](/gateway/security)
+安全上下文：[安全](../gateway/security.html)
 
 ## 1) 私聊配对（入站聊天访问）
 
 当频道配置为私聊策略 `pairing` 时，未知发送者会收到一个短码，他们的消息**不会被处理**，直到你批准。
 
-默认私聊策略文档在：[安全](/gateway/security)
+默认私聊策略文档在：[安全](../gateway/security.html)
 
 配对码：
 - 8 个字符，大写，无歧义字符（`0O1I`）。
@@ -77,12 +77,12 @@ openclaw devices reject <requestId>
 
 ## 相关文档
 
-- 安全模型 + 提示注入：[安全](/gateway/security)
-- 安全更新（运行 doctor）：[更新](/install/updating)
+- 安全模型 + 提示注入：[安全](../gateway/security.html)
+- 安全更新（运行 doctor）：[更新](../install/updating.html)
 - 频道配置：
-  - Telegram：[Telegram](/channels/telegram)
-  - WhatsApp：[WhatsApp](/channels/whatsapp)
-  - Signal：[Signal](/channels/signal)
-  - iMessage：[iMessage](/channels/imessage)
-  - Discord：[Discord](/channels/discord)
-  - Slack：[Slack](/channels/slack)
+  - Telegram：[Telegram](../channels/telegram.html)
+  - WhatsApp：[WhatsApp](../channels/whatsapp.html)
+  - Signal：[Signal](../channels/signal.html)
+  - iMessage：[iMessage](../channels/imessage.html)
+  - Discord：[Discord](../channels/discord.html)
+  - Slack：[Slack](../channels/slack.html)

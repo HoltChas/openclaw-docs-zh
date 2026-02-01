@@ -17,7 +17,7 @@ read_when:
 ## 前置条件（从源码）
 - Node `>=22`
 - `pnpm`
-- Docker（可选；仅用于容器化设置/e2e —— 参见 [Docker](/install/docker)）
+- Docker（可选；仅用于容器化设置/e2e —— 参见 [Docker](../install/docker.html)）
 
 ## 个性化策略（这样更新不会伤害你）
 
@@ -121,7 +121,7 @@ openclaw health
 - **配对白名单**：`~/.openclaw/credentials/<channel>-allowFrom.json`
 - **模型认证配置**：`~/.openclaw/agents/<agentId>/agent/auth-profiles.json`
 - **旧版 OAuth 导入**：`~/.openclaw/credentials/oauth.json`
-更多详情：[安全](/gateway/security#credential-storage-map)。
+更多详情：[安全](../gateway/security#credential-storage-map.html)。
 
 ## 更新（不破坏你的设置）
 
@@ -139,12 +139,12 @@ sudo loginctl enable-linger $USER
 ```
 
 对于始终在线或多用户服务器，考虑使用**系统**服务而不是
-用户服务（不需要持久化）。参见 [Gateway 手册](/gateway) 了解 systemd 说明。
+用户服务（不需要持久化）。参见 [Gateway 手册](../gateway/index.html) 了解 systemd 说明。
 
 ## 相关文档
 
-- [Gateway 手册](/gateway)（标志、监督、端口）
-- [Gateway 配置](/gateway/configuration)（配置模式 + 示例）
-- [Discord](/channels/discord) 和 [Telegram](/channels/telegram)（回复标签 + replyToMode 设置）
-- [OpenClaw 助手设置](/start/openclaw)
-- [macOS 应用](/platforms/macos)（Gateway 生命周期）
+- [Gateway 手册](../gateway/index.html)（标志、监督、端口）
+- [Gateway 配置](../gateway/configuration.html)（配置模式 + 示例）
+- [Discord](../channels/discord.html) 和 [Telegram](../channels/telegram.html)（回复标签 + replyToMode 设置）
+- [OpenClaw 助手设置](../start/openclaw.html)
+- [macOS 应用](../platforms/macos.html)（Gateway 生命周期）

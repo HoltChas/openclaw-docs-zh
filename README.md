@@ -27,8 +27,8 @@ OpenClaw 同时也是 OpenClaw 助手的核心引擎。
 
 ## 从这里开始
 
-- **全新安装**：[快速入门指南](/start/getting-started.html)
-- **引导式设置**（推荐）：[向导](/start/wizard.html)（`openclaw onboard`）
+- **全新安装**：[快速入门指南](start/getting-started.html)
+- **引导式设置**（推荐）：[向导](start/wizard.html)（`openclaw onboard`）
 - **打开控制台**（本地网关）：[http://127.0.0.1:18789/](http://127.0.0.1:18789/)
 
 > 如果网关在同一台计算机上运行，上述链接会直接打开浏览器控制界面。如果无法访问，请先启动网关：`openclaw gateway`
@@ -40,7 +40,7 @@ OpenClaw 同时也是 OpenClaw 助手的核心引擎。
 控制台是用于聊天、配置、节点管理、会话等的浏览器控制界面。
 
 - **本地默认地址**：[http://127.0.0.1:18789/](http://127.0.0.1:18789/)
-- **远程访问**：[Web 界面](/web/webchat.html) 和 [Tailscale](/gateway/tailscale.html)
+- **远程访问**：[Web 界面](web/webchat.html) 和 [Tailscale](gateway/tailscale.html)
 
 ---
 
@@ -71,7 +71,7 @@ WhatsApp / Telegram / Discord / iMessage (+ 插件)
 
 ## 网络模型
 
-- **每台主机一个网关**（推荐）：这是唯一被允许拥有 WhatsApp Web 会话的进程。如需隔离机器人或严格分离环境，可运行多个网关并使用独立的配置文件和端口；详见[多网关配置](/gateway/multiple-gateways.html)。
+- **每台主机一个网关**（推荐）：这是唯一被允许拥有 WhatsApp Web 会话的进程。如需隔离机器人或严格分离环境，可运行多个网关并使用独立的配置文件和端口；详见[多网关配置](gateway/multiple-gateways.html)。
 
 - **本地优先**：网关 WebSocket 默认绑定 `ws://127.0.0.1:18789`。
 
@@ -81,9 +81,9 @@ WhatsApp / Telegram / Discord / iMessage (+ 插件)
 
 - **节点**：通过 WebSocket 连接到网关（按需通过局域网/Tailnet/SSH）；传统的 TCP 桥接已被弃用/移除。
 
-- **Canvas 宿主**：HTTP 文件服务器，监听 `canvasHost.port`（默认 18793），为节点 WebView 提供 `/__openclaw__/canvas/` 服务；详见[网关配置](/gateway/configuration.html)（canvasHost）。
+- **Canvas 宿主**：HTTP 文件服务器，监听 `canvasHost.port`（默认 18793），为节点 WebView 提供 `/__openclaw__/canvas/` 服务；详见[网关配置](gateway/configuration.html)（canvasHost）。
 
-- **远程使用**：SSH 隧道或 Tailnet/VPN；详见[远程访问](/gateway/remote.html) 和 [发现机制](/gateway/discovery.html)。
+- **远程使用**：SSH 隧道或 Tailnet/VPN；详见[远程访问](gateway/remote.html) 和 [发现机制](gateway/discovery.html)。
 
 ---
 
@@ -97,11 +97,11 @@ WhatsApp / Telegram / Discord / iMessage (+ 插件)
 | 🧩 | Mattermost 机器人（插件） | Bot Token + WebSocket 事件 |
 | 💬 | iMessage | 本地 imsg CLI 集成（macOS） |
 | 🤖 | 代理桥接 | Pi（RPC 模式），支持工具流式传输 |
-| ⏱️ | 流式传输 + 分块 | 块级流式 + Telegram 草稿流式；详见[流式传输](/concepts/streaming.html) |
+| ⏱️ | 流式传输 + 分块 | 块级流式 + Telegram 草稿流式；详见[流式传输](concepts/streaming.html) |
 | 🧠 | 多代理路由 | 将不同提供商账号/对话路由到隔离的代理（工作区 + 每个代理的会话） |
 | 🔐 | 订阅认证 | 支持 Anthropic（Claude Pro/Max）和 OpenAI（ChatGPT/Codex）OAuth 登录 |
 | 💬 | 会话管理 | 私聊默认合并到共享主会话；群组相互隔离 |
-| 👥 | 群组聊天支持 | 默认基于提及触发；所有者可切换 `/activation always\|mention` |
+| 👥 | 群组聊天支持 | 默认基于提及触发；所有者可切换 `/activation always|mention` |
 | 📎 | 媒体支持 | 发送和接收图片、音频、文档 |
 | 🎤 | 语音消息 | 可选的语音转文字钩子 |
 | 🖥️ | WebChat + macOS 应用 | 本地界面 + 菜单栏助手，支持运维和语音唤醒 |
@@ -197,61 +197,61 @@ openclaw message send --target +15555550123 --message "Hello from OpenClaw"
 
 ### 入门指南
 
-- [文档中心（所有页面链接）](/start/hubs.html)
-- [帮助文档](/help.html) ← 常见问题 + 故障排查
-- [配置说明](/gateway/configuration.html)
-- [配置示例](/gateway/configuration-examples.html)
-- [斜杠命令](/tools/slash-commands.html)
-- [多代理路由](/concepts/multi-agent.html)
-- [更新/回滚](/install/updating.html)
-- [配对（私聊 + 节点）](/start/pairing.html)
-- [Nix 模式](/install/nix.html)
-- [OpenClaw 助手设置](/start/openclaw.html)
+- [文档中心（所有页面链接）](start/hubs.html)
+- [帮助文档](help.html) ← 常见问题 + 故障排查
+- [配置说明](gateway/configuration.html)
+- [配置示例](gateway/configuration-examples.html)
+- [斜杠命令](tools/slash-commands.html)
+- [多代理路由](concepts/multi-agent.html)
+- [更新/回滚](install/updating.html)
+- [配对（私聊 + 节点）](start/pairing.html)
+- [Nix 模式](install/nix.html)
+- [OpenClaw 助手设置](start/openclaw.html)
 
 ### 工具与技能
 
-- [技能系统](/tools/skills.html)
-- [技能配置](/tools/skills-config.html)
-- [工作区模板](/reference/templates/AGENTS.html)
-- [RPC 适配器](/reference/rpc)
+- [技能系统](tools/skills.html)
+- [技能配置](tools/skills-config.html)
+- [工作区模板](reference/templates/AGENTS.html)
+- [RPC 适配器](reference/rpc.html)
 
 ### 网关与节点
 
-- [网关运维手册](/gateway)
-- [节点（iOS/Android）](/nodes)
-- [Web 界面（控制 UI）](/web/webchat.html)
-- [发现机制 + 传输层](/gateway/discovery.html)
-- [远程访问](/gateway/remote.html)
+- [网关运维手册](gateway/index.html)
+- [节点（iOS/Android）](nodes/index.html)
+- [Web 界面（控制 UI）](web/webchat.html)
+- [发现机制 + 传输层](gateway/discovery.html)
+- [远程访问](gateway/remote.html)
 
 ### 平台与用户体验
 
-- [WebChat](/web/webchat)
-- [控制 UI（浏览器）](/web/control-ui)
-- [Telegram](/channels/telegram)
-- [Discord](/channels/discord)
-- [Mattermost（插件）](/channels/mattermost)
-- [iMessage](/channels/imessage)
-- [群组](/concepts/groups)
-- [WhatsApp 群组消息](/concepts/group-messages)
-- [媒体：图片](/nodes/images)
-- [媒体：音频](/nodes/audio)
+- [WebChat](web/webchat.html)
+- [控制 UI（浏览器）](web/control-ui.html)
+- [Telegram](channels/telegram.html)
+- [Discord](channels/discord.html)
+- [Mattermost（插件）](channels/mattermost.html)
+- [iMessage](channels/imessage.html)
+- [群组](concepts/groups.html)
+- [WhatsApp 群组消息](concepts/group-messages.html)
+- [媒体：图片](nodes/images.html)
+- [媒体：音频](nodes/audio.html)
 
 ### 配套应用
 
-- [macOS 应用](/platforms/macos)
-- [iOS 应用](/platforms/ios)
-- [Android 应用](/platforms/android)
-- [Windows（WSL2）](/platforms/windows)
-- [Linux 应用](/platforms/linux)
+- [macOS 应用](platforms/macos.html)
+- [iOS 应用](platforms/ios.html)
+- [Android 应用](platforms/android.html)
+- [Windows（WSL2）](platforms/windows.html)
+- [Linux 应用](platforms/linux.html)
 
 ### 运维与安全
 
-- [会话管理](/concepts/session)
-- [定时任务](/automation/cron-jobs)
-- [Webhooks](/automation/webhook)
-- [Gmail 钩子（Pub/Sub）](/automation/gmail-pubsub)
-- [安全](/gateway/security)
-- [故障排查](/gateway/troubleshooting)
+- [会话管理](concepts/session.html)
+- [定时任务](automation/cron-jobs.html)
+- [Webhooks](automation/webhook.html)
+- [Gmail 钩子（Pub/Sub）](automation/gmail-pubsub.html)
+- [安全](gateway/security.html)
+- [故障排查](gateway/troubleshooting.html)
 
 ---
 
@@ -285,4 +285,3 @@ MIT —— 像大海中的龙虾一样自由 🦞
 ---
 
 *本文档由社区翻译，原文：https://docs.openclaw.ai/*
-# Force redeploy Sun Feb  1 14:48:30 CST 2026

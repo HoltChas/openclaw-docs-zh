@@ -26,11 +26,11 @@ status: active
 主 Agent 的凭证不会自动共享。不要跨 Agent 共享 `agentDir`（会导致认证/会话冲突）。如果你要共享凭证，请复制 `auth-profiles.json` 到另一个 Agent 的 `agentDir`。
 
 技能是每个 Agent 的 `workspace/skills`，共享技能放在 `~/.openclaw/skills`。
-参见 [技能：每个 Agent vs 共享](/tools/skills#per-agent-vs-shared-skills)。
+参见 [技能：每个 Agent vs 共享(../tools/skills#per-agent-vs-shared-skills.html)。
 
 Gateway 可以同时托管 **一个 Agent**（默认）或 **多个 Agent**。
 
-**工作区说明：** 每个 Agent 的工作区是 **默认 cwd**，不是硬隔离。相对路径解析在工作区内，但绝对路径可访问其他主机路径，除非开启沙盒。参见 [沙盒化](/gateway/sandboxing)。
+**工作区说明：** 每个 Agent 的工作区是 **默认 cwd**，不是硬隔离。相对路径解析在工作区内，但绝对路径可访问其他主机路径，除非开启沙盒。参见 [沙盒化(../gateway/sandboxing.html)。
 
 ## 路径速查
 
@@ -106,7 +106,7 @@ openclaw agents list --bindings # 中文注释：查看 Agent 及其绑定
 
 说明：
 - DM 访问控制是 **每个 WhatsApp 账号全局**（配对/允许列表），不是每个 Agent。
-- 对共享群，绑定到一个 Agent 或使用 [广播群组](/broadcast-groups)。
+- 对共享群，绑定到一个 Agent 或使用 [广播群组](../broadcast-groups.html)。
 
 ## 路由规则（消息如何选择 Agent）
 
@@ -340,4 +340,4 @@ peer 绑定总是胜出，所以把它放在频道级规则上方。
 注意：`tools.elevated` 是 **全局** 且基于发送者；不能按 Agent 配置。如果你需要每 Agent 的边界，使用 `agents.list[].tools` 禁用 `exec`。
 针对群聊，使用 `agents.list[].groupChat.mentionPatterns` 以便 @mention 清晰映射到目标 Agent。
 
-参见 [多 Agent 沙盒与工具](/multi-agent-sandbox-tools) 获取更多示例。
+参见 [多 Agent 沙盒与工具](../multi-agent-sandbox-tools.html) 获取更多示例。
