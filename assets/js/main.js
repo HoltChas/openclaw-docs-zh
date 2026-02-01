@@ -48,3 +48,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// 记住导航栏滚动位置
+document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.getElementById('navLinks');
+    if (!navLinks) return;
+    
+    // 恢复滚动位置
+    const savedScroll = sessionStorage.getItem('navScrollPosition');
+    if (savedScroll) {
+        navLinks.scrollTop = parseInt(savedScroll);
+        sessionStorage.removeItem('navScrollPosition');
+    }
+    
+    // 点击链接前保存滚动位置
+    const links = navLinks.querySelectorAll('a');
+    links.forEach(link => {
+        link.addEventListener('click', function() {
+            sessionStorage.setItem('navScrollPosition', navLinks.scrollTop);
+        });
+    });
+});
