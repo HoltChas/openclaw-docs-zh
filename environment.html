@@ -121,9 +121,64 @@
     <main class="main-content">
         <div class="content">
             <h1>环境变量</h1>
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/environment" target="_blank">查看原始英文文档</a></p>
+<h1>环境变量</h1>
+<p>OpenClaw 从多个来源提取环境变量。规则是<strong>绝不覆盖现有值</strong>。</p>
+<h2>优先级（从高到低）</h2>
+<ol>
+<li><strong>进程环境</strong>（Gateway 进程从父 shell/守护进程已经拥有的）</li>
+<li><strong>当前工作目录中的 <code>.env</code></strong>（dotenv 默认；不覆盖）</li>
+<li><strong><code>~/.openclaw/.env</code> 的全局 <code>.env</code></strong>（即 <code>$OPENCLAW_STATE_DIR/.env</code>；不覆盖）</li>
+<li><strong><code>~/.openclaw/openclaw.json</code> 中的配置 <code>env</code> 块</strong>（仅在缺失时应用）</li>
+<li><strong>可选的登录 shell 导入</strong>（<code>env.shellEnv.enabled</code> 或 <code>OPENCLAW_LOAD_SHELL_ENV=1</code>），仅对缺失的预期键应用</li>
+</ol>
+<p>如果配置文件完全缺失，跳过第 4 步；如果启用，shell 导入仍会运行。</p>
+<h2>配置 <code>env</code> 块</h2>
+<p>两种等效的方式设置内联环境变量（都是不覆盖的）：</p>
+<pre><code class="language-json5">{
+  env: {
+    OPENROUTER_API_KEY: &quot;sk-or-...&quot;,
+    vars: {
+      GROQ_API_KEY: &quot;gsk-...&quot;
+    }
+  }
+}
+</code></pre>
+<h2>Shell 环境导入</h2>
+<p><code>env.shellEnv</code> 运行你的登录 shell 并仅导入<strong>缺失</strong>的预期键：</p>
+<pre><code class="language-json5">{
+  env: {
+    shellEnv: {
+      enabled: true,
+      timeoutMs: 15000
+    }
+  }
+}
+</code></pre>
+<p>环境变量等效项：</p>
+<ul>
+<li><code>OPENCLAW_LOAD_SHELL_ENV=1</code></li>
+<li><code>OPENCLAW_SHELL_ENV_TIMEOUT_MS=15000</code></li>
+</ul>
+<h2>配置中的环境变量替换</h2>
+<p>你可以在配置字符串值中直接使用 <code>${VAR_NAME}</code> 语法引用环境变量：</p>
+<pre><code class="language-json5">{
+  models: {
+    providers: {
+      &quot;vercel-gateway&quot;: {
+        apiKey: &quot;${VERCEL_GATEWAY_API_KEY}&quot;
+      }
+    }
+  }
+}
+</code></pre>
+<p>完整详情参见 <a href="/gateway/configuration#env-var-substitution-in-config">配置：配置中的环境变量替换</a>。</p>
+<h2>相关文档</h2>
+<ul>
+<li><a href="/gateway/configuration">Gateway 配置</a></li>
+<li><a href="/help/faq#env-vars-and-env-loading">FAQ：环境变量和 .env 加载</a></li>
+<li><a href="/concepts/models">模型概览</a></li>
+</ul>
+
         </div>
     </main>
 

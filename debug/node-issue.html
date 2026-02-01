@@ -121,9 +121,70 @@
     <main class="main-content">
         <div class="content">
             <h1>Node 问题</h1>
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/debug/node-issue" target="_blank">查看原始英文文档</a></p>
+<h1>Node + tsx &quot;__name is not a function&quot; 崩溃</h1>
+<h2>概述</h2>
+<p>使用 Node 运行 OpenClaw（配合 <code>tsx</code>）在启动时失败：</p>
+<pre><code>[openclaw] Failed to start CLI: TypeError: __name is not a function
+    at createSubsystemLogger (.../src/logging/subsystem.ts:203:25)
+    at .../src/agents/auth-profiles/constants.ts:25:20
+</code></pre>
+<p>这个问题出现在将 dev 脚本从 Bun 切换到 <code>tsx</code> 之后（commit <code>2871657e</code>，2026-01-06）。同样的运行时路径在 Bun 下工作正常。</p>
+<h2>环境</h2>
+<ul>
+<li>Node: v25.x（在 v25.3.0 上观察到）</li>
+<li>tsx: 4.21.0</li>
+<li>OS: macOS（在其他运行 Node 25 的平台上可能也能复现）</li>
+</ul>
+<h2>复现步骤（仅 Node）</h2>
+<pre><code class="language-bash"># 在仓库根目录
+node --version
+pnpm install
+node --import tsx src/entry.ts status
+</code></pre>
+<h2>仓库中的最小复现</h2>
+<pre><code class="language-bash">node --import tsx scripts/repro/tsx-name-repro.ts
+</code></pre>
+<h2>Node 版本检查</h2>
+<ul>
+<li>Node 25.3.0: 失败</li>
+<li>Node 22.22.0（Homebrew <code>node@22</code>）: 失败</li>
+<li>Node 24: 这里还没安装；需要验证</li>
+</ul>
+<h2>备注 / 假设</h2>
+<ul>
+<li><code>tsx</code> 使用 esbuild 转换 TS/ESM。esbuild 的 <code>keepNames</code> 会发出一个 <code>__name</code> 辅助函数并用 <code>__name(...)</code> 包装函数定义。</li>
+<li>崩溃表明 <code>__name</code> 在运行时存在但不是函数，这意味着该辅助函数在 Node 25 加载器路径中对于这个模块缺失或被覆盖。</li>
+<li>其他 esbuild 使用者在辅助函数缺失或被重写时也报告过类似的 <code>__name</code> 辅助函数问题。</li>
+</ul>
+<h2>回归历史</h2>
+<ul>
+<li><code>2871657e</code>（2026-01-06）：脚本从 Bun 改为 tsx，使 Bun 变为可选。</li>
+<li>之前（Bun 路径），<code>openclaw status</code> 和 <code>gateway:watch</code> 工作正常。</li>
+</ul>
+<h2>解决方案</h2>
+<ul>
+<li>使用 Bun 运行 dev 脚本（当前的临时回退方案）。</li>
+<li>使用 Node + tsc watch，然后运行编译后的输出：<pre><code class="language-bash">pnpm exec tsc --watch --preserveWatchOutput
+node --watch openclaw.mjs status
+</code></pre>
+</li>
+<li>本地确认：<code>pnpm exec tsc -p tsconfig.json</code> + <code>node openclaw.mjs status</code> 在 Node 25 上工作正常。</li>
+<li>如果可能，在 TS 加载器中禁用 esbuild keepNames（防止 <code>__name</code> 辅助函数插入）；tsx 目前不提供此选项。</li>
+<li>用 <code>tsx</code> 测试 Node LTS（22/24）以确认是否是 Node 25 特定问题。</li>
+</ul>
+<h2>参考链接</h2>
+<ul>
+<li><a href="https://opennext.js.org/cloudflare/howtos/keep_names">https://opennext.js.org/cloudflare/howtos/keep_names</a></li>
+<li><a href="https://esbuild.github.io/api/#keep-names">https://esbuild.github.io/api/#keep-names</a></li>
+<li><a href="https://github.com/evanw/esbuild/issues/1031">https://github.com/evanw/esbuild/issues/1031</a></li>
+</ul>
+<h2>后续步骤</h2>
+<ul>
+<li>在 Node 22/24 上复现以确认 Node 25 回归。</li>
+<li>测试 <code>tsx</code> nightly 版本，如果存在已知回归则固定到早期版本。</li>
+<li>如果在 Node LTS 上也能复现，向上游提交最小复现，包含 <code>__name</code> 堆栈跟踪。</li>
+</ul>
+
         </div>
     </main>
 

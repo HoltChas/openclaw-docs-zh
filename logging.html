@@ -121,9 +121,276 @@
     <main class="main-content">
         <div class="content">
             <h1>日志配置</h1>
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/logging" target="_blank">查看原始英文文档</a></p>
+<h1>日志</h1>
+<p>OpenClaw 在两个地方记录日志：</p>
+<ul>
+<li><strong>文件日志</strong>（JSON 行）由 Gateway 写入</li>
+<li><strong>控制台输出</strong> 显示在终端和控制台 UI 中</li>
+</ul>
+<p>本文档解释日志的位置、如何读取它们，以及如何配置日志级别和格式。</p>
+<h2>日志位置</h2>
+<p>默认情况下，Gateway 将滚动日志文件写入：</p>
+<p><code>/tmp/openclaw/openclaw-YYYY-MM-DD.log</code></p>
+<p>日期使用 Gateway 主机的本地时区。</p>
+<p>你可以在 <code>~/.openclaw/openclaw.json</code> 中覆盖此设置：</p>
+<pre><code class="language-json">{
+  &quot;logging&quot;: {
+    &quot;file&quot;: &quot;/path/to/openclaw.log&quot;
+  }
+}
+</code></pre>
+<h2>如何读取日志</h2>
+<h3>CLI：实时跟踪（推荐）</h3>
+<p>使用 CLI 通过 RPC 跟踪 Gateway 日志文件：</p>
+<pre><code class="language-bash">openclaw logs --follow
+</code></pre>
+<p>输出模式：</p>
+<ul>
+<li><strong>TTY 会话</strong>：美观、彩色、结构化的日志行</li>
+<li><strong>非 TTY 会话</strong>：纯文本</li>
+<li><code>--json</code>：换行分隔的 JSON（每行一个日志事件）</li>
+<li><code>--plain</code>：在 TTY 会话中强制纯文本</li>
+<li><code>--no-color</code>：禁用 ANSI 颜色</li>
+</ul>
+<p>在 JSON 模式下，CLI 发出带 <code>type</code> 标签的对象：</p>
+<ul>
+<li><code>meta</code>：流元数据（文件、游标、大小）</li>
+<li><code>log</code>：解析的日志条目</li>
+<li><code>notice</code>：截断/轮换提示</li>
+<li><code>raw</code>：未解析的日志行</li>
+</ul>
+<p>如果 Gateway 不可达，CLI 会打印一个简短提示来运行：</p>
+<pre><code class="language-bash">openclaw doctor
+</code></pre>
+<h3>控制台 UI（网页）</h3>
+<p>控制台 UI 的 <strong>Logs</strong> 标签页使用 <code>logs.tail</code> 跟踪同一文件。<br>打开方式详见 <a href="/web/control-ui">/web/control-ui</a>。</p>
+<h3>仅频道日志</h3>
+<p>要过滤频道活动（WhatsApp/Telegram 等），使用：</p>
+<pre><code class="language-bash">openclaw channels logs --channel whatsapp
+</code></pre>
+<h2>日志格式</h2>
+<h3>文件日志（JSONL）</h3>
+<p>日志文件中的每一行都是一个 JSON 对象。CLI 和控制台 UI 解析这些条目以渲染结构化输出（时间、级别、子系统、消息）。</p>
+<h3>控制台输出</h3>
+<p>控制台日志是 <strong>TTY 感知</strong> 的，并为可读性格式化：</p>
+<ul>
+<li>子系统前缀（例如 <code>gateway/channels/whatsapp</code>）</li>
+<li>级别着色（info/warn/error）</li>
+<li>可选的紧凑或 JSON 模式</li>
+</ul>
+<p>控制台格式由 <code>logging.consoleStyle</code> 控制。</p>
+<h2>配置日志</h2>
+<p>所有日志配置都位于 <code>~/.openclaw/openclaw.json</code> 的 <code>logging</code> 下。</p>
+<pre><code class="language-json">{
+  &quot;logging&quot;: {
+    &quot;level&quot;: &quot;info&quot;,
+    &quot;file&quot;: &quot;/tmp/openclaw/openclaw-YYYY-MM-DD.log&quot;,
+    &quot;consoleLevel&quot;: &quot;info&quot;,
+    &quot;consoleStyle&quot;: &quot;pretty&quot;,
+    &quot;redactSensitive&quot;: &quot;tools&quot;,
+    &quot;redactPatterns&quot;: [
+      &quot;sk-.*&quot;
+    ]
+  }
+}
+</code></pre>
+<h3>日志级别</h3>
+<ul>
+<li><code>logging.level</code>：<strong>文件日志</strong>（JSONL）级别</li>
+<li><code>logging.consoleLevel</code>：<strong>控制台</strong>详细级别</li>
+</ul>
+<p><code>--verbose</code> 仅影响控制台输出；不会更改文件日志级别。</p>
+<h3>控制台样式</h3>
+<p><code>logging.consoleStyle</code>：</p>
+<ul>
+<li><code>pretty</code>：人类友好的彩色输出，带时间戳</li>
+<li><code>compact</code>：更紧凑的输出（长时间会话的最佳选择）</li>
+<li><code>json</code>：每行 JSON（用于日志处理器）</li>
+</ul>
+<h3>脱敏</h3>
+<p>工具摘要可以在输出到控制台之前脱敏敏感令牌：</p>
+<ul>
+<li><code>logging.redactSensitive</code>：<code>off</code> | <code>tools</code>（默认：<code>tools</code>）</li>
+<li><code>logging.redactPatterns</code>：正则表达式字符串列表，用于覆盖默认集合</li>
+</ul>
+<p>脱敏仅影响<strong>控制台输出</strong>，不会更改文件日志。</p>
+<h2>诊断 + OpenTelemetry</h2>
+<p>诊断是用于模型运行<strong>和</strong>消息流遥测（webhook、队列、会话状态）的结构化、机器可读事件。它们<strong>不会</strong>取代日志；它们的存在是为了向指标、跟踪和其他导出器提供数据。</p>
+<p>诊断事件在进程内发出，但只有在启用了诊断 + 导出器插件时，导出器才会附加。</p>
+<h3>OpenTelemetry vs OTLP</h3>
+<ul>
+<li><strong>OpenTelemetry (OTel)</strong>：用于跟踪、指标和日志的数据模型 + SDK</li>
+<li><strong>OTLP</strong>：用于将 OTel 数据导出到收集器/后端的线协议</li>
+<li>OpenClaw 目前通过 <strong>OTLP/HTTP (protobuf)</strong> 导出</li>
+</ul>
+<h3>导出的信号</h3>
+<ul>
+<li><strong>指标</strong>：计数器 + 直方图（令牌使用、消息流、队列）</li>
+<li><strong>跟踪</strong>：模型使用 + webhook/消息处理的跨度</li>
+<li><strong>日志</strong>：当 <code>diagnostics.otel.logs</code> 启用时通过 OTLP 导出。日志量可能很大；注意 <code>logging.level</code> 和导出器过滤器。</li>
+</ul>
+<h3>诊断事件目录</h3>
+<p>模型使用：</p>
+<ul>
+<li><code>model.usage</code>：令牌、成本、持续时间、上下文、提供者/模型/频道、会话 ID</li>
+</ul>
+<p>消息流：</p>
+<ul>
+<li><code>webhook.received</code>：每个频道的 webhook 入口</li>
+<li><code>webhook.processed</code>：webhook 处理 + 持续时间</li>
+<li><code>webhook.error</code>：webhook 处理程序错误</li>
+<li><code>message.queued</code>：消息入队等待处理</li>
+<li><code>message.processed</code>：结果 + 持续时间 + 可选错误</li>
+</ul>
+<p>队列 + 会话：</p>
+<ul>
+<li><code>queue.lane.enqueue</code>：命令队列通道入队 + 深度</li>
+<li><code>queue.lane.dequeue</code>：命令队列通道出队 + 等待时间</li>
+<li><code>session.state</code>：会话状态转换 + 原因</li>
+<li><code>session.stuck</code>：会话卡住警告 + 年龄</li>
+<li><code>run.attempt</code>：运行重试/尝试元数据</li>
+<li><code>diagnostic.heartbeat</code>：聚合计数器（webhook/队列/会话）</li>
+</ul>
+<h3>启用诊断（无导出器）</h3>
+<p>如果你希望诊断事件可用于插件或自定义接收器，使用此选项：</p>
+<pre><code class="language-json">{
+  &quot;diagnostics&quot;: {
+    &quot;enabled&quot;: true
+  }
+}
+</code></pre>
+<h3>诊断标志（有针对性的日志）</h3>
+<p>使用标志在不提高 <code>logging.level</code> 的情况下打开额外的有针对性的调试日志。标志不区分大小写，支持通配符（例如 <code>telegram.*</code> 或 <code>*</code>）。</p>
+<pre><code class="language-json">{
+  &quot;diagnostics&quot;: {
+    &quot;flags&quot;: [&quot;telegram.http&quot;]
+  }
+}
+</code></pre>
+<p>环境变量覆盖（一次性）：</p>
+<pre><code>OPENCLAW_DIAGNOSTICS=telegram.http,telegram.payload
+</code></pre>
+<p>注意：</p>
+<ul>
+<li>标志日志进入标准日志文件（与 <code>logging.file</code> 相同）</li>
+<li>仍根据 <code>logging.redactSensitive</code> 进行脱敏</li>
+<li>完整指南：<a href="/diagnostics/flags">/diagnostics/flags</a></li>
+</ul>
+<h3>导出到 OpenTelemetry</h3>
+<p>诊断可以通过 <code>diagnostics-otel</code> 插件（OTLP/HTTP）导出。这适用于任何接受 OTLP/HTTP 的 OpenTelemetry 收集器/后端。</p>
+<pre><code class="language-json">{
+  &quot;plugins&quot;: {
+    &quot;allow&quot;: [&quot;diagnostics-otel&quot;],
+    &quot;entries&quot;: {
+      &quot;diagnostics-otel&quot;: {
+        &quot;enabled&quot;: true
+      }
+    }
+  },
+  &quot;diagnostics&quot;: {
+    &quot;enabled&quot;: true,
+    &quot;otel&quot;: {
+      &quot;enabled&quot;: true,
+      &quot;endpoint&quot;: &quot;http://otel-collector:4318&quot;,
+      &quot;protocol&quot;: &quot;http/protobuf&quot;,
+      &quot;serviceName&quot;: &quot;openclaw-gateway&quot;,
+      &quot;traces&quot;: true,
+      &quot;metrics&quot;: true,
+      &quot;logs&quot;: true,
+      &quot;sampleRate&quot;: 0.2,
+      &quot;flushIntervalMs&quot;: 60000
+    }
+  }
+}
+</code></pre>
+<p>注意：</p>
+<ul>
+<li>你也可以用 <code>openclaw plugins enable diagnostics-otel</code> 启用插件</li>
+<li><code>protocol</code> 目前仅支持 <code>http/protobuf</code>。<code>grpc</code> 被忽略</li>
+<li>指标包括令牌使用、成本、上下文大小、运行持续时间，以及消息流计数器/直方图（webhook、队列、会话状态、队列深度/等待）</li>
+<li>跟踪/指标可以用 <code>traces</code> / <code>metrics</code> 切换（默认：开启）</li>
+<li>跟踪包括模型使用跨度加上 webhook/消息处理跨度（启用时）</li>
+<li>当收集器需要认证时设置 <code>headers</code></li>
+<li>支持的环境变量：<code>OTEL_EXPORTER_OTLP_ENDPOINT</code>、<code>OTEL_SERVICE_NAME</code>、<code>OTEL_EXPORTER_OTLP_PROTOCOL</code></li>
+</ul>
+<h3>导出的指标（名称 + 类型）</h3>
+<p>模型使用：</p>
+<ul>
+<li><code>openclaw.tokens</code>（计数器，属性：<code>openclaw.token</code>, <code>openclaw.channel</code>, <code>openclaw.provider</code>, <code>openclaw.model</code>）</li>
+<li><code>openclaw.cost.usd</code>（计数器，属性：<code>openclaw.channel</code>, <code>openclaw.provider</code>, <code>openclaw.model</code>）</li>
+<li><code>openclaw.run.duration_ms</code>（直方图，属性：<code>openclaw.channel</code>, <code>openclaw.provider</code>, <code>openclaw.model</code>）</li>
+<li><code>openclaw.context.tokens</code>（直方图，属性：<code>openclaw.context</code>, <code>openclaw.channel</code>, <code>openclaw.provider</code>, <code>openclaw.model</code>）</li>
+</ul>
+<p>消息流：</p>
+<ul>
+<li><code>openclaw.webhook.received</code>（计数器，属性：<code>openclaw.channel</code>, <code>openclaw.webhook</code>）</li>
+<li><code>openclaw.webhook.error</code>（计数器，属性：<code>openclaw.channel</code>, <code>openclaw.webhook</code>）</li>
+<li><code>openclaw.webhook.duration_ms</code>（直方图，属性：<code>openclaw.channel</code>, <code>openclaw.webhook</code>）</li>
+<li><code>openclaw.message.queued</code>（计数器，属性：<code>openclaw.channel</code>, <code>openclaw.source</code>）</li>
+<li><code>openclaw.message.processed</code>（计数器，属性：<code>openclaw.channel</code>, <code>openclaw.outcome</code>）</li>
+<li><code>openclaw.message.duration_ms</code>（直方图，属性：<code>openclaw.channel</code>, <code>openclaw.outcome</code>）</li>
+</ul>
+<p>队列 + 会话：</p>
+<ul>
+<li><code>openclaw.queue.lane.enqueue</code>（计数器，属性：<code>openclaw.lane</code>）</li>
+<li><code>openclaw.queue.lane.dequeue</code>（计数器，属性：<code>openclaw.lane</code>）</li>
+<li><code>openclaw.queue.depth</code>（直方图，属性：<code>openclaw.lane</code> 或 <code>openclaw.channel=heartbeat</code>）</li>
+<li><code>openclaw.queue.wait_ms</code>（直方图，属性：<code>openclaw.lane</code>）</li>
+<li><code>openclaw.session.state</code>（计数器，属性：<code>openclaw.state</code>, <code>openclaw.reason</code>）</li>
+<li><code>openclaw.session.stuck</code>（计数器，属性：<code>openclaw.state</code>）</li>
+<li><code>openclaw.session.stuck_age_ms</code>（直方图，属性：<code>openclaw.state</code>）</li>
+<li><code>openclaw.run.attempt</code>（计数器，属性：<code>openclaw.attempt</code>）</li>
+</ul>
+<h3>导出的跨度（名称 + 关键属性）</h3>
+<ul>
+<li><code>openclaw.model.usage</code><ul>
+<li><code>openclaw.channel</code>, <code>openclaw.provider</code>, <code>openclaw.model</code></li>
+<li><code>openclaw.sessionKey</code>, <code>openclaw.sessionId</code></li>
+<li><code>openclaw.tokens.*</code>（input/output/cache_read/cache_write/total）</li>
+</ul>
+</li>
+<li><code>openclaw.webhook.processed</code><ul>
+<li><code>openclaw.channel</code>, <code>openclaw.webhook</code>, <code>openclaw.chatId</code></li>
+</ul>
+</li>
+<li><code>openclaw.webhook.error</code><ul>
+<li><code>openclaw.channel</code>, <code>openclaw.webhook</code>, <code>openclaw.chatId</code>, <code>openclaw.error</code></li>
+</ul>
+</li>
+<li><code>openclaw.message.processed</code><ul>
+<li><code>openclaw.channel</code>, <code>openclaw.outcome</code>, <code>openclaw.chatId</code>, <code>openclaw.messageId</code>, <code>openclaw.sessionKey</code>, <code>openclaw.sessionId</code>, <code>openclaw.reason</code></li>
+</ul>
+</li>
+<li><code>openclaw.session.stuck</code><ul>
+<li><code>openclaw.state</code>, <code>openclaw.ageMs</code>, <code>openclaw.queueDepth</code>, <code>openclaw.sessionKey</code>, <code>openclaw.sessionId</code></li>
+</ul>
+</li>
+</ul>
+<h3>采样 + 刷新</h3>
+<ul>
+<li>跟踪采样：<code>diagnostics.otel.sampleRate</code>（0.0–1.0，仅根跨度）</li>
+<li>指标导出间隔：<code>diagnostics.otel.flushIntervalMs</code>（最小 1000ms）</li>
+</ul>
+<h3>协议说明</h3>
+<ul>
+<li>OTLP/HTTP 端点可以通过 <code>diagnostics.otel.endpoint</code> 或 <code>OTEL_EXPORTER_OTLP_ENDPOINT</code> 设置</li>
+<li>如果端点已包含 <code>/v1/traces</code> 或 <code>/v1/metrics</code>，则按原样使用</li>
+<li>如果端点已包含 <code>/v1/logs</code>，则按原样用于日志</li>
+<li><code>diagnostics.otel.logs</code> 为主日志记录器输出启用 OTLP 日志导出</li>
+</ul>
+<h3>日志导出行为</h3>
+<ul>
+<li>OTLP 日志使用写入 <code>logging.file</code> 的相同结构化记录</li>
+<li>遵循 <code>logging.level</code>（文件日志级别）。控制台脱敏<strong>不适用于</strong> OTLP 日志</li>
+<li>高流量安装应优先使用 OTLP 收集器采样/过滤</li>
+</ul>
+<h2>故障排除技巧</h2>
+<ul>
+<li><strong>Gateway 不可达？</strong> 先运行 <code>openclaw doctor</code></li>
+<li><strong>日志为空？</strong> 检查 Gateway 是否正在运行并写入 <code>logging.file</code> 中的文件路径</li>
+<li><strong>需要更多细节？</strong> 将 <code>logging.level</code> 设置为 <code>debug</code> 或 <code>trace</code> 然后重试</li>
+</ul>
+
         </div>
     </main>
 

@@ -121,9 +121,35 @@
     <main class="main-content">
         <div class="content">
             <h1>Brave 搜索</h1>
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/brave-search" target="_blank">查看原始英文文档</a></p>
+<h1>Brave Search API</h1>
+<p>OpenClaw 使用 Brave Search 作为 <code>web_search</code> 的默认提供者。</p>
+<h2>获取 API 密钥</h2>
+<ol>
+<li>在 <a href="https://brave.com/search/api/">https://brave.com/search/api/</a> 创建 Brave Search API 账户</li>
+<li>在仪表板中，选择 <strong>Data for Search</strong> 计划并生成 API 密钥</li>
+<li>将密钥存储在配置中（推荐）或在 Gateway 环境中设置 <code>BRAVE_API_KEY</code></li>
+</ol>
+<h2>配置示例</h2>
+<pre><code class="language-json5">{
+  tools: {
+    web: {
+      search: {
+        provider: &quot;brave&quot;,
+        apiKey: &quot;BRAVE_API_KEY_HERE&quot;,
+        maxResults: 5,
+        timeoutSeconds: 30
+      }
+    }
+  }
+}
+</code></pre>
+<h2>备注</h2>
+<ul>
+<li>Data for AI 计划<strong>不兼容</strong> <code>web_search</code></li>
+<li>Brave 提供免费套餐和付费计划；查看 Brave API 门户了解当前限制</li>
+</ul>
+<p>完整 <code>web_search</code> 配置参见 <a href="/tools/web">Web 工具</a>。</p>
+
         </div>
     </main>
 

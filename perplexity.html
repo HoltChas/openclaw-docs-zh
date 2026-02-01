@@ -121,9 +121,66 @@
     <main class="main-content">
         <div class="content">
             <h1>Perplexity</h1>
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/perplexity" target="_blank">查看原始英文文档</a></p>
+<h1>Perplexity Sonar</h1>
+<p>OpenClaw 可以将 Perplexity Sonar 用于 <code>web_search</code> 工具。你可以通过 Perplexity 的直接 API 或 OpenRouter 连接。</p>
+<h2>API 选项</h2>
+<h3>Perplexity（直接）</h3>
+<ul>
+<li>Base URL: <a href="https://api.perplexity.ai">https://api.perplexity.ai</a></li>
+<li>环境变量: <code>PERPLEXITY_API_KEY</code></li>
+</ul>
+<h3>OpenRouter（替代）</h3>
+<ul>
+<li>Base URL: <a href="https://openrouter.ai/api/v1">https://openrouter.ai/api/v1</a></li>
+<li>环境变量: <code>OPENROUTER_API_KEY</code></li>
+<li>支持预付/加密信用。</li>
+</ul>
+<h2>配置示例</h2>
+<pre><code class="language-json5">{
+  tools: {
+    web: {
+      search: {
+        provider: &quot;perplexity&quot;,
+        perplexity: {
+          apiKey: &quot;pplx-...&quot;,
+          baseUrl: &quot;https://api.perplexity.ai&quot;,
+          model: &quot;perplexity/sonar-pro&quot;
+        }
+      }
+    }
+  }
+}
+</code></pre>
+<h2>从 Brave 切换</h2>
+<pre><code class="language-json5">{
+  tools: {
+    web: {
+      search: {
+        provider: &quot;perplexity&quot;,
+        perplexity: {
+          apiKey: &quot;pplx-...&quot;,
+          baseUrl: &quot;https://api.perplexity.ai&quot;
+        }
+      }
+    }
+  }
+}
+</code></pre>
+<p>如果同时设置了 <code>PERPLEXITY_API_KEY</code> 和 <code>OPENROUTER_API_KEY</code>，设置<br><code>tools.web.search.perplexity.baseUrl</code>（或 <code>tools.web.search.perplexity.apiKey</code>）<br>来消除歧义。</p>
+<p>如果没有设置 base URL，OpenClaw 根据 API 密钥源选择默认值：</p>
+<ul>
+<li><code>PERPLEXITY_API_KEY</code> 或 <code>pplx-...</code> → 直接 Perplexity (<code>https://api.perplexity.ai</code>)</li>
+<li><code>OPENROUTER_API_KEY</code> 或 <code>sk-or-...</code> → OpenRouter (<code>https://openrouter.ai/api/v1</code>)</li>
+<li>未知密钥格式 → OpenRouter（安全回退）</li>
+</ul>
+<h2>模型</h2>
+<ul>
+<li><code>perplexity/sonar</code> — 快速问答 + 网页搜索</li>
+<li><code>perplexity/sonar-pro</code>（默认）— 多步推理 + 网页搜索</li>
+<li><code>perplexity/sonar-reasoning-pro</code> — 深度研究</li>
+</ul>
+<p>完整 <code>web_search</code> 配置参见 <a href="/tools/web">Web 工具</a>。</p>
+
         </div>
     </main>
 

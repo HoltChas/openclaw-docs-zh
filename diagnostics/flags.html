@@ -121,9 +121,62 @@
     <main class="main-content">
         <div class="content">
             <h1>诊断标志</h1>
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/diagnostics/flags" target="_blank">查看原始英文文档</a></p>
+<h1>诊断标志</h1>
+<p>诊断标志让你能够在不打开全局详细日志的情况下启用有针对性的调试日志。标志是选择性加入的，除非子系统检查它们，否则不会产生任何效果。</p>
+<h2>工作原理</h2>
+<ul>
+<li>标志是字符串（不区分大小写）</li>
+<li>你可以在配置中或通过环境变量覆盖启用标志</li>
+<li>支持通配符：<ul>
+<li><code>telegram.*</code> 匹配 <code>telegram.http</code></li>
+<li><code>*</code> 启用所有标志</li>
+</ul>
+</li>
+</ul>
+<h2>通过配置启用</h2>
+<pre><code class="language-json">{
+  &quot;diagnostics&quot;: {
+    &quot;flags&quot;: [&quot;telegram.http&quot;]
+  }
+}
+</code></pre>
+<p>多个标志：</p>
+<pre><code class="language-json">{
+  &quot;diagnostics&quot;: {
+    &quot;flags&quot;: [&quot;telegram.http&quot;, &quot;gateway.*&quot;]
+  }
+}
+</code></pre>
+<p>更改标志后重启 Gateway。</p>
+<h2>环境变量覆盖（一次性）</h2>
+<pre><code class="language-bash">OPENCLAW_DIAGNOSTICS=telegram.http,telegram.payload
+</code></pre>
+<p>禁用所有标志：</p>
+<pre><code class="language-bash">OPENCLAW_DIAGNOSTICS=0
+</code></pre>
+<h2>日志输出位置</h2>
+<p>标志将日志输出到标准诊断日志文件。默认位置：</p>
+<pre><code>/tmp/openclaw/openclaw-YYYY-MM-DD.log
+</code></pre>
+<p>如果设置了 <code>logging.file</code>，请使用该路径。日志格式为 JSONL（每行一个 JSON 对象）。<br>根据 <code>logging.redactSensitive</code> 设置，仍会进行敏感信息脱敏。</p>
+<h2>提取日志</h2>
+<p>选择最新的日志文件：</p>
+<pre><code class="language-bash">ls -t /tmp/openclaw/openclaw-*.log | head -n 1
+</code></pre>
+<p>过滤 Telegram HTTP 诊断日志：</p>
+<pre><code class="language-bash">rg &quot;telegram http error&quot; /tmp/openclaw/openclaw-*.log
+</code></pre>
+<p>或在复现时实时跟踪：</p>
+<pre><code class="language-bash">tail -f /tmp/openclaw/openclaw-$(date +%F).log | rg &quot;telegram http error&quot;
+</code></pre>
+<p>对于远程 Gateway，你也可以使用 <code>openclaw logs --follow</code>（详见 <a href="/cli/logs">/cli/logs</a>）。</p>
+<h2>备注</h2>
+<ul>
+<li>如果 <code>logging.level</code> 设置为高于 <code>warn</code>，这些日志可能会被抑制。默认的 <code>info</code> 级别没问题。</li>
+<li>标志可以安全地保持启用；它们只影响特定子系统的日志量。</li>
+<li>使用 <a href="/logging">/logging</a> 更改日志目标、级别和脱敏设置。</li>
+</ul>
+
         </div>
     </main>
 

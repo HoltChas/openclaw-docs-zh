@@ -121,9 +121,320 @@
     <main class="main-content">
         <div class="content">
             <h1>多代理沙盒</h1>
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/multi-agent-sandbox-tools" target="_blank">查看原始英文文档</a></p>
+<h1>多 Agent 沙盒与工具配置</h1>
+<h2>概述</h2>
+<p>多 Agent 设置中的每个 Agent 现在可以有自己的：</p>
+<ul>
+<li><strong>沙盒配置</strong>（<code>agents.list[].sandbox</code> 覆盖 <code>agents.defaults.sandbox</code>）</li>
+<li><strong>工具限制</strong>（<code>tools.allow</code> / <code>tools.deny</code>，加上 <code>agents.list[].tools</code>）</li>
+</ul>
+<p>这让你可以运行具有不同安全配置的多个 Agent：</p>
+<ul>
+<li>完全访问的个人助手</li>
+<li>受限制工具的家庭/工作 Agent</li>
+<li>沙盒中的面向公众 Agent</li>
+</ul>
+<p><code>setupCommand</code> 属于 <code>sandbox.docker</code> 下（全局或每个 Agent），在容器创建时运行一次。</p>
+<p>每个 Agent 的认证：每个 Agent 从自己的 <code>agentDir</code> 认证存储读取：</p>
+<pre><code>~/.openclaw/agents/&lt;agentId&gt;/agent/auth-profiles.json
+</code></pre>
+<p><strong>凭证不在 Agent 之间共享。</strong> 永远不要跨 Agent 重用 <code>agentDir</code>。<br>如果你想共享凭证，将 <code>auth-profiles.json</code> 复制到其他 Agent 的 <code>agentDir</code> 中。</p>
+<p>运行时沙盒行为详见 <a href="/gateway/sandboxing">沙盒</a>。<br>调试&quot;为什么被阻止？&quot;详见 <a href="/gateway/sandbox-vs-tool-policy-vs-elevated">沙盒 vs 工具策略 vs 特权</a> 和 <code>openclaw sandbox explain</code>。</p>
+<hr>
+<h2>配置示例</h2>
+<h3>示例 1：个人 + 受限制的家庭 Agent</h3>
+<pre><code class="language-json">{
+  &quot;agents&quot;: {
+    &quot;list&quot;: [
+      {
+        &quot;id&quot;: &quot;main&quot;,
+        &quot;default&quot;: true,
+        &quot;name&quot;: &quot;Personal Assistant&quot;,
+        &quot;workspace&quot;: &quot;~/.openclaw/workspace&quot;,
+        &quot;sandbox&quot;: { &quot;mode&quot;: &quot;off&quot; }
+      },
+      {
+        &quot;id&quot;: &quot;family&quot;,
+        &quot;name&quot;: &quot;Family Bot&quot;,
+        &quot;workspace&quot;: &quot;~/.openclaw/workspace-family&quot;,
+        &quot;sandbox&quot;: {
+          &quot;mode&quot;: &quot;all&quot;,
+          &quot;scope&quot;: &quot;agent&quot;
+        },
+        &quot;tools&quot;: {
+          &quot;allow&quot;: [&quot;read&quot;],
+          &quot;deny&quot;: [&quot;exec&quot;, &quot;write&quot;, &quot;edit&quot;, &quot;apply_patch&quot;, &quot;process&quot;, &quot;browser&quot;]
+        }
+      }
+    ]
+  },
+  &quot;bindings&quot;: [
+    {
+      &quot;agentId&quot;: &quot;family&quot;,
+      &quot;match&quot;: {
+        &quot;provider&quot;: &quot;whatsapp&quot;,
+        &quot;accountId&quot;: &quot;*&quot;,
+        &quot;peer&quot;: {
+          &quot;kind&quot;: &quot;group&quot;,
+          &quot;id&quot;: &quot;120363424282127706@g.us&quot;
+        }
+      }
+    }
+  ]
+}
+</code></pre>
+<p><strong>结果：</strong></p>
+<ul>
+<li><code>main</code> Agent：在主机上运行，完全工具访问</li>
+<li><code>family</code> Agent：在 Docker 中运行（每个 Agent 一个容器），只有 <code>read</code> 工具</li>
+</ul>
+<hr>
+<h3>示例 2：工作 Agent 与共享沙盒</h3>
+<pre><code class="language-json">{
+  &quot;agents&quot;: {
+    &quot;list&quot;: [
+      {
+        &quot;id&quot;: &quot;personal&quot;,
+        &quot;workspace&quot;: &quot;~/.openclaw/workspace-personal&quot;,
+        &quot;sandbox&quot;: { &quot;mode&quot;: &quot;off&quot; }
+      },
+      {
+        &quot;id&quot;: &quot;work&quot;,
+        &quot;workspace&quot;: &quot;~/.openclaw/workspace-work&quot;,
+        &quot;sandbox&quot;: {
+          &quot;mode&quot;: &quot;all&quot;,
+          &quot;scope&quot;: &quot;shared&quot;,
+          &quot;workspaceRoot&quot;: &quot;/tmp/work-sandboxes&quot;
+        },
+        &quot;tools&quot;: {
+          &quot;allow&quot;: [&quot;read&quot;, &quot;write&quot;, &quot;apply_patch&quot;, &quot;exec&quot;],
+          &quot;deny&quot;: [&quot;browser&quot;, &quot;gateway&quot;, &quot;discord&quot;]
+        }
+      }
+    ]
+  }
+}
+</code></pre>
+<hr>
+<h3>示例 2b：全局编码配置 + 仅消息 Agent</h3>
+<pre><code class="language-json">{
+  &quot;tools&quot;: { &quot;profile&quot;: &quot;coding&quot; },
+  &quot;agents&quot;: {
+    &quot;list&quot;: [
+      {
+        &quot;id&quot;: &quot;support&quot;,
+        &quot;tools&quot;: { &quot;profile&quot;: &quot;messaging&quot;, &quot;allow&quot;: [&quot;slack&quot;] }
+      }
+    ]
+  }
+}
+</code></pre>
+<p><strong>结果：</strong></p>
+<ul>
+<li>默认 Agent 获得编码工具</li>
+<li><code>support</code> Agent 仅用于消息（+ Slack 工具）</li>
+</ul>
+<hr>
+<h3>示例 3：每个 Agent 不同的沙盒模式</h3>
+<pre><code class="language-json">{
+  &quot;agents&quot;: {
+    &quot;defaults&quot;: {
+      &quot;sandbox&quot;: {
+        &quot;mode&quot;: &quot;non-main&quot;,  // 全局默认
+        &quot;scope&quot;: &quot;session&quot;
+      }
+    },
+    &quot;list&quot;: [
+      {
+        &quot;id&quot;: &quot;main&quot;,
+        &quot;workspace&quot;: &quot;~/.openclaw/workspace&quot;,
+        &quot;sandbox&quot;: {
+          &quot;mode&quot;: &quot;off&quot;  // 覆盖：main 从不沙盒
+        }
+      },
+      {
+        &quot;id&quot;: &quot;public&quot;,
+        &quot;workspace&quot;: &quot;~/.openclaw/workspace-public&quot;,
+        &quot;sandbox&quot;: {
+          &quot;mode&quot;: &quot;all&quot;,  // 覆盖：public 始终沙盒
+          &quot;scope&quot;: &quot;agent&quot;
+        },
+        &quot;tools&quot;: {
+          &quot;allow&quot;: [&quot;read&quot;],
+          &quot;deny&quot;: [&quot;exec&quot;, &quot;write&quot;, &quot;edit&quot;, &quot;apply_patch&quot;]
+        }
+      }
+    ]
+  }
+}
+</code></pre>
+<hr>
+<h2>配置优先级</h2>
+<p>当全局（<code>agents.defaults.*</code>）和特定 Agent（<code>agents.list[].*</code>）配置都存在时：</p>
+<h3>沙盒配置</h3>
+<p>特定 Agent 设置覆盖全局：</p>
+<pre><code>agents.list[].sandbox.mode &gt; agents.defaults.sandbox.mode
+agents.list[].sandbox.scope &gt; agents.defaults.sandbox.scope
+agents.list[].sandbox.workspaceRoot &gt; agents.defaults.sandbox.workspaceRoot
+agents.list[].sandbox.workspaceAccess &gt; agents.defaults.sandbox.workspaceAccess
+agents.list[].sandbox.docker.* &gt; agents.defaults.sandbox.docker.*
+agents.list[].sandbox.browser.* &gt; agents.defaults.sandbox.browser.*
+agents.list[].sandbox.prune.* &gt; agents.defaults.sandbox.prune.*
+</code></pre>
+<p><strong>注意：</strong></p>
+<ul>
+<li><code>agents.list[].sandbox.{docker,browser,prune}.*</code> 覆盖该 Agent 的 <code>agents.defaults.sandbox.{docker,browser,prune}.*</code>（当沙盒范围解析为 <code>&quot;shared&quot;</code> 时忽略）</li>
+</ul>
+<h3>工具限制</h3>
+<p>过滤顺序是：</p>
+<ol>
+<li><strong>工具配置文件</strong>（<code>tools.profile</code> 或 <code>agents.list[].tools.profile</code>）</li>
+<li><strong>提供者工具配置文件</strong>（<code>tools.byProvider[provider].profile</code> 或 <code>agents.list[].tools.byProvider[provider].profile</code>）</li>
+<li><strong>全局工具策略</strong>（<code>tools.allow</code> / <code>tools.deny</code>）</li>
+<li><strong>提供者工具策略</strong>（<code>tools.byProvider[provider].allow/deny</code>）</li>
+<li><strong>特定 Agent 工具策略</strong>（<code>agents.list[].tools.allow/deny</code>）</li>
+<li><strong>Agent 提供者策略</strong>（<code>agents.list[].tools.byProvider[provider].allow/deny</code>）</li>
+<li><strong>沙盒工具策略</strong>（<code>tools.sandbox.tools</code> 或 <code>agents.list[].tools.sandbox.tools</code>）</li>
+<li><strong>子 Agent 工具策略</strong>（<code>tools.subagents.tools</code>，如果适用）</li>
+</ol>
+<p>每个级别只能进一步限制工具，不能授予之前级别拒绝的工具。<br>如果设置了 <code>agents.list[].tools.sandbox.tools</code>，它会替换该 Agent 的 <code>tools.sandbox.tools</code>。<br>如果设置了 <code>agents.list[].tools.profile</code>，它会覆盖该 Agent 的 <code>tools.profile</code>。<br>提供者工具键接受 <code>provider</code>（例如 <code>google-antigravity</code>）或 <code>provider/model</code>（例如 <code>openai/gpt-5.2</code>）。</p>
+<h3>工具组（简写）</h3>
+<p>工具策略（全局、Agent、沙盒）支持展开为多个具体工具的 <code>group:*</code> 条目：</p>
+<ul>
+<li><code>group:runtime</code>: <code>exec</code>, <code>bash</code>, <code>process</code></li>
+<li><code>group:fs</code>: <code>read</code>, <code>write</code>, <code>edit</code>, <code>apply_patch</code></li>
+<li><code>group:sessions</code>: <code>sessions_list</code>, <code>sessions_history</code>, <code>sessions_send</code>, <code>sessions_spawn</code>, <code>session_status</code></li>
+<li><code>group:memory</code>: <code>memory_search</code>, <code>memory_get</code></li>
+<li><code>group:ui</code>: <code>browser</code>, <code>canvas</code></li>
+<li><code>group:automation</code>: <code>cron</code>, <code>gateway</code></li>
+<li><code>group:messaging</code>: <code>message</code></li>
+<li><code>group:nodes</code>: <code>nodes</code></li>
+<li><code>group:openclaw</code>: 所有内置 OpenClaw 工具（不包括提供者插件）</li>
+</ul>
+<h3>特权模式</h3>
+<p><code>tools.elevated</code> 是全局基线（基于发送者的允许列表）。<code>agents.list[].tools.elevated</code> 可以进一步限制特定 Agent 的特权（两者都必须允许）。</p>
+<p>缓解模式：</p>
+<ul>
+<li>对不受信任的 Agent 拒绝 <code>exec</code>（<code>agents.list[].tools.deny: [&quot;exec&quot;]</code>）</li>
+<li>避免将发送者列入会路由到受限制 Agent 的白名单</li>
+<li>全局禁用特权（<code>tools.elevated.enabled: false</code>）如果你只想要沙盒执行</li>
+<li>为敏感配置文件每个 Agent 禁用特权（<code>agents.list[].tools.elevated.enabled: false</code>）</li>
+</ul>
+<hr>
+<h2>从单 Agent 迁移</h2>
+<p><strong>之前（单 Agent）：</strong></p>
+<pre><code class="language-json">{
+  &quot;agents&quot;: {
+    &quot;defaults&quot;: {
+      &quot;workspace&quot;: &quot;~/.openclaw/workspace&quot;,
+      &quot;sandbox&quot;: {
+        &quot;mode&quot;: &quot;non-main&quot;
+      }
+    }
+  },
+  &quot;tools&quot;: {
+    &quot;sandbox&quot;: {
+      &quot;tools&quot;: {
+        &quot;allow&quot;: [&quot;read&quot;, &quot;write&quot;, &quot;apply_patch&quot;, &quot;exec&quot;],
+        &quot;deny&quot;: []
+      }
+    }
+  }
+}
+</code></pre>
+<p><strong>之后（具有不同配置文件的多 Agent）：</strong></p>
+<pre><code class="language-json">{
+  &quot;agents&quot;: {
+    &quot;list&quot;: [
+      {
+        &quot;id&quot;: &quot;main&quot;,
+        &quot;default&quot;: true,
+        &quot;workspace&quot;: &quot;~/.openclaw/workspace&quot;,
+        &quot;sandbox&quot;: { &quot;mode&quot;: &quot;off&quot; }
+      }
+    ]
+  }
+}
+</code></pre>
+<p>旧版 <code>agent.*</code> 配置由 <code>openclaw doctor</code> 迁移；今后优先使用 <code>agents.defaults</code> + <code>agents.list</code>。</p>
+<hr>
+<h2>工具限制示例</h2>
+<h3>只读 Agent</h3>
+<pre><code class="language-json">{
+  &quot;tools&quot;: {
+    &quot;allow&quot;: [&quot;read&quot;],
+    &quot;deny&quot;: [&quot;exec&quot;, &quot;write&quot;, &quot;edit&quot;, &quot;apply_patch&quot;, &quot;process&quot;]
+  }
+}
+</code></pre>
+<h3>安全执行 Agent（无文件修改）</h3>
+<pre><code class="language-json">{
+  &quot;tools&quot;: {
+    &quot;allow&quot;: [&quot;read&quot;, &quot;exec&quot;, &quot;process&quot;],
+    &quot;deny&quot;: [&quot;write&quot;, &quot;edit&quot;, &quot;apply_patch&quot;, &quot;browser&quot;, &quot;gateway&quot;]
+  }
+}
+</code></pre>
+<h3>仅通信 Agent</h3>
+<pre><code class="language-json">{
+  &quot;tools&quot;: {
+    &quot;allow&quot;: [&quot;sessions_list&quot;, &quot;sessions_send&quot;, &quot;sessions_history&quot;, &quot;session_status&quot;],
+    &quot;deny&quot;: [&quot;exec&quot;, &quot;write&quot;, &quot;edit&quot;, &quot;apply_patch&quot;, &quot;read&quot;, &quot;browser&quot;]
+  }
+}
+</code></pre>
+<hr>
+<h2>常见陷阱：&quot;non-main&quot;</h2>
+<p><code>agents.defaults.sandbox.mode: &quot;non-main&quot;</code> 基于 <code>session.mainKey</code>（默认 <code>&quot;main&quot;</code>），<br>而不是 Agent ID。群组/频道会话总是获得自己的键，因此它们被视为 non-main 并将被沙盒。如果你想让 Agent 从不沙盒，设置 <code>agents.list[].sandbox.mode: &quot;off&quot;</code>。</p>
+<hr>
+<h2>测试</h2>
+<p>配置多 Agent 沙盒和工具后：</p>
+<ol>
+<li><p><strong>检查 Agent 解析：</strong></p>
+<pre><code class="language-bash">openclaw agents list --bindings
+</code></pre>
+</li>
+<li><p><strong>验证沙盒容器：</strong></p>
+<pre><code class="language-bash">docker ps --filter &quot;name=openclaw-sbx-&quot;
+</code></pre>
+</li>
+<li><p><strong>测试工具限制：</strong></p>
+<ul>
+<li>发送需要受限制工具的消息</li>
+<li>验证 Agent 不能使用被拒绝的工具</li>
+</ul>
+</li>
+<li><p><strong>监控日志：</strong></p>
+<pre><code class="language-bash">tail -f &quot;${OPENCLAW_STATE_DIR:-$HOME/.openclaw}/logs/gateway.log&quot; | grep -E &quot;routing|sandbox|tools&quot;
+</code></pre>
+</li>
+</ol>
+<hr>
+<h2>故障排除</h2>
+<h3>尽管设置了 <code>mode: &quot;all&quot;</code> Agent 仍未沙盒</h3>
+<ul>
+<li>检查是否有全局 <code>agents.defaults.sandbox.mode</code> 覆盖了它</li>
+<li>特定 Agent 配置优先，所以设置 <code>agents.list[].sandbox.mode: &quot;all&quot;</code></li>
+</ul>
+<h3>尽管有拒绝列表工具仍然可用</h3>
+<ul>
+<li>检查工具过滤顺序：全局 → Agent → 沙盒 → 子 Agent</li>
+<li>每个级别只能进一步限制，不能授予</li>
+<li>用日志验证：<code>[tools] filtering tools for agent:${agentId}</code></li>
+</ul>
+<h3>容器未按 Agent 隔离</h3>
+<ul>
+<li>在特定 Agent 沙盒配置中设置 <code>scope: &quot;agent&quot;</code></li>
+<li>默认是 <code>&quot;session&quot;</code>，为每个会话创建一个容器</li>
+</ul>
+<hr>
+<h2>另见</h2>
+<ul>
+<li><a href="/concepts/multi-agent">多 Agent 路由</a></li>
+<li><a href="/gateway/configuration#agentsdefaults-sandbox">沙盒配置</a></li>
+<li><a href="/concepts/session">会话管理</a></li>
+</ul>
+
         </div>
     </main>
 

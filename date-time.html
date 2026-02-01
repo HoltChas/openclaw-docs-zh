@@ -121,9 +121,87 @@
     <main class="main-content">
         <div class="content">
             <h1>日期时间</h1>
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/date-time" target="_blank">查看原始英文文档</a></p>
+<h1>日期与时间</h1>
+<p>OpenClaw 默认为<strong>传输时间戳使用主机本地时间</strong>，<strong>仅在系统提示词中使用用户时区</strong>。<br>提供者时间戳被保留，因此工具保持其原生语义（当前时间可通过 <code>session_status</code> 获得）。</p>
+<h2>消息信封（默认本地）</h2>
+<p>入站消息包装有时间戳（精确到分钟）：</p>
+<pre><code>[Provider ... 2026-01-05 16:26 PST] message text
+</code></pre>
+<p>信封时间戳<strong>默认使用主机本地时间</strong>，无论提供者时区如何。</p>
+<p>你可以覆盖此行为：</p>
+<pre><code class="language-json5">{
+  agents: {
+    defaults: {
+      envelopeTimezone: &quot;local&quot;, // &quot;utc&quot; | &quot;local&quot; | &quot;user&quot; | IANA 时区
+      envelopeTimestamp: &quot;on&quot;, // &quot;on&quot; | &quot;off&quot;
+      envelopeElapsed: &quot;on&quot; // &quot;on&quot; | &quot;off&quot;
+    }
+  }
+}
+</code></pre>
+<ul>
+<li><code>envelopeTimezone: &quot;utc&quot;</code> 使用 UTC</li>
+<li><code>envelopeTimezone: &quot;local&quot;</code> 使用主机时区</li>
+<li><code>envelopeTimezone: &quot;user&quot;</code> 使用 <code>agents.defaults.userTimezone</code>（回退到主机时区）</li>
+<li>使用显式 IANA 时区（例如 <code>&quot;America/Chicago&quot;</code>）固定时区</li>
+<li><code>envelopeTimestamp: &quot;off&quot;</code> 从信封头中移除绝对时间戳</li>
+<li><code>envelopeElapsed: &quot;off&quot;</code> 移除经过时间后缀（<code>+2m</code> 样式）</li>
+</ul>
+<h3>示例</h3>
+<p><strong>本地（默认）：</strong></p>
+<pre><code>[WhatsApp +1555 2026-01-18 00:19 PST] hello
+</code></pre>
+<p><strong>用户时区：</strong></p>
+<pre><code>[WhatsApp +1555 2026-01-18 00:19 CST] hello
+</code></pre>
+<p><strong>启用经过时间：</strong></p>
+<pre><code>[WhatsApp +1555 +30s 2026-01-18T05:19Z] follow-up
+</code></pre>
+<h2>系统提示词：当前日期与时间</h2>
+<p>如果知道用户时区，系统提示词包含一个专用的<br><strong>当前日期与时间</strong>部分，<strong>只包含时区</strong>（无时钟/时间格式）<br>以保持提示词缓存稳定：</p>
+<pre><code>Time zone: America/Chicago
+</code></pre>
+<p>当 Agent 需要当前时间时，使用 <code>session_status</code> 工具；状态卡包含时间戳行。</p>
+<h2>系统事件行（默认本地）</h2>
+<p>排队插入 Agent 上下文的系统事件用与消息信封相同的时区选择（默认：主机本地）添加前缀。</p>
+<pre><code>System: [2026-01-12 12:19:17 PST] Model switched.
+</code></pre>
+<h3>配置用户时区 + 格式</h3>
+<pre><code class="language-json5">{
+  agents: {
+    defaults: {
+      userTimezone: &quot;America/Chicago&quot;,
+      timeFormat: &quot;auto&quot; // auto | 12 | 24
+    }
+  }
+}
+</code></pre>
+<ul>
+<li><code>userTimezone</code> 设置提示词上下文的<strong>用户本地时区</strong></li>
+<li><code>timeFormat</code> 控制提示词中的<strong>12h/24h 显示</strong>。<code>auto</code> 遵循 OS 偏好。</li>
+</ul>
+<h2>时间格式检测（自动）</h2>
+<p>当 <code>timeFormat: &quot;auto&quot;</code> 时，OpenClaw 检查 OS 偏好（macOS/Windows）<br>并回退到区域格式。检测值<strong>每个进程缓存</strong>以避免重复系统调用。</p>
+<h2>工具负载 + 连接器（原始提供者时间 + 规范字段）</h2>
+<p>频道工具返回<strong>提供者原生时间戳</strong>并添加规范字段以保持一致性：</p>
+<ul>
+<li><code>timestampMs</code>: epoch 毫秒（UTC）</li>
+<li><code>timestampUtc</code>: ISO 8601 UTC 字符串</li>
+</ul>
+<p>保留原始提供者字段，因此不会丢失任何内容。</p>
+<ul>
+<li>Slack：来自 API 的类 epoch 字符串</li>
+<li>Discord：UTC ISO 时间戳</li>
+<li>Telegram/WhatsApp：提供者特定的数字/ISO 时间戳</li>
+</ul>
+<p>如果你需要本地时间，使用已知时区在下游转换。</p>
+<h2>相关文档</h2>
+<ul>
+<li><a href="/concepts/system-prompt">系统提示词</a></li>
+<li><a href="/concepts/timezone">时区</a></li>
+<li><a href="/concepts/messages">消息</a></li>
+</ul>
+
         </div>
     </main>
 

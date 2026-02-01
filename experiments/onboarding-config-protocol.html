@@ -121,9 +121,40 @@
     <main class="main-content">
         <div class="content">
             <h1>配置协议</h1>
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/experiments/onboarding-config-protocol" target="_blank">查看原始英文文档</a></p>
+<h1>引导与配置协议</h1>
+<p>目的：在 CLI、macOS 应用和 Web UI 之间共享引导 + 配置界面。</p>
+<h2>组件</h2>
+<ul>
+<li>向导引擎（共享会话 + 提示 + 引导状态）</li>
+<li>CLI 引导使用与 UI 客户端相同的向导流程</li>
+<li>Gateway RPC 暴露向导 + 配置模式端点</li>
+<li>macOS 引导使用向导步骤模型</li>
+<li>Web UI 从 JSON Schema + UI 提示渲染配置表单</li>
+</ul>
+<h2>Gateway RPC</h2>
+<ul>
+<li><code>wizard.start</code> 参数：<code>{ mode?: &quot;local&quot;|&quot;remote&quot;, workspace?: string }</code></li>
+<li><code>wizard.next</code> 参数：<code>{ sessionId, answer?: { stepId, value? } }</code></li>
+<li><code>wizard.cancel</code> 参数：<code>{ sessionId }</code></li>
+<li><code>wizard.status</code> 参数：<code>{ sessionId }</code></li>
+<li><code>config.schema</code> 参数：<code>{}</code></li>
+</ul>
+<p>响应格式：</p>
+<ul>
+<li>向导：<code>{ sessionId, done, step?, status?, error? }</code></li>
+<li>配置模式：<code>{ schema, uiHints, version, generatedAt }</code></li>
+</ul>
+<h2>UI 提示</h2>
+<ul>
+<li><code>uiHints</code> 按键路径；可选元数据（label/help/group/order/advanced/sensitive/placeholder）</li>
+<li>敏感字段渲染为密码输入；无脱敏层</li>
+<li>不支持的 Schema 节点回退到原始 JSON 编辑器</li>
+</ul>
+<h2>备注</h2>
+<ul>
+<li>本文档是跟踪引导/配置协议重构的单一位置</li>
+</ul>
+
         </div>
     </main>
 

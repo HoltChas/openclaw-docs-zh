@@ -121,9 +121,52 @@
     <main class="main-content">
         <div class="content">
             <h1>Northflank 部署</h1>
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/northflank" target="_blank">查看原始英文文档</a></p>
+<p>使用一键模板在 Northflank 上部署 OpenClaw，并在浏览器中完成设置。<br>这是最简单的&quot;服务器上无终端&quot;路径：Northflank 为你运行 Gateway，<br>你通过 <code>/setup</code> Web 向导配置一切。</p>
+<h2>如何开始</h2>
+<ol>
+<li>点击 <a href="https://northflank.com/stacks/deploy-openclaw">部署 OpenClaw</a> 打开模板。  </li>
+<li>如果还没有，在 <a href="https://app.northflank.com/signup">Northflank 创建账户</a>。  </li>
+<li>点击 <strong>立即部署 OpenClaw</strong>。  </li>
+<li>设置必需的环境变量：<code>SETUP_PASSWORD</code>。</li>
+<li>点击 <strong>部署堆栈</strong> 构建并运行 OpenClaw 模板。</li>
+<li>等待部署完成，然后点击 <strong>查看资源</strong>。</li>
+<li>打开 OpenClaw 服务。</li>
+<li>打开公共 OpenClaw URL 并在 <code>/setup</code> 完成设置。</li>
+<li>在 <code>/openclaw</code> 打开控制台 UI。</li>
+</ol>
+<h2>你将获得什么</h2>
+<ul>
+<li>托管的 OpenClaw Gateway + 控制台 UI</li>
+<li><code>/setup</code> 的 Web 设置向导（无需终端命令）</li>
+<li>通过 Northflank Volume（<code>/data</code>）的持久存储，配置/凭证/工作空间在重新部署后保留</li>
+</ul>
+<h2>设置流程</h2>
+<ol>
+<li>访问 <code>https://&lt;your-northflank-domain&gt;/setup</code> 并输入你的 <code>SETUP_PASSWORD</code>。</li>
+<li>选择模型/认证提供者并粘贴你的密钥。</li>
+<li>（可选）添加 Telegram/Discord/Slack 令牌。</li>
+<li>点击 <strong>运行设置</strong>。</li>
+<li>在 <code>https://&lt;your-northflank-domain&gt;/openclaw</code> 打开控制台 UI</li>
+</ol>
+<p>如果 Telegram DM 设置为配对，设置向导可以批准配对码。</p>
+<h2>获取聊天令牌</h2>
+<h3>Telegram 机器人令牌</h3>
+<ol>
+<li>在 Telegram 中给 <code>@BotFather</code> 发消息</li>
+<li>运行 <code>/newbot</code></li>
+<li>复制令牌（看起来像 <code>123456789:AA...</code>）</li>
+<li>粘贴到 <code>/setup</code></li>
+</ol>
+<h3>Discord 机器人令牌</h3>
+<ol>
+<li>前往 <a href="https://discord.com/developers/applications">https://discord.com/developers/applications</a></li>
+<li><strong>新建应用</strong> → 选择一个名称</li>
+<li><strong>Bot</strong> → <strong>添加 Bot</strong></li>
+<li><strong>在 Bot → Privileged Gateway Intents 下启用 MESSAGE CONTENT INTENT</strong>（必需，否则机器人启动时会崩溃）</li>
+<li>复制 <strong>Bot Token</strong> 并粘贴到 <code>/setup</code></li>
+<li>邀请机器人到你的服务器（OAuth2 URL Generator；范围：<code>bot</code>, <code>applications.commands</code>）</li>
+</ol>
+
         </div>
     </main>
 
