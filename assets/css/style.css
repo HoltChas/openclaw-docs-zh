@@ -26,6 +26,7 @@ body {
     color: var(--text-primary);
     line-height: 1.6;
     min-height: 100vh;
+    overflow: hidden;
 }
 
 /* Navigation */
@@ -107,7 +108,8 @@ body {
 .main-content {
     margin-left: var(--nav-width);
     padding: 2rem;
-    min-height: 100vh;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 /* Hero Section */
@@ -398,12 +400,17 @@ blockquote {
         --nav-width: 100%;
     }
 
+    body {
+        overflow: auto;
+    }
+
     .navbar {
         width: 100%;
         height: auto;
         position: relative;
         border-right: none;
         border-bottom: 1px solid var(--border-color);
+        overflow-y: visible;
     }
 
     .nav-container {
@@ -426,6 +433,8 @@ blockquote {
         display: none;
         padding: 1rem;
         background-color: var(--bg-secondary);
+        max-height: 70vh;
+        overflow-y: auto;
     }
 
     .nav-links.active {
@@ -435,6 +444,8 @@ blockquote {
     .main-content {
         margin-left: 0;
         padding: 1rem;
+        height: auto;
+        overflow-y: visible;
     }
 
     .footer {
