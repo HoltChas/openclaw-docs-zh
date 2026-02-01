@@ -38,11 +38,23 @@ document.addEventListener('keydown', function(e) {
 // Highlight current page in nav
 document.addEventListener('DOMContentLoaded', function() {
     const currentPath = window.location.pathname;
+    // 移除子目录前缀，只保留路径末尾部分用于匹配
+    const currentPage = currentPath.split('/').pop() || currentPath;
+    const currentDir = currentPath.split('/').slice(-2)[0] || '';
     const navLinks = document.querySelectorAll('.nav-links a');
     
     navLinks.forEach(link => {
-        const linkPath = link.getAttribute('href');
-        if (linkPath && currentPath.includes(linkPath)) {
+        const linkPath = link.getAttribute('href') || '';
+        // 提取链接的文件名和目录
+        const linkParts = linkPath.split('/');
+        const linkPage = linkParts.pop() || linkPath;
+        const linkDir = linkParts.pop() || '';
+        
+        // 匹配：同目录下的同名文件
+        const isMatch = (linkPage === currentPage) && 
+                       (linkDir === '' || linkDir === currentDir || currentPath.includes(linkDir));
+        
+        if (isMatch) {
             link.style.color = 'var(--accent-primary)';
             link.style.fontWeight = '600';
         }
