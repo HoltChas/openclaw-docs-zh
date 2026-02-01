@@ -20,6 +20,9 @@ const pages = [
     { path: 'gateway/tailscale.html', title: 'Tailscale', category: '网关配置' },
     { path: 'gateway/multiple-gateways.html', title: '多网关', category: '网关配置' },
     { path: 'gateway/discovery.html', title: '发现机制', category: '网关配置' },
+    { path: 'environment.html', title: '环境变量', category: '网关配置' },
+    { path: 'logging.html', title: '日志配置', category: '网关配置' },
+    { path: 'network.html', title: '网络配置', category: '网关配置' },
     
     // Channels section
     { path: 'channels/whatsapp.html', title: 'WhatsApp', category: '消息渠道' },
@@ -39,17 +42,23 @@ const pages = [
     { path: 'concepts/group-messages.html', title: '群组消息', category: '核心概念' },
     { path: 'concepts/multi-agent.html', title: '多代理路由', category: '核心概念' },
     { path: 'concepts/session.html', title: '会话', category: '核心概念' },
+    { path: 'broadcast-groups.html', title: '广播群组', category: '核心概念' },
+    { path: 'multi-agent-sandbox-tools.html', title: '多代理沙盒', category: '核心概念' },
+    { path: 'date-time.html', title: '日期时间', category: '核心概念' },
     
     // Automation section
     { path: 'automation/cron-jobs.html', title: '定时任务', category: '自动化' },
     { path: 'automation/webhook.html', title: 'Webhooks', category: '自动化' },
     { path: 'automation/gmail-pubsub.html', title: 'Gmail Pub/Sub', category: '自动化' },
+    { path: 'hooks.html', title: '钩子系统', category: '自动化' },
     
     // Tools section
     { path: 'tools/slash-commands.html', title: '斜杠命令', category: '工具与技能' },
     { path: 'tools/skills.html', title: '技能', category: '工具与技能' },
     { path: 'tools/skills-config.html', title: '技能配置', category: '工具与技能' },
     { path: 'tools/web.html', title: 'Web 工具', category: '工具与技能' },
+    { path: 'brave-search.html', title: 'Brave 搜索', category: '工具与技能' },
+    { path: 'perplexity.html', title: 'Perplexity', category: '工具与技能' },
     
     // Install section
     { path: 'install/updating.html', title: '更新', category: '安装与平台' },
@@ -61,12 +70,22 @@ const pages = [
     { path: 'platforms/android.html', title: 'Android', category: '安装与平台' },
     { path: 'platforms/windows.html', title: 'Windows (WSL2)', category: '安装与平台' },
     { path: 'platforms/linux.html', title: 'Linux', category: '安装与平台' },
+    { path: 'northflank.html', title: 'Northflank 部署', category: '安装与平台' },
+    { path: 'bedrock.html', title: 'AWS Bedrock', category: '安装与平台' },
     
     // Nodes section
     { path: 'nodes/index.html', title: '节点', category: '节点与媒体' },
     { path: 'nodes/images.html', title: '图片', category: '节点与媒体' },
     { path: 'nodes/audio.html', title: '音频', category: '节点与媒体' },
     
+    // CLI + Debug
+    { path: 'cli/index.html', title: 'CLI 参考', category: 'CLI 与调试' },
+    { path: 'debug/node-issue.html', title: 'Node 问题', category: 'CLI 与调试' },
+    { path: 'diagnostics/flags.html', title: '诊断标志', category: 'CLI 与调试' },
+
+    // Experiments
+    { path: 'experiments/onboarding-config-protocol.html', title: '配置协议', category: '实验性' },
+
     // Help
     { path: 'help.html', title: '帮助', category: '其他' },
 ];
@@ -90,6 +109,9 @@ const navTemplate = `
                 <a href="${p => p.startsWith('gateway/') ? '' : 'gateway/'}tailscale.html">Tailscale</a>
                 <a href="${p => p.startsWith('gateway/') ? '' : 'gateway/'}multiple-gateways.html">多网关</a>
                 <a href="${p => p.startsWith('gateway/') ? '' : 'gateway/'}discovery.html">发现机制</a>
+                <a href="${p => p === 'environment.html' ? '' : ''}environment.html">环境变量</a>
+                <a href="${p => p === 'logging.html' ? '' : ''}logging.html">日志配置</a>
+                <a href="${p => p === 'network.html' ? '' : ''}network.html">网络配置</a>
             </div>
             <div class="nav-section">
                 <span class="nav-section-title">消息渠道</span>
@@ -177,6 +199,9 @@ function generatePage(filePath, title, category) {
                 <a href="${prefix}gateway/tailscale.html">Tailscale</a>
                 <a href="${prefix}gateway/multiple-gateways.html">多网关</a>
                 <a href="${prefix}gateway/discovery.html">发现机制</a>
+                <a href="${prefix}environment.html">环境变量</a>
+                <a href="${prefix}logging.html">日志配置</a>
+                <a href="${prefix}network.html">网络配置</a>
             </div>
             <div class="nav-section">
                 <span class="nav-section-title">消息渠道</span>
@@ -199,12 +224,16 @@ function generatePage(filePath, title, category) {
                 <a href="${prefix}concepts/group-messages.html">群组消息</a>
                 <a href="${prefix}concepts/multi-agent.html">多代理路由</a>
                 <a href="${prefix}concepts/session.html">会话</a>
+                <a href="${prefix}broadcast-groups.html">广播群组</a>
+                <a href="${prefix}multi-agent-sandbox-tools.html">多代理沙盒</a>
+                <a href="${prefix}date-time.html">日期时间</a>
             </div>
             <div class="nav-section">
                 <span class="nav-section-title">自动化</span>
                 <a href="${prefix}automation/cron-jobs.html">定时任务</a>
                 <a href="${prefix}automation/webhook.html">Webhooks</a>
                 <a href="${prefix}automation/gmail-pubsub.html">Gmail Pub/Sub</a>
+                <a href="${prefix}hooks.html">钩子系统</a>
             </div>
             <div class="nav-section">
                 <span class="nav-section-title">工具与技能</span>
@@ -212,6 +241,8 @@ function generatePage(filePath, title, category) {
                 <a href="${prefix}tools/skills.html">技能</a>
                 <a href="${prefix}tools/skills-config.html">技能配置</a>
                 <a href="${prefix}tools/web.html">Web 工具</a>
+                <a href="${prefix}brave-search.html">Brave 搜索</a>
+                <a href="${prefix}perplexity.html">Perplexity</a>
             </div>
             <div class="nav-section">
                 <span class="nav-section-title">安装与平台</span>
@@ -222,12 +253,24 @@ function generatePage(filePath, title, category) {
                 <a href="${prefix}platforms/android.html">Android</a>
                 <a href="${prefix}platforms/windows.html">Windows (WSL2)</a>
                 <a href="${prefix}platforms/linux.html">Linux</a>
+                <a href="${prefix}northflank.html">Northflank 部署</a>
+                <a href="${prefix}bedrock.html">AWS Bedrock</a>
             </div>
             <div class="nav-section">
                 <span class="nav-section-title">节点与媒体</span>
                 <a href="${prefix}nodes/index.html">节点</a>
                 <a href="${prefix}nodes/images.html">图片</a>
                 <a href="${prefix}nodes/audio.html">音频</a>
+            </div>
+            <div class="nav-section">
+                <span class="nav-section-title">CLI 与调试</span>
+                <a href="${prefix}cli/index.html">CLI 参考</a>
+                <a href="${prefix}debug/node-issue.html">Node 问题</a>
+                <a href="${prefix}diagnostics/flags.html">诊断标志</a>
+            </div>
+            <div class="nav-section">
+                <span class="nav-section-title">实验性</span>
+                <a href="${prefix}experiments/onboarding-config-protocol.html">配置协议</a>
             </div>
             <div class="nav-section">
                 <span class="nav-section-title">其他</span>
