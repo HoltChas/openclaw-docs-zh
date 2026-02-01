@@ -57,6 +57,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isMatch) {
             link.style.color = 'var(--accent-primary)';
             link.style.fontWeight = '600';
+            // 将当前链接滚动到可视区域
+            link.scrollIntoView({ behavior: 'instant', block: 'nearest' });
         }
     });
 });
