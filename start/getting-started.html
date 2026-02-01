@@ -123,7 +123,7 @@
             <h1>快速入门</h1>
 <h1>入门指南</h1>
 <p>目标：让你从<strong>零</strong>快速上手 → 到<strong>第一条可用的聊天消息</strong>（使用合理的默认配置）。</p>
-<p>最快的聊天方式：打开 Control UI（无需设置频道）。运行 <code>openclaw dashboard</code>，<br>然后在浏览器中聊天，或在 Gateway 主机上打开 <code>http://127.0.0.1:18789/</code>。<br>文档：<a href="/web/dashboard">Dashboard</a> 和 <a href="/web/control-ui">Control UI</a>。</p>
+<p>最快的聊天方式：打开 Control UI（无需设置频道）。运行 <code>openclaw dashboard</code>，<br>然后在浏览器中聊天，或在 Gateway 主机上打开 <code>http://127.0.0.1:18789/</code>。<br>文档：<a href="../web/dashboard.html">Dashboard</a> 和 <a href="../web/control-ui.html">Control UI</a>。</p>
 <p>推荐路径：使用 <strong>CLI 配置向导</strong> (<code>openclaw onboard</code>)。它会帮你设置：</p>
 <ul>
 <li>模型/认证（推荐 OAuth）</li>
@@ -133,7 +133,7 @@
 <li>工作空间引导 + Skills</li>
 <li>可选的后台服务</li>
 </ul>
-<p>如果你想看更深入的参考页面，跳转到：<a href="/start/wizard">向导</a>、<a href="/start/setup">设置</a>、<a href="/start/pairing">配对</a>、<a href="/gateway/security">安全</a>。</p>
+<p>如果你想看更深入的参考页面，跳转到：<a href="./wizard.html">向导</a>、<a href="./setup.html">设置</a>、<a href="./pairing.html">配对</a>、<a href="../gateway/security.html">安全</a>。</p>
 <p>沙盒说明：<code>agents.defaults.sandbox.mode: &quot;non-main&quot;</code> 使用 <code>session.mainKey</code>（默认 <code>&quot;main&quot;</code>），<br>所以群组/频道会话会被沙盒隔离。如果你希望 main Agent 始终在主机上运行，请设置明确的每 Agent 覆盖：</p>
 <pre><code class="language-json">{
   &quot;routing&quot;: {
@@ -150,14 +150,14 @@
 <ul>
 <li>Node <code>&gt;=22</code></li>
 <li><code>pnpm</code>（可选；如果从源码构建则推荐）</li>
-<li><strong>推荐：</strong> Brave Search API 密钥用于网页搜索。最简单的方式：<br><code>openclaw configure --section web</code>（存储 <code>tools.web.search.apiKey</code>）。<br>参见 <a href="/tools/web">Web 工具</a>。</li>
+<li><strong>推荐：</strong> Brave Search API 密钥用于网页搜索。最简单的方式：<br><code>openclaw configure --section web</code>（存储 <code>tools.web.search.apiKey</code>）。<br>参见 <a href="../tools/web.html">Web 工具</a>。</li>
 </ul>
-<p>macOS：如果你计划构建应用，安装 Xcode / CLT。仅使用 CLI + Gateway 的话，Node 就够了。<br>Windows：使用 <strong>WSL2</strong>（推荐 Ubuntu）。强烈建议使用 WSL2；原生 Windows 未经充分测试，问题较多，且工具兼容性较差。先安装 WSL2，然后在 WSL 中运行 Linux 步骤。参见 <a href="/platforms/windows">Windows (WSL2)</a>。</p>
+<p>macOS：如果你计划构建应用，安装 Xcode / CLT。仅使用 CLI + Gateway 的话，Node 就够了。<br>Windows：使用 <strong>WSL2</strong>（推荐 Ubuntu）。强烈建议使用 WSL2；原生 Windows 未经充分测试，问题较多，且工具兼容性较差。先安装 WSL2，然后在 WSL 中运行 Linux 步骤。参见 <a href="../platforms/windows.html">Windows (WSL2)</a>。</p>
 <h2>1) 安装 CLI（推荐）</h2>
 <pre><code class="language-bash"># 使用官方安装脚本
 curl -fsSL https://openclaw.bot/install.sh | bash
 </code></pre>
-<p>安装选项（安装方式、非交互式、从 GitHub）：<a href="/install">安装</a>。</p>
+<p>安装选项（安装方式、非交互式、从 GitHub）：<a href="../install/updating.html">安装</a>。</p>
 <p>Windows (PowerShell)：</p>
 <pre><code class="language-powershell">iwr -useb https://openclaw.ai/install.ps1 | iex
 </code></pre>
@@ -183,7 +183,7 @@ openclaw onboard --install-daemon
 </li>
 <li><strong>Gateway Token</strong>：向导默认会生成一个（即使是回环地址）并存储在 <code>gateway.auth.token</code>。</li>
 </ul>
-<p>向导文档：<a href="/start/wizard">向导</a></p>
+<p>向导文档：<a href="./wizard.html">向导</a></p>
 <h3>认证：存储位置（重要）</h3>
 <ul>
 <li><p><strong>推荐的 Anthropic 路径：</strong> 设置 API 密钥（向导可以为服务使用存储它）。如果你想复用 Claude Code 凭据，也支持 <code>claude setup-token</code>。</p>
@@ -219,13 +219,13 @@ openclaw security audit --deep
 openclaw channels login
 </code></pre>
 <p>通过 WhatsApp → 设置 → 已关联设备 扫描二维码。</p>
-<p>WhatsApp 文档：<a href="/channels/whatsapp">WhatsApp</a></p>
+<p>WhatsApp 文档：<a href="../channels/whatsapp.html">WhatsApp</a></p>
 <h3>Telegram / Discord / 其他</h3>
 <p>向导可以帮你写入 Token/配置。如果你喜欢手动配置，从以下开始：</p>
 <ul>
-<li>Telegram：<a href="/channels/telegram">Telegram</a></li>
-<li>Discord：<a href="/channels/discord">Discord</a></li>
-<li>Mattermost（插件）：<a href="/channels/mattermost">Mattermost</a></li>
+<li>Telegram：<a href="../channels/telegram.html">Telegram</a></li>
+<li>Discord：<a href="../channels/discord.html">Discord</a></li>
+<li>Mattermost（插件）：<a href="../channels/mattermost.html">Mattermost</a></li>
 </ul>
 <p><strong>Telegram 私聊提示：</strong> 你的第一条私聊会返回一个配对码。批准它（见下一步）否则 Bot 不会回复。</p>
 <h2>5) 私聊安全（配对批准）</h2>
@@ -235,7 +235,7 @@ openclaw pairing list whatsapp
 # 批准特定配对码
 openclaw pairing approve whatsapp &lt;code&gt;
 </code></pre>
-<p>配对文档：<a href="/start/pairing">配对</a></p>
+<p>配对文档：<a href="./pairing.html">配对</a></p>
 <h2>从源码运行（开发）</h2>
 <p>如果你要 hack OpenClaw 本身，从源码运行：</p>
 <pre><code class="language-bash"># 克隆仓库
@@ -264,10 +264,10 @@ openclaw message send --target +15555550123 --message &quot;Hello from OpenClaw&
 <p>提示：<code>openclaw status --all</code> 是最佳的、可粘贴的、只读调试报告。<br>健康探测：<code>openclaw health</code>（或 <code>openclaw status --deep</code>）会向运行的 Gateway 请求健康快照。</p>
 <h2>后续步骤（可选，但很推荐）</h2>
 <ul>
-<li>macOS 菜单栏应用 + 语音唤醒：<a href="/platforms/macos">macOS 应用</a></li>
+<li>macOS 菜单栏应用 + 语音唤醒：<a href="../platforms/macos.html">macOS 应用</a></li>
 <li>iOS/Android 节点（Canvas/相机/语音）：<a href="/nodes">节点</a></li>
-<li>远程访问（SSH 隧道 / Tailscale Serve）：<a href="/gateway/remote">远程访问</a> 和 <a href="/gateway/tailscale">Tailscale</a></li>
-<li>始终在线 / VPN 设置：<a href="/gateway/remote">远程访问</a>、<a href="/platforms/exe-dev">exe.dev</a>、<a href="/platforms/hetzner">Hetzner</a>、<a href="/platforms/mac/remote">macOS 远程</a></li>
+<li>远程访问（SSH 隧道 / Tailscale Serve）：<a href="../gateway/remote.html">远程访问</a> 和 <a href="../gateway/tailscale.html">Tailscale</a></li>
+<li>始终在线 / VPN 设置：<a href="../gateway/remote.html">远程访问</a>、<a href="../platforms/exe-dev.html">exe.dev</a>、<a href="../platforms/hetzner.html">Hetzner</a>、<a href="../platforms/mac/remote.html">macOS 远程</a></li>
 </ul>
 
         </div>
