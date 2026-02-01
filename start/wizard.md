@@ -316,7 +316,7 @@ WhatsApp 凭据存储在 `~/.openclaw/credentials/whatsapp/<accountId>/`。
 
 ## 相关文档
 
-- macOS 应用配置：[配置](/start/onboarding)
+- macOS 应用配置：[配置](./onboarding.html)
 - 配置参考：[Gateway 配置](/gateway/configuration)
 - Provider：[WhatsApp](/channels/whatsapp)、[Telegram](/channels/telegram)、[Discord](/channels/discord)、[Google Chat](/channels/googlechat)、[Signal](/channels/signal)、[iMessage](/channels/imessage)
 - Skills：[Skills](/tools/skills)、[Skills 配置](/tools/skills-config)

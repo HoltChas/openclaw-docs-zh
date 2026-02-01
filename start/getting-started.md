@@ -215,6 +215,6 @@ openclaw message send --target +15555550123 --message "Hello from OpenClaw"
 ## 后续步骤（可选，但很推荐）
 
 - macOS 菜单栏应用 + 语音唤醒：[macOS 应用](../platforms/macos.html)
-- iOS/Android 节点（Canvas/相机/语音）：[节点](/nodes)
+- iOS/Android 节点（Canvas/相机/语音）：[节点](../nodes/index.html)
 - 远程访问（SSH 隧道 / Tailscale Serve）：[远程访问](../gateway/remote.html) 和 [Tailscale](../gateway/tailscale.html)
 - 始终在线 / VPN 设置：[远程访问](../gateway/remote.html)、[exe.dev](../platforms/exe-dev.html)、[Hetzner](../platforms/hetzner.html)、[macOS 远程](../platforms/mac/remote.html)
