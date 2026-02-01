@@ -263,7 +263,7 @@ function generatePage(filePath, title, category, mdContent) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title} - OpenClaw 文档</title>
-    <link rel="stylesheet" href="${prefix}assets/css/style.css">
+    <link rel="stylesheet" href="${prefix}assets/css/style.css?v=3">
 </head>
 <body>
     <nav class="navbar">
@@ -288,7 +288,7 @@ ${contentHtml}
         </div>
     </main>
 
-    <script src="${prefix}assets/js/main.js"></script>
+    <script src="${prefix}assets/js/main.js?v=3"></script>
 </body>
 </html>
 `;
