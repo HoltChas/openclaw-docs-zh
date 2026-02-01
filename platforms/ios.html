@@ -121,11 +121,86 @@
     <main class="main-content">
         <div class="content">
             <h1>iOS</h1>
+<h1>iOS 应用（节点）</h1>
+<p>可用性：内部预览。iOS 应用尚未公开发布。</p>
+<h2>功能</h2>
+<ul>
+<li>通过 WebSocket 连接到 Gateway（LAN 或 tailnet）。</li>
+<li>暴露节点能力：Canvas、屏幕快照、相机捕获、位置、对话模式、语音唤醒。</li>
+<li>接收 <code>node.invoke</code> 命令并报告节点状态事件。</li>
+</ul>
+<h2>要求</h2>
+<ul>
+<li>Gateway 在另一台设备上运行（macOS、Linux 或 Windows via WSL2）。</li>
+<li>网络路径：<ul>
+<li>通过 Bonjour 的同一 LAN，<strong>或</strong></li>
+<li>通过单播 DNS-SD 的 Tailnet（示例域：<code>openclaw.internal.</code>），<strong>或</strong></li>
+<li>手动主机/端口（回退）。</li>
+</ul>
+</li>
+</ul>
+<h2>快速开始（配对 + 连接）</h2>
+<ol>
+<li>启动 Gateway：</li>
+</ol>
+<pre><code class="language-bash">openclaw gateway --port 18789
+</code></pre>
+<ol start="2">
+<li><p>在 iOS 应用中，打开设置并选择发现的 Gateway（或启用手动主机并输入主机/端口）。</p>
+</li>
+<li><p>在 Gateway 主机上批准配对请求：</p>
+</li>
+</ol>
+<pre><code class="language-bash">openclaw nodes pending
+openclaw nodes approve &lt;requestId&gt;
+</code></pre>
+<ol start="4">
+<li>验证连接：</li>
+</ol>
+<pre><code class="language-bash">openclaw nodes status
+openclaw gateway call node.list --params &quot;{}&quot;
+</code></pre>
+<h2>发现路径</h2>
+<h3>Bonjour（LAN）</h3>
+<p>Gateway 在 <code>local.</code> 上广播 <code>_openclaw-gw._tcp</code>。iOS 应用自动列出这些。</p>
+<h3>Tailnet（跨网络）</h3>
+<p>如果 mDNS 被阻止，使用单播 DNS-SD 区域（选择域；示例：<code>openclaw.internal.</code>）和 Tailscale 分割 DNS。<br>参见 <a href="/gateway/bonjour">Bonjour</a> 了解 CoreDNS 示例。</p>
+<h3>手动主机/端口</h3>
+<p>在设置中，启用 <strong>手动主机</strong> 并输入 Gateway 主机 + 端口（默认 <code>18789</code>）。</p>
+<h2>Canvas + A2UI</h2>
+<p>iOS 节点渲染 WKWebView Canvas。使用 <code>node.invoke</code> 驱动它：</p>
+<pre><code class="language-bash">openclaw nodes invoke --node &quot;iOS Node&quot; --command canvas.navigate --params &#39;{&quot;url&quot;:&quot;http://&lt;gateway-host&gt;:18793/__openclaw__/canvas/&quot;}&#39;
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>Gateway Canvas 主机提供 <code>/__openclaw__/canvas/</code> 和 <code>/__openclaw__/a2ui/</code>。</li>
+<li>当广告 Canvas 主机 URL 时，iOS 节点在连接时自动导航到 A2UI。</li>
+<li>使用 <code>canvas.navigate</code> 和 <code>{&quot;url&quot;:&quot;&quot;}</code> 返回内置脚手架。</li>
+</ul>
+<h3>Canvas eval / 快照</h3>
+<pre><code class="language-bash">openclaw nodes invoke --node &quot;iOS Node&quot; --command canvas.eval --params &#39;{&quot;javaScript&quot;:&quot;(() =&gt; { const {ctx} = window.__openclaw; ctx.clearRect(0,0,innerWidth,innerHeight); ctx.lineWidth=6; ctx.strokeStyle=\&quot;#ff2d55\&quot;; ctx.beginPath(); ctx.moveTo(40,40); ctx.lineTo(innerWidth-40, innerHeight-40); ctx.stroke(); return \&quot;ok\&quot;; })()&quot;}&#39;
+</code></pre>
+<pre><code class="language-bash">openclaw nodes invoke --node &quot;iOS Node&quot; --command canvas.snapshot --params &#39;{&quot;maxWidth&quot;:900,&quot;format&quot;:&quot;jpeg&quot;}&#39;
+</code></pre>
+<h2>语音唤醒 + 对话模式</h2>
+<ul>
+<li>语音唤醒和对话模式在设置中可用。</li>
+<li>iOS 可能在后台暂停音频；当应用不活动时，将语音功能视为尽力而为。</li>
+</ul>
+<h2>常见错误</h2>
+<ul>
+<li><code>NODE_BACKGROUND_UNAVAILABLE</code>：将 iOS 应用带到前台（Canvas/相机/屏幕命令需要它）。</li>
+<li><code>A2UI_HOST_NOT_CONFIGURED</code>：Gateway 没有广告 Canvas 主机 URL；检查 <a href="/gateway/configuration">Gateway 配置</a> 中的 <code>canvasHost</code>。</li>
+<li>配对提示从未出现：运行 <code>openclaw nodes pending</code> 并手动批准。</li>
+<li>重新安装后重新连接失败：Keychain 配对令牌已清除；重新配对节点。</li>
+</ul>
+<h2>相关文档</h2>
+<ul>
+<li><a href="/gateway/pairing">配对</a></li>
+<li><a href="/gateway/discovery">发现</a></li>
+<li><a href="/gateway/bonjour">Bonjour</a></li>
+</ul>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/platforms/ios" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

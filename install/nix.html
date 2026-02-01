@@ -121,11 +121,68 @@
     <main class="main-content">
         <div class="content">
             <h1>Nix 模式</h1>
+<h1>Nix 安装</h1>
+<p>使用 Nix 运行 OpenClaw 的推荐方式是通过 <strong><a href="https://github.com/openclaw/nix-openclaw">nix-openclaw</a></strong> —— 一个包含电池的 Home Manager 模块。</p>
+<h2>快速开始</h2>
+<p>将这段粘贴给你的 AI 代理（Claude、Cursor 等）：</p>
+<pre><code class="language-text">我想在我的 Mac 上设置 nix-openclaw。
+仓库：github:openclaw/nix-openclaw
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/install/nix" target="_blank">查看原始英文文档</a></p>
-        
+我需要你做的：
+1. 检查是否安装了 Determinate Nix（如果没有，安装它）
+2. 使用 templates/agent-first/flake.nix 在 ~/code/openclaw-local 创建本地 flake
+3. 帮我创建 Telegram 机器人（@BotFather）并获取我的聊天 ID（@userinfobot）
+4. 设置 secrets（机器人 token、Anthropic 密钥）- 纯文本文件在 ~/.secrets/ 也可以
+5. 填写模板占位符并运行 home-manager switch
+6. 验证：launchd 运行中，机器人响应消息
+
+参考 nix-openclaw README 了解模块选项。
+</code></pre>
+<blockquote>
+<p><strong>📦 完整指南：<a href="https://github.com/openclaw/nix-openclaw">github.com/openclaw/nix-openclaw</a></strong></p>
+<p>nix-openclaw 仓库是 Nix 安装的真相来源。本页只是一个快速概述。</p>
+</blockquote>
+<h2>你得到什么</h2>
+<ul>
+<li>Gateway + macOS 应用 + 工具（whisper、spotify、cameras）—— 全部固定</li>
+<li>重启后仍然存活的 Launchd 服务</li>
+<li>声明式配置的插件系统</li>
+<li>即时回滚：<code>home-manager switch --rollback</code></li>
+</ul>
+<hr>
+<h2>Nix 模式运行时行为</h2>
+<p>当设置 <code>OPENCLAW_NIX_MODE=1</code> 时（nix-openclaw 自动设置）：</p>
+<p>OpenClaw 支持 <strong>Nix 模式</strong>，使配置确定化并禁用自动安装流程。<br>通过导出启用它：</p>
+<pre><code class="language-bash">OPENCLAW_NIX_MODE=1
+</code></pre>
+<p>在 macOS 上，GUI 应用不会自动继承 shell 环境变量。你也可以通过 defaults 启用 Nix 模式：</p>
+<pre><code class="language-bash">defaults write bot.molt.mac openclaw.nixMode -bool true
+</code></pre>
+<h3>配置 + 状态路径</h3>
+<p>OpenClaw 从 <code>OPENCLAW_CONFIG_PATH</code> 读取 JSON5 配置，并将可变数据存储在 <code>OPENCLAW_STATE_DIR</code>。</p>
+<ul>
+<li><code>OPENCLAW_STATE_DIR</code>（默认：<code>~/.openclaw</code>）</li>
+<li><code>OPENCLAW_CONFIG_PATH</code>（默认：<code>$OPENCLAW_STATE_DIR/openclaw.json</code>）</li>
+</ul>
+<p>在 Nix 下运行时，显式设置这些为 Nix 管理的位置，以便运行时状态和配置保持在不<br>the immutable store 之外。</p>
+<h3>Nix 模式下的运行时行为</h3>
+<ul>
+<li>禁用自动安装和自修改流程</li>
+<li>缺失依赖显示 Nix 特定的修复消息</li>
+<li>当存在时，UI 显示只读 Nix 模式横幅</li>
+</ul>
+<h2>打包说明（macOS）</h2>
+<p>macOS 打包流程期望在以下位置有一个稳定的 Info.plist 模板：</p>
+<pre><code>apps/macos/Sources/OpenClaw/Resources/Info.plist
+</code></pre>
+<p><a href="https://github.com/openclaw/openclaw/blob/main/scripts/package-mac-app.sh"><code>scripts/package-mac-app.sh</code></a> 将此模板复制到应用包中并修补动态字段<br>（bundle ID、版本/构建、Git SHA、Sparkle 密钥）。这保持 plist 对 SwiftPM<br>打包和 Nix 构建（不依赖完整 Xcode 工具链）是确定性的。</p>
+<h2>相关</h2>
+<ul>
+<li><a href="https://github.com/openclaw/nix-openclaw">nix-openclaw</a> —— 完整设置指南</li>
+<li><a href="/start/wizard">向导</a> —— 非 Nix CLI 设置</li>
+<li><a href="/install/docker">Docker</a> —— 容器化设置</li>
+</ul>
+
         </div>
     </main>
 

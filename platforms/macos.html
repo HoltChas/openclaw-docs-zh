@@ -121,11 +121,152 @@
     <main class="main-content">
         <div class="content">
             <h1>macOS</h1>
+<h1>OpenClaw macOS 配套应用（菜单栏 + Gateway 代理）</h1>
+<p>macOS 应用是 OpenClaw 的<strong>菜单栏配套应用</strong>。它拥有权限，在本地管理/附加到 Gateway（launchd 或手动），并将 macOS 能力作为节点暴露给 Agent。</p>
+<h2>功能</h2>
+<ul>
+<li>在菜单栏中显示原生通知和状态。</li>
+<li>拥有 TCC 提示（通知、辅助功能、屏幕录制、麦克风、语音识别、自动化/AppleScript）。</li>
+<li>运行或连接到 Gateway（本地或远程）。</li>
+<li>暴露仅限 macOS 的工具（Canvas、Camera、屏幕录制、<code>system.run</code>）。</li>
+<li>在 <strong>远程</strong> 模式下启动本地节点主机服务（launchd），在 <strong>本地</strong> 模式下停止它。</li>
+<li>可选托管 <strong>PeekabooBridge</strong> 用于 UI 自动化。</li>
+<li>应请求通过 npm/pnpm 安装全局 CLI（<code>openclaw</code>）（不推荐 Bun 作为 Gateway 运行时）。</li>
+</ul>
+<h2>本地 vs 远程模式</h2>
+<ul>
+<li><strong>本地</strong>（默认）：如果存在，应用附加到运行的本地 Gateway；<br>否则通过 <code>openclaw gateway install</code> 启用 launchd 服务。</li>
+<li><strong>远程</strong>：应用通过 SSH/Tailscale 连接到 Gateway 从不启动本地进程。<br>应用启动本地 <strong>节点主机服务</strong> 以便远程 Gateway 可以到达此 Mac。<br>应用不会将 Gateway 作为子进程生成。</li>
+</ul>
+<h2>Launchd 控制</h2>
+<p>应用管理标记为 <code>bot.molt.gateway</code> 的每用户 LaunchAgent<br>（或使用 <code>--profile</code>/<code>OPENCLAW_PROFILE</code> 时为 <code>bot.molt.&lt;profile&gt;</code>；遗留 <code>com.openclaw.*</code> 仍然卸载）。</p>
+<pre><code class="language-bash">launchctl kickstart -k gui/$UID/bot.molt.gateway
+launchctl bootout gui/$UID/bot.molt.gateway
+</code></pre>
+<p>使用命名配置文件时将标签替换为 <code>bot.molt.&lt;profile&gt;</code>。</p>
+<p>如果 LaunchAgent 未安装，从应用启用它或运行<br><code>openclaw gateway install</code>。</p>
+<h2>节点能力（mac）</h2>
+<p>macOS 应用将自己展示为节点。常见命令：</p>
+<ul>
+<li>Canvas: <code>canvas.present</code>, <code>canvas.navigate</code>, <code>canvas.eval</code>, <code>canvas.snapshot</code>, <code>canvas.a2ui.*</code></li>
+<li>Camera: <code>camera.snap</code>, <code>camera.clip</code></li>
+<li>Screen: <code>screen.record</code></li>
+<li>System: <code>system.run</code>, <code>system.notify</code></li>
+</ul>
+<p>节点报告一个 <code>permissions</code> 映射，以便 Agent 决定什么是允许的。</p>
+<p>节点服务 + 应用 IPC：</p>
+<ul>
+<li>当无头节点主机服务运行（远程模式）时，它通过本地 Unix socket 连接到 Gateway WS 作为节点。</li>
+<li><code>system.run</code> 在 macOS 应用中执行（UI/TCC 上下文）通过本地 Unix socket；提示 + 输出保留在应用中。</li>
+</ul>
+<p>图表（SCI）：</p>
+<pre><code>Gateway -&gt; 节点服务 (WS)
+                 |  IPC (UDS + token + HMAC + TTL)
+                 v
+             Mac 应用 (UI + TCC + system.run)
+</code></pre>
+<h2>Exec 批准（system.run）</h2>
+<p><code>system.run</code> 由 macOS 应用中的 <strong>Exec 批准</strong>控制（设置 → Exec 批准）。<br>安全 + 询问 + 允许列表存储在 Mac 本地：</p>
+<pre><code>~/.openclaw/exec-approvals.json
+</code></pre>
+<p>示例：</p>
+<pre><code class="language-json">{
+  &quot;version&quot;: 1,
+  &quot;defaults&quot;: {
+    &quot;security&quot;: &quot;deny&quot;,
+    &quot;ask&quot;: &quot;on-miss&quot;
+  },
+  &quot;agents&quot;: {
+    &quot;main&quot;: {
+      &quot;security&quot;: &quot;allowlist&quot;,
+      &quot;ask&quot;: &quot;on-miss&quot;,
+      &quot;allowlist&quot;: [
+        { &quot;pattern&quot;: &quot;/opt/homebrew/bin/rg&quot; }
+      ]
+    }
+  }
+}
+</code></pre>
+<p>说明：</p>
+<ul>
+<li><code>allowlist</code> 条目是解析二进制路径的 glob 模式。</li>
+<li>在提示中选择&quot;始终允许&quot;会将该命令添加到允许列表。</li>
+<li><code>system.run</code> 环境覆盖被过滤（丢弃 <code>PATH</code>、<code>DYLD_*</code>、<code>LD_*</code>、<code>NODE_OPTIONS</code>、<code>PYTHON*</code>、<code>PERL*</code>、<code>RUBYOPT</code>），然后与应用的环境合并。</li>
+</ul>
+<h2>深度链接</h2>
+<p>应用注册 <code>openclaw://</code> URL scheme 用于本地操作。</p>
+<h3><code>openclaw://agent</code></h3>
+<p>触发 Gateway <code>agent</code> 请求。</p>
+<pre><code class="language-bash">open &#39;openclaw://agent?message=Hello%20from%20deep%20link&#39;
+</code></pre>
+<p>查询参数：</p>
+<ul>
+<li><code>message</code>（必需）</li>
+<li><code>sessionKey</code>（可选）</li>
+<li><code>thinking</code>（可选）</li>
+<li><code>deliver</code> / <code>to</code> / <code>channel</code>（可选）</li>
+<li><code>timeoutSeconds</code>（可选）</li>
+<li><code>key</code>（可选无人值守模式密钥）</li>
+</ul>
+<p>安全：</p>
+<ul>
+<li>没有 <code>key</code> 时，应用提示确认。</li>
+<li>使用有效 <code>key</code> 时，运行是无人值守的（用于个人自动化）。</li>
+</ul>
+<h2>引导流程（典型）</h2>
+<ol>
+<li>安装并启动 <strong>OpenClaw.app</strong>。</li>
+<li>完成权限检查表（TCC 提示）。</li>
+<li>确保 <strong>本地</strong> 模式激活且 Gateway 正在运行。</li>
+<li>如果你想要终端访问，安装 CLI。</li>
+</ol>
+<h2>构建和开发工作流（原生）</h2>
+<ul>
+<li><code>cd apps/macos &amp;&amp; swift build</code></li>
+<li><code>swift run OpenClaw</code>（或 Xcode）</li>
+<li>打包应用：<code>scripts/package-mac-app.sh</code></li>
+</ul>
+<h2>调试 Gateway 连接（macOS CLI）</h2>
+<p>使用调试 CLI 练习与 macOS 应用相同的 Gateway WebSocket 握手和发现逻辑，而不启动应用。</p>
+<pre><code class="language-bash">cd apps/macos
+swift run openclaw-mac connect --json
+swift run openclaw-mac discover --timeout 3000 --json
+</code></pre>
+<p>连接选项：</p>
+<ul>
+<li><code>--url &lt;ws://host:port&gt;</code>：覆盖配置</li>
+<li><code>--mode &lt;local|remote&gt;</code>：从配置解析（默认：配置或本地）</li>
+<li><code>--probe</code>：强制新鲜健康探测</li>
+<li><code>--timeout &lt;ms&gt;</code>：请求超时（默认：<code>15000</code>）</li>
+<li><code>--json</code>：结构化输出用于差异比较</li>
+</ul>
+<p>发现选项：</p>
+<ul>
+<li><code>--include-local</code>：包括会被过滤为&quot;本地&quot;的 Gateway</li>
+<li><code>--timeout &lt;ms&gt;</code>：整体发现窗口（默认：<code>2000</code>）</li>
+<li><code>--json</code>：结构化输出用于差异比较</li>
+</ul>
+<p>提示：与 <code>openclaw gateway discover --json</code> 比较，查看 macOS 应用的发现管道（NWBrowser + tailnet DNS-SD 回退）与 Node CLI 的 <code>dns-sd</code> 基础发现有何不同。</p>
+<h2>远程连接管道（SSH 隧道）</h2>
+<p>当 macOS 应用在 <strong>远程</strong> 模式下运行时，它打开 SSH 隧道以便本地 UI 组件可以像与 localhost 通信一样与远程 Gateway 通信。</p>
+<h3>控制隧道（Gateway WebSocket 端口）</h3>
+<ul>
+<li><strong>目的：</strong> 健康检查、状态、Web Chat、配置和其他控制平面调用。</li>
+<li><strong>本地端口：</strong> Gateway 端口（默认 <code>18789</code>），始终稳定。</li>
+<li><strong>远程端口：</strong> 远程主机上的相同 Gateway 端口。</li>
+<li><strong>行为：</strong> 没有随机本地端口；应用重用现有健康隧道或根据需要重启它。</li>
+<li><strong>SSH 形状：</strong> <code>ssh -N -L &lt;local&gt;:127.0.0.1:&lt;remote&gt;</code>，带有 BatchMode +<br>ExitOnForwardFailure + keepalive 选项。</li>
+<li><strong>IP 报告：</strong> SSH 隧道使用环回，因此 Gateway 会将节点 IP 视为 <code>127.0.0.1</code>。如果你希望显示真实客户端 IP，使用 <strong>直接（ws/wss）</strong> 传输<br>（参见 <a href="/platforms/mac/remote">macOS 远程访问</a>）。</li>
+</ul>
+<p>设置步骤，参见 <a href="/platforms/mac/remote">macOS 远程访问</a>。协议详情，参见 <a href="/gateway/protocol">Gateway 协议</a>。</p>
+<h2>相关文档</h2>
+<ul>
+<li><a href="/gateway">Gateway 运行手册</a></li>
+<li><a href="/platforms/mac/bundled-gateway">Gateway（macOS）</a></li>
+<li><a href="/platforms/mac/permissions">macOS 权限</a></li>
+<li><a href="/platforms/mac/canvas">Canvas</a></li>
+</ul>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/platforms/macos" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

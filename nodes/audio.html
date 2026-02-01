@@ -121,11 +121,107 @@
     <main class="main-content">
         <div class="content">
             <h1>音频</h1>
+<h1>音频 / 语音笔记 — 2026-01-17</h1>
+<h2>功能</h2>
+<ul>
+<li><strong>媒体理解（音频）</strong>：如果启用音频理解（或自动检测），OpenClaw：<ol>
+<li>定位第一个音频附件（本地路径或 URL）并在需要时下载。</li>
+<li>在发送到每个模型条目之前强制执行 <code>maxBytes</code>。</li>
+<li>按顺序运行第一个符合条件的模型条目（Provider 或 CLI）。</li>
+<li>如果失败或跳过（大小/超时），尝试下一个条目。</li>
+<li>成功时，用 <code>[Audio]</code> 块替换 <code>Body</code> 并设置 <code>{{Transcript}}</code>。</li>
+</ol>
+</li>
+<li><strong>命令解析</strong>：当转录成功时，<code>CommandBody</code>/<code>RawBody</code> 被设置为转录本，以便斜杠命令仍然有效。</li>
+<li><strong>详细日志记录</strong>：在 <code>--verbose</code> 中，我们记录转录何时运行以及何时替换正文。</li>
+</ul>
+<h2>自动检测（默认）</h2>
+<p>如果你 <strong>不配置模型</strong> 且 <code>tools.media.audio.enabled</code> <strong>未</strong>设置为 <code>false</code>，<br>OpenClaw 按此顺序自动检测并在第一个可用选项处停止：</p>
+<ol>
+<li><strong>本地 CLI</strong>（如果已安装）<ul>
+<li><code>sherpa-onnx-offline</code>（需要带 encoder/decoder/joiner/tokens 的 <code>SHERPA_ONNX_MODEL_DIR</code>）</li>
+<li><code>whisper-cli</code>（来自 <code>whisper-cpp</code>；使用 <code>WHISPER_CPP_MODEL</code> 或捆绑的 tiny 模型）</li>
+<li><code>whisper</code>（Python CLI；自动下载模型）</li>
+</ul>
+</li>
+<li><strong>Gemini CLI</strong> (<code>gemini</code>) 使用 <code>read_many_files</code></li>
+<li><strong>Provider 密钥</strong>（OpenAI → Groq → Deepgram → Google）</li>
+</ol>
+<p>要禁用自动检测，设置 <code>tools.media.audio.enabled: false</code>。<br>要自定义，设置 <code>tools.media.audio.models</code>。<br>注意：二进制检测在 macOS/Linux/Windows 上是尽力而为；确保 CLI 在 <code>PATH</code> 上（我们扩展 <code>~</code>），或为显式 CLI 模型设置完整命令路径。</p>
+<h2>配置示例</h2>
+<h3>Provider + CLI 回退（OpenAI + Whisper CLI）</h3>
+<pre><code class="language-json5">{
+  tools: {
+    media: {
+      audio: {
+        enabled: true,
+        maxBytes: 20971520,
+        models: [
+          { provider: &quot;openai&quot;, model: &quot;gpt-4o-mini-transcribe&quot; },
+          {
+            type: &quot;cli&quot;,
+            command: &quot;whisper&quot;,
+            args: [&quot;--model&quot;, &quot;base&quot;, &quot;{{MediaPath}}&quot;],
+            timeoutSeconds: 45
+          }
+        ]
+      }
+    }
+  }
+}
+</code></pre>
+<h3>仅 Provider 带范围门控</h3>
+<pre><code class="language-json5">{
+  tools: {
+    media: {
+      audio: {
+        enabled: true,
+        scope: {
+          default: &quot;allow&quot;,
+          rules: [
+            { action: &quot;deny&quot;, match: { chatType: &quot;group&quot; } }
+          ]
+        },
+        models: [
+          { provider: &quot;openai&quot;, model: &quot;gpt-4o-mini-transcribe&quot; }
+        ]
+      }
+    }
+  }
+}
+</code></pre>
+<h3>仅 Provider（Deepgram）</h3>
+<pre><code class="language-json5">{
+  tools: {
+    media: {
+      audio: {
+        enabled: true,
+        models: [{ provider: &quot;deepgram&quot;, model: &quot;nova-3&quot; }]
+      }
+    }
+  }
+}
+</code></pre>
+<h2>说明和限制</h2>
+<ul>
+<li>Provider 认证遵循标准模型认证顺序（认证配置文件、环境变量、<code>models.providers.*.apiKey</code>）。</li>
+<li>使用 <code>provider: &quot;deepgram&quot;</code> 时，Deepgram 拾取 <code>DEEPGRAM_API_KEY</code>。</li>
+<li>Deepgram 设置详情：<a href="/providers/deepgram">Deepgram（音频转录）</a>。</li>
+<li>音频 Provider 可以通过 <code>tools.media.audio</code> 覆盖 <code>baseUrl</code>、<code>headers</code> 和 <code>providerOptions</code>。</li>
+<li>默认大小上限为 20MB（<code>tools.media.audio.maxBytes</code>）。超大音频跳过该模型并尝试下一个条目。</li>
+<li>音频的默认 <code>maxChars</code> 为 <strong>未设置</strong>（完整转录）。设置 <code>tools.media.audio.maxChars</code> 或每个条目的 <code>maxChars</code> 以修剪输出。</li>
+<li>OpenAI 自动默认为 <code>gpt-4o-mini-transcribe</code>；设置 <code>model: &quot;gpt-4o-transcribe&quot;</code> 以获得更高准确性。</li>
+<li>使用 <code>tools.media.audio.attachments</code> 处理多个语音笔记（<code>mode: &quot;all&quot;</code> + <code>maxAttachments</code>）。</li>
+<li>转录本作为 <code>{{Transcript}}</code> 可用于模板。</li>
+<li>CLI stdout 被限制（5MB）；保持 CLI 输出简洁。</li>
+</ul>
+<h2>注意事项</h2>
+<ul>
+<li>范围规则使用先到先得。<code>chatType</code> 被规范化为 <code>direct</code>、<code>group</code> 或 <code>room</code>。</li>
+<li>确保你的 CLI 退出 0 并打印纯文本；JSON 需要通过 <code>jq -r .text</code> 处理。</li>
+<li>保持超时合理（<code>timeoutSeconds</code>，默认 60s）以避免阻塞回复队列。</li>
+</ul>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/nodes/audio" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

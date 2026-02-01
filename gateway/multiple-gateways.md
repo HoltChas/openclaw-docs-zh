@@ -1,92 +1,91 @@
 ---
-summary: "Run multiple OpenClaw Gateways on one host (isolation, ports, and profiles)"
+summary: "在同一主机上运行多个 OpenClaw Gateway（隔离、端口和 profile）"
 read_when:
-  - Running more than one Gateway on the same machine
-  - You need isolated config/state/ports per Gateway
+  - 在同一台机器上运行多个 Gateway
+  - 需要每个 Gateway 独立的配置/状态/端口
 ---
-# Multiple Gateways (same host)
+# 多个 Gateway（同一主机）
 
-Most setups should use one Gateway because a single Gateway can handle multiple messaging connections and agents. If you need stronger isolation or redundancy (e.g., a rescue bot), run separate Gateways with isolated profiles/ports.
+多数设置使用一个 Gateway，因为一个 Gateway 可以处理多个消息连接和 Agent。如果你需要更强的隔离或冗余（例如救援 bot），可以运行多个隔离的 Gateway（独立 profile/端口）。
 
-## Isolation checklist (required)
-- `OPENCLAW_CONFIG_PATH` — per-instance config file
-- `OPENCLAW_STATE_DIR` — per-instance sessions, creds, caches
-- `agents.defaults.workspace` — per-instance workspace root
-- `gateway.port` (or `--port`) — unique per instance
-- Derived ports (browser/canvas) must not overlap
+## 隔离检查清单（必需）
+- `OPENCLAW_CONFIG_PATH` — 每个实例独立配置文件
+- `OPENCLAW_STATE_DIR` — 每个实例独立会话、凭证、缓存
+- `agents.defaults.workspace` — 每个实例独立工作区根
+- `gateway.port`（或 `--port`）— 每个实例唯一
+- 派生端口（browser/canvas）不得冲突
 
-If these are shared, you will hit config races and port conflicts.
+如果共享这些，会引发配置竞争和端口冲突。
 
-## Recommended: profiles (`--profile`)
+## 推荐：profiles（`--profile`）
 
-Profiles auto-scope `OPENCLAW_STATE_DIR` + `OPENCLAW_CONFIG_PATH` and suffix service names.
+profiles 会自动作用于 `OPENCLAW_STATE_DIR` + `OPENCLAW_CONFIG_PATH`，并给服务名加后缀。
 
 ```bash
 # main
-openclaw --profile main setup
+openclaw --profile main setup # 中文注释：创建 main profile
 openclaw --profile main gateway --port 18789
 
 # rescue
-openclaw --profile rescue setup
+openclaw --profile rescue setup # 中文注释：创建 rescue profile
 openclaw --profile rescue gateway --port 19001
 ```
 
-Per-profile services:
+每个 profile 的服务：
 ```bash
 openclaw --profile main gateway install
 openclaw --profile rescue gateway install
 ```
 
-## Rescue-bot guide
+## 救援 Bot 指南
 
-Run a second Gateway on the same host with its own:
+在同一主机上运行第二个 Gateway，分别使用：
 - profile/config
-- state dir
+- state 目录
 - workspace
-- base port (plus derived ports)
+- 基础端口（以及派生端口）
 
-This keeps the rescue bot isolated from the main bot so it can debug or apply config changes if the primary bot is down.
+这样救援 bot 与主 bot 隔离，当主 bot 出问题时可用于调试或应用配置更改。
 
-Port spacing: leave at least 20 ports between base ports so the derived browser/canvas/CDP ports never collide.
+端口间隔：基础端口至少相隔 20 个端口，确保派生的浏览器/canvas/CDP 端口不冲突。
 
-### How to install (rescue bot)
+### 如何安装（救援 bot）
 
 ```bash
-# Main bot (existing or fresh, without --profile param)
-# Runs on port 18789 + Chrome CDC/Canvas/... Ports 
+# 主 bot（已存在或新建，不带 --profile 参数）
+# 运行在 18789 + Chrome CDC/Canvas/... 端口
 openclaw onboard
 openclaw gateway install
 
-# Rescue bot (isolated profile + ports)
+# 救援 bot（隔离 profile + 端口）
 openclaw --profile rescue onboard
-# Notes: 
-# - workspace name will be postfixed with -rescue per default
-# - Port should be at least 18789 + 20 Ports, 
-#   better choose completely different base port, like 19789,
-# - rest of the onboarding is the same as normal
+# 说明：
+# - workspace 名称默认会加上 -rescue
+# - 端口至少比 18789 大 20，最好直接选不同的基础端口，如 19789
+# - 其余引导过程与正常相同
 
-# To install the service (if not happened automatically during onboarding)
+# 安装服务（如果引导未自动安装）
 openclaw --profile rescue gateway install
 ```
 
-## Port mapping (derived)
+## 端口映射（派生）
 
-Base port = `gateway.port` (or `OPENCLAW_GATEWAY_PORT` / `--port`).
+基础端口 = `gateway.port`（或 `OPENCLAW_GATEWAY_PORT` / `--port`）。
 
-- browser control service port = base + 2 (loopback only)
+- 浏览器控制服务端口 = 基础 + 2（仅 loopback）
 - `canvasHost.port = base + 4`
-- Browser profile CDP ports auto-allocate from `browser.controlPort + 9 .. + 108`
+- 浏览器 profile 的 CDP 端口从 `browser.controlPort + 9 .. + 108` 自动分配
 
-If you override any of these in config or env, you must keep them unique per instance.
+如果你在配置或环境中覆盖了这些，需要确保每个实例唯一。
 
-## Browser/CDP notes (common footgun)
+## 浏览器/CDP 注意事项（常见坑）
 
-- Do **not** pin `browser.cdpUrl` to the same values on multiple instances.
-- Each instance needs its own browser control port and CDP range (derived from its gateway port).
-- If you need explicit CDP ports, set `browser.profiles.<name>.cdpPort` per instance.
-- Remote Chrome: use `browser.profiles.<name>.cdpUrl` (per profile, per instance).
+- **不要**在多个实例中把 `browser.cdpUrl` 固定为相同值。
+- 每个实例需要自己的浏览器控制端口和 CDP 范围（由 Gateway 端口派生）。
+- 如需显式 CDP 端口，在每个实例上设置 `browser.profiles.<name>.cdpPort`。
+- 远程 Chrome：使用 `browser.profiles.<name>.cdpUrl`（每个 profile、每个实例）。
 
-## Manual env example
+## 手动环境示例
 
 ```bash
 OPENCLAW_CONFIG_PATH=~/.openclaw/main.json \
@@ -98,7 +97,7 @@ OPENCLAW_STATE_DIR=~/.openclaw-rescue \
 openclaw gateway --port 19001
 ```
 
-## Quick checks
+## 快速检查
 
 ```bash
 openclaw --profile main status

@@ -121,11 +121,118 @@
     <main class="main-content">
         <div class="content">
             <h1>Android</h1>
+<h1>Android 应用（节点）</h1>
+<h2>支持快照</h2>
+<ul>
+<li>角色：配套节点应用（Android 不托管 Gateway）。</li>
+<li>需要 Gateway：是（在 macOS、Linux 或 Windows via WSL2 上运行它）。</li>
+<li>安装：<a href="/start/getting-started">入门</a> + <a href="/gateway/pairing">配对</a>。</li>
+<li>Gateway：<a href="/gateway">运行手册</a> + <a href="/gateway/configuration">配置</a>。<ul>
+<li>协议：<a href="/gateway/protocol">Gateway 协议</a>（节点 + 控制平面）。</li>
+</ul>
+</li>
+</ul>
+<h2>系统控制</h2>
+<p>系统控制（launchd/systemd）位于 Gateway 主机上。参见 <a href="/gateway">Gateway</a>。</p>
+<h2>连接运行手册</h2>
+<p>Android 节点应用 ⇄（mDNS/NSD + WebSocket）⇄ <strong>Gateway</strong></p>
+<p>Android 直接连接到 Gateway WebSocket（默认 <code>ws://&lt;host&gt;:18789</code>）并使用 Gateway 拥有的配对。</p>
+<h3>前置条件</h3>
+<ul>
+<li>你可以在&quot;主&quot;机器上运行 Gateway。</li>
+<li>Android 设备/模拟器可以到达 Gateway WebSocket：<ul>
+<li>使用 mDNS/NSD 的同一 LAN，<strong>或</strong></li>
+<li>使用 Wide-Area Bonjour / 单播 DNS-SD 的同一 Tailscale tailnet（见下文），<strong>或</strong></li>
+<li>手动 Gateway 主机/端口（回退）</li>
+</ul>
+</li>
+<li>你可以在 Gateway 机器上运行 CLI（<code>openclaw</code>）（或通过 SSH）。</li>
+</ul>
+<h3>1) 启动 Gateway</h3>
+<pre><code class="language-bash">openclaw gateway --port 18789 --verbose
+</code></pre>
+<p>在日志中确认你看到类似：</p>
+<ul>
+<li><code>listening on ws://0.0.0.0:18789</code></li>
+</ul>
+<p>对于仅 tailnet 设置（推荐用于 Vienna ⇄ London），将 Gateway 绑定到 tailnet IP：</p>
+<ul>
+<li>在 Gateway 主机的 <code>~/.openclaw/openclaw.json</code> 中设置 <code>gateway.bind: &quot;tailnet&quot;</code>。</li>
+<li>重启 Gateway / macOS 菜单栏应用。</li>
+</ul>
+<h3>2) 验证发现（可选）</h3>
+<p>从 Gateway 机器：</p>
+<pre><code class="language-bash">dns-sd -B _openclaw-gw._tcp local.
+</code></pre>
+<p>更多调试说明：<a href="/gateway/bonjour">Bonjour</a>。</p>
+<h4>Tailnet（Vienna ⇄ London）通过单播 DNS-SD 发现</h4>
+<p>Android NSD/mDNS 发现不会跨网络。如果你的 Android 节点和 Gateway 在不同网络但通过 Tailscale 连接，改用 Wide-Area Bonjour / 单播 DNS-SD：</p>
+<ol>
+<li>在 Gateway 主机上设置 DNS-SD 区域（示例 <code>openclaw.internal.</code>）并发布 <code>_openclaw-gw._tcp</code> 记录。</li>
+<li>配置 Tailscale 分割 DNS 为你选择的域指向该 DNS 服务器。</li>
+</ol>
+<p>详情和示例 CoreDNS 配置：<a href="/gateway/bonjour">Bonjour</a>。</p>
+<h3>3) 从 Android 连接</h3>
+<p>在 Android 应用中：</p>
+<ul>
+<li>应用通过 <strong>前台服务</strong>（持久通知）保持 Gateway 连接存活。</li>
+<li>打开 <strong>设置</strong>。</li>
+<li>在 <strong>发现的 Gateways</strong> 下，选择你的 Gateway 并点击 <strong>连接</strong>。</li>
+<li>如果 mDNS 被阻止，使用 <strong>高级 → 手动 Gateway</strong>（主机 + 端口）和 <strong>连接（手动）</strong>。</li>
+</ul>
+<p>首次成功配对后，Android 在启动时自动重新连接：</p>
+<ul>
+<li>手动端点（如果启用），否则</li>
+<li>最后发现的 Gateway（尽力而为）。</li>
+</ul>
+<h3>4) 批准配对（CLI）</h3>
+<p>在 Gateway 机器上：</p>
+<pre><code class="language-bash">openclaw nodes pending
+openclaw nodes approve &lt;requestId&gt;
+</code></pre>
+<p>配对详情：<a href="/gateway/pairing">Gateway 配对</a>。</p>
+<h3>5) 验证节点已连接</h3>
+<ul>
+<li>通过节点状态：<pre><code class="language-bash">openclaw nodes status
+</code></pre>
+</li>
+<li>通过 Gateway：<pre><code class="language-bash">openclaw gateway call node.list --params &quot;{}&quot;
+</code></pre>
+</li>
+</ul>
+<h3>6) 聊天 + 历史</h3>
+<p>Android 节点的聊天表使用 Gateway 的 <strong>主会话键</strong>（<code>main</code>），因此历史和回复与 WebChat 和其他客户端共享：</p>
+<ul>
+<li>历史：<code>chat.history</code></li>
+<li>发送：<code>chat.send</code></li>
+<li>推送更新（尽力而为）：<code>chat.subscribe</code> → <code>event:&quot;chat&quot;</code></li>
+</ul>
+<h3>7) Canvas + 相机</h3>
+<h4>Gateway Canvas 主机（推荐用于 Web 内容）</h4>
+<p>如果你想让节点显示 Agent 可以在磁盘上编辑的真实 HTML/CSS/JS，将节点指向 Gateway Canvas 主机。</p>
+<p>注意：节点使用 <code>canvasHost.port</code>（默认 <code>18793</code>）上的独立 Canvas 主机。</p>
+<ol>
+<li><p>在 Gateway 主机上创建 <code>~/.openclaw/workspace/canvas/index.html</code>。</p>
+</li>
+<li><p>导航节点到它（LAN）：</p>
+</li>
+</ol>
+<pre><code class="language-bash">openclaw nodes invoke --node &quot;&lt;Android Node&gt;&quot; --command canvas.navigate --params &#39;{&quot;url&quot;:&quot;http://&lt;gateway-hostname&gt;.local:18793/__openclaw__/canvas/&quot;}&#39;
+</code></pre>
+<p>Tailnet（可选）：如果两台设备都在 Tailscale 上，使用 MagicDNS 名称或 tailnet IP 代替 <code>.local</code>，例如 <code>http://&lt;gateway-magicdns&gt;:18793/__openclaw__/canvas/</code>。</p>
+<p>此服务器将实时重新加载客户端注入 HTML 并在文件更改时重新加载。<br>A2UI 主机位于 <code>http://&lt;gateway-host&gt;:18793/__openclaw__/a2ui/</code>。</p>
+<p>Canvas 命令（仅前台）：</p>
+<ul>
+<li><code>canvas.eval</code>, <code>canvas.snapshot</code>, <code>canvas.navigate</code>（使用 <code>{&quot;url&quot;:&quot;&quot;}</code> 或 <code>{&quot;url&quot;:&quot;/&quot;}</code> 返回默认脚手架）。<code>canvas.snapshot</code> 返回 <code>{ format, base64 }</code>（默认 <code>format=&quot;jpeg&quot;</code>）。</li>
+<li>A2UI: <code>canvas.a2ui.push</code>, <code>canvas.a2ui.reset</code>（<code>canvas.a2ui.pushJSONL</code> 遗留别名）</li>
+</ul>
+<p>相机命令（仅前台；权限门控）：</p>
+<ul>
+<li><code>camera.snap</code> (jpg)</li>
+<li><code>camera.clip</code> (mp4)</li>
+</ul>
+<p>参见 <a href="/nodes/camera">相机节点</a> 了解参数和 CLI 助手。</p>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/platforms/android" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

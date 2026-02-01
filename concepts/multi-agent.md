@@ -1,92 +1,87 @@
 ---
-summary: "Multi-agent routing: isolated agents, channel accounts, and bindings"
+summary: "多 Agent 路由：隔离 Agent、频道账号与绑定"
 title: Multi-Agent Routing
-read_when: "You want multiple isolated agents (workspaces + auth) in one gateway process."
+read_when: "你想在一个 Gateway 里运行多个隔离 Agent（工作区 + 认证）。"
 status: active
 ---
 
-# Multi-Agent Routing
+# 多 Agent 路由
 
-Goal: multiple *isolated* agents (separate workspace + `agentDir` + sessions), plus multiple channel accounts (e.g. two WhatsApps) in one running Gateway. Inbound is routed to an agent via bindings.
+目标：在一个 Gateway 进程中运行多个**隔离** Agent（各自的 workspace + `agentDir` + sessions），并支持多个频道账号（比如两个 WhatsApp）。入站消息通过绑定路由到具体 Agent。
 
-## What is “one agent”?
+## 什么是“一位 Agent”？
 
-An **agent** is a fully scoped brain with its own:
+**Agent** 是一个完整隔离的“脑”，拥有自己的：
 
-- **Workspace** (files, AGENTS.md/SOUL.md/USER.md, local notes, persona rules).
-- **State directory** (`agentDir`) for auth profiles, model registry, and per-agent config.
-- **Session store** (chat history + routing state) under `~/.openclaw/agents/<agentId>/sessions`.
+- **工作区**（文件、AGENTS.md/SOUL.md/USER.md、本地笔记、人格规则）。
+- **状态目录**（`agentDir`），保存认证配置、模型注册表和每个 Agent 的配置。
+- **会话存储**（聊天历史 + 路由状态）位于 `~/.openclaw/agents/<agentId>/sessions`。
 
-Auth profiles are **per-agent**. Each agent reads from its own:
+认证配置是 **每个 Agent 独立**。每个 Agent 从自己的文件读取：
 
 ```
 ~/.openclaw/agents/<agentId>/agent/auth-profiles.json
 ```
 
-Main agent credentials are **not** shared automatically. Never reuse `agentDir`
-across agents (it causes auth/session collisions). If you want to share creds,
-copy `auth-profiles.json` into the other agent's `agentDir`.
+主 Agent 的凭证不会自动共享。不要跨 Agent 共享 `agentDir`（会导致认证/会话冲突）。如果你要共享凭证，请复制 `auth-profiles.json` 到另一个 Agent 的 `agentDir`。
 
-Skills are per-agent via each workspace’s `skills/` folder, with shared skills
-available from `~/.openclaw/skills`. See [Skills: per-agent vs shared](/tools/skills#per-agent-vs-shared-skills).
+技能是每个 Agent 的 `workspace/skills`，共享技能放在 `~/.openclaw/skills`。
+参见 [技能：每个 Agent vs 共享](/tools/skills#per-agent-vs-shared-skills)。
 
-The Gateway can host **one agent** (default) or **many agents** side-by-side.
+Gateway 可以同时托管 **一个 Agent**（默认）或 **多个 Agent**。
 
-**Workspace note:** each agent’s workspace is the **default cwd**, not a hard
-sandbox. Relative paths resolve inside the workspace, but absolute paths can
-reach other host locations unless sandboxing is enabled. See
-[Sandboxing](/gateway/sandboxing).
+**工作区说明：** 每个 Agent 的工作区是 **默认 cwd**，不是硬隔离。相对路径解析在工作区内，但绝对路径可访问其他主机路径，除非开启沙盒。参见 [沙盒化](/gateway/sandboxing)。
 
-## Paths (quick map)
+## 路径速查
 
-- Config: `~/.openclaw/openclaw.json` (or `OPENCLAW_CONFIG_PATH`)
-- State dir: `~/.openclaw` (or `OPENCLAW_STATE_DIR`)
-- Workspace: `~/.openclaw/workspace` (or `~/.openclaw/workspace-<agentId>`)
-- Agent dir: `~/.openclaw/agents/<agentId>/agent` (or `agents.list[].agentDir`)
-- Sessions: `~/.openclaw/agents/<agentId>/sessions`
+- 配置：`~/.openclaw/openclaw.json`（或 `OPENCLAW_CONFIG_PATH`）
+- 状态目录：`~/.openclaw`（或 `OPENCLAW_STATE_DIR`）
+- 工作区：`~/.openclaw/workspace`（或 `~/.openclaw/workspace-<agentId>`）
+- Agent 目录：`~/.openclaw/agents/<agentId>/agent`（或 `agents.list[].agentDir`）
+- 会话：`~/.openclaw/agents/<agentId>/sessions`
 
-### Single-agent mode (default)
+### 单 Agent 模式（默认）
 
-If you do nothing, OpenClaw runs a single agent:
+如果你不做任何事，OpenClaw 运行单 Agent：
 
-- `agentId` defaults to **`main`**.
-- Sessions are keyed as `agent:main:<mainKey>`.
-- Workspace defaults to `~/.openclaw/workspace` (or `~/.openclaw/workspace-<profile>` when `OPENCLAW_PROFILE` is set).
-- State defaults to `~/.openclaw/agents/main/agent`.
+- `agentId` 默认是 **`main`**。
+- 会话键为 `agent:main:<mainKey>`。
+- 工作区默认 `~/.openclaw/workspace`（或设置 `OPENCLAW_PROFILE` 时 `~/.openclaw/workspace-<profile>`）。
+- 状态默认 `~/.openclaw/agents/main/agent`。
 
-## Agent helper
+## Agent 助手
 
-Use the agent wizard to add a new isolated agent:
+使用 Agent 向导添加一个新的隔离 Agent：
 
 ```bash
-openclaw agents add work
+openclaw agents add work # 中文注释：新增一个叫 work 的 Agent
 ```
 
-Then add `bindings` (or let the wizard do it) to route inbound messages.
+然后添加 `bindings`（或让向导做）来路由入站消息。
 
-Verify with:
+验证：
 
 ```bash
-openclaw agents list --bindings
+openclaw agents list --bindings # 中文注释：查看 Agent 及其绑定
 ```
 
-## Multiple agents = multiple people, multiple personalities
+## 多 Agent = 多个人、多种人格
 
-With **multiple agents**, each `agentId` becomes a **fully isolated persona**:
+在 **多 Agent** 设置中，每个 `agentId` 是一个**完全隔离**的人设：
 
-- **Different phone numbers/accounts** (per channel `accountId`).
-- **Different personalities** (per-agent workspace files like `AGENTS.md` and `SOUL.md`).
-- **Separate auth + sessions** (no cross-talk unless explicitly enabled).
+- **不同账号/手机号**（每个频道 `accountId`）。
+- **不同人格**（每个 Agent 的工作区文件如 `AGENTS.md` 和 `SOUL.md`）。
+- **独立认证 + 会话**（除非明确共享）。
 
-This lets **multiple people** share one Gateway server while keeping their AI “brains” and data isolated.
+这样可以让**多个人**共享一个 Gateway 服务器，同时保持 AI “大脑”与数据隔离。
 
-## One WhatsApp number, multiple people (DM split)
+## 一个 WhatsApp 号，多个人（DM 拆分）
 
-You can route **different WhatsApp DMs** to different agents while staying on **one WhatsApp account**. Match on sender E.164 (like `+15551234567`) with `peer.kind: "dm"`. Replies still come from the same WhatsApp number (no per‑agent sender identity).
+你可以在 **一个 WhatsApp 账号** 下，将不同 DM 路由给不同 Agent，通过发送者 E.164（如 `+15551234567`）匹配 `peer.kind: "dm"`。回复仍来自同一个 WhatsApp 号码（无法按 Agent 区分发送者身份）。
 
-Important detail: direct chats collapse to the agent’s **main session key**, so true isolation requires **one agent per person**.
+重要细节：直聊会折叠到 Agent 的 **主会话键**，因此真正隔离需要 **一人一个 Agent**。
 
-Example:
+示例：
 
 ```json5
 {
@@ -102,44 +97,43 @@ Example:
   ],
   channels: {
     whatsapp: {
-      dmPolicy: "allowlist",
+      dmPolicy: "allowlist", // 中文注释：DM 允许列表模式
       allowFrom: ["+15551230001", "+15551230002"]
     }
   }
 }
 ```
 
-Notes:
-- DM access control is **global per WhatsApp account** (pairing/allowlist), not per agent.
-- For shared groups, bind the group to one agent or use [Broadcast groups](/broadcast-groups).
+说明：
+- DM 访问控制是 **每个 WhatsApp 账号全局**（配对/允许列表），不是每个 Agent。
+- 对共享群，绑定到一个 Agent 或使用 [广播群组](/broadcast-groups)。
 
-## Routing rules (how messages pick an agent)
+## 路由规则（消息如何选择 Agent）
 
-Bindings are **deterministic** and **most-specific wins**:
+绑定是 **确定性** 且 **最具体优先**：
 
-1. `peer` match (exact DM/group/channel id)
-2. `guildId` (Discord)
-3. `teamId` (Slack)
-4. `accountId` match for a channel
-5. channel-level match (`accountId: "*"`)
-6. fallback to default agent (`agents.list[].default`, else first list entry, default: `main`)
+1. `peer` 匹配（精确 DM/群/频道 id）
+2. `guildId`（Discord）
+3. `teamId`（Slack）
+4. 频道的 `accountId` 匹配
+5. 频道级匹配（`accountId: "*"`）
+6. 回退到默认 Agent（`agents.list[].default`，否则列表第一项，默认：`main`）
 
-## Multiple accounts / phone numbers
+## 多账号 / 多手机号
 
-Channels that support **multiple accounts** (e.g. WhatsApp) use `accountId` to identify
-each login. Each `accountId` can be routed to a different agent, so one server can host
-multiple phone numbers without mixing sessions.
+支持 **多账号** 的频道（如 WhatsApp）使用 `accountId` 标识每个登录。
+每个 `accountId` 可以路由给不同 Agent，因此一个服务器可托管多个手机号而不混淆会话。
 
-## Concepts
+## 核心概念
 
-- `agentId`: one “brain” (workspace, per-agent auth, per-agent session store).
-- `accountId`: one channel account instance (e.g. WhatsApp account `"personal"` vs `"biz"`).
-- `binding`: routes inbound messages to an `agentId` by `(channel, accountId, peer)` and optionally guild/team ids.
-- Direct chats collapse to `agent:<agentId>:<mainKey>` (per-agent “main”; `session.mainKey`).
+- `agentId`：一个“脑”（工作区、每个 Agent 的认证、每个 Agent 的会话存储）。
+- `accountId`：一个频道账号实例（如 WhatsApp 账号 "personal" vs "biz"）。
+- `binding`：通过 `(channel, accountId, peer)` 将入站消息路由到 `agentId`，可选 guild/team id。
+- 直聊折叠到 `agent:<agentId>:<mainKey>`（每个 Agent 的 “main”；`session.mainKey`）。
 
-## Example: two WhatsApps → two agents
+## 示例：两个 WhatsApp → 两个 Agent
 
-`~/.openclaw/openclaw.json` (JSON5):
+`~/.openclaw/openclaw.json`（JSON5）：
 
 ```js
 {
@@ -161,12 +155,12 @@ multiple phone numbers without mixing sessions.
     ],
   },
 
-  // Deterministic routing: first match wins (most-specific first).
+  // 中文注释：确定性路由，最具体优先
   bindings: [
     { agentId: "home", match: { channel: "whatsapp", accountId: "personal" } },
     { agentId: "work", match: { channel: "whatsapp", accountId: "biz" } },
 
-    // Optional per-peer override (example: send a specific group to work agent).
+    // 中文注释：可选单个群聊覆写
     {
       agentId: "work",
       match: {
@@ -177,7 +171,7 @@ multiple phone numbers without mixing sessions.
     },
   ],
 
-  // Off by default: agent-to-agent messaging must be explicitly enabled + allowlisted.
+  // 中文注释：默认关闭，Agent 间消息必须显式启用 + 允许列表
   tools: {
     agentToAgent: {
       enabled: false,
@@ -189,11 +183,11 @@ multiple phone numbers without mixing sessions.
     whatsapp: {
       accounts: {
         personal: {
-          // Optional override. Default: ~/.openclaw/credentials/whatsapp/personal
+          // 中文注释：可选覆盖。默认：~/.openclaw/credentials/whatsapp/personal
           // authDir: "~/.openclaw/credentials/whatsapp/personal",
         },
         biz: {
-          // Optional override. Default: ~/.openclaw/credentials/whatsapp/biz
+          // 中文注释：可选覆盖。默认：~/.openclaw/credentials/whatsapp/biz
           // authDir: "~/.openclaw/credentials/whatsapp/biz",
         },
       },
@@ -202,9 +196,9 @@ multiple phone numbers without mixing sessions.
 }
 ```
 
-## Example: WhatsApp daily chat + Telegram deep work
+## 示例：WhatsApp 日常 + Telegram 深度工作
 
-Split by channel: route WhatsApp to a fast everyday agent and Telegram to an Opus agent.
+按频道拆分：WhatsApp 路由到快速日常 Agent，Telegram 路由到 Opus Agent。
 
 ```json5
 {
@@ -231,13 +225,13 @@ Split by channel: route WhatsApp to a fast everyday agent and Telegram to an Opu
 }
 ```
 
-Notes:
-- If you have multiple accounts for a channel, add `accountId` to the binding (for example `{ channel: "whatsapp", accountId: "personal" }`).
-- To route a single DM/group to Opus while keeping the rest on chat, add a `match.peer` binding for that peer; peer matches always win over channel-wide rules.
+说明：
+- 如果你有多个账号，给绑定加上 `accountId`（例如 `{ channel: "whatsapp", accountId: "personal" }`）。
+- 想把某个 DM/群路由到 Opus，同时其余保持 chat，添加 `match.peer` 绑定；peer 匹配总是胜过频道级规则。
 
-## Example: same channel, one peer to Opus
+## 示例：同频道，单一 peer 到 Opus
 
-Keep WhatsApp on the fast agent, but route one DM to Opus:
+保持 WhatsApp 走快速 Agent，但把一个 DM 路由到 Opus：
 
 ```json5
 {
@@ -254,12 +248,11 @@ Keep WhatsApp on the fast agent, but route one DM to Opus:
 }
 ```
 
-Peer bindings always win, so keep them above the channel-wide rule.
+peer 绑定总是胜出，所以把它放在频道级规则上方。
 
-## Family agent bound to a WhatsApp group
+## 示例：家庭 Agent 绑定到 WhatsApp 群
 
-Bind a dedicated family agent to a single WhatsApp group, with mention gating
-and a tighter tool policy:
+把一个专用家庭 Agent 绑定到单个群，同时启用提及门控和更严格的工具策略：
 
 ```json5
 {
@@ -296,15 +289,13 @@ and a tighter tool policy:
 }
 ```
 
-Notes:
-- Tool allow/deny lists are **tools**, not skills. If a skill needs to run a
-  binary, ensure `exec` is allowed and the binary exists in the sandbox.
-- For stricter gating, set `agents.list[].groupChat.mentionPatterns` and keep
-  group allowlists enabled for the channel.
+说明：
+- 工具允许/拒绝列表是 **工具**，不是技能。若技能需要运行二进制，请确保允许 `exec` 且二进制存在于沙盒中。
+- 若要更严格门控，设置 `agents.list[].groupChat.mentionPatterns` 并保持频道群允许列表启用。
 
-## Per-Agent Sandbox and Tool Configuration
+## 每个 Agent 的沙盒和工具配置
 
-Starting with v2026.1.6, each agent can have its own sandbox and tool restrictions:
+从 v2026.1.6 开始，每个 Agent 可以有自己的沙盒和工具限制：
 
 ```js
 {
@@ -314,24 +305,24 @@ Starting with v2026.1.6, each agent can have its own sandbox and tool restrictio
         id: "personal",
         workspace: "~/.openclaw/workspace-personal",
         sandbox: {
-          mode: "off",  // No sandbox for personal agent
+          mode: "off",  // 中文注释：个人 Agent 不启用沙盒
         },
-        // No tool restrictions - all tools available
+        // 中文注释：不限制工具 - 全部可用
       },
       {
         id: "family",
         workspace: "~/.openclaw/workspace-family",
         sandbox: {
-          mode: "all",     // Always sandboxed
-          scope: "agent",  // One container per agent
+          mode: "all",     // 中文注释：始终沙盒
+          scope: "agent",  // 中文注释：每个 Agent 一个容器
           docker: {
-            // Optional one-time setup after container creation
+            // 中文注释：容器创建后的可选一次性设置
             setupCommand: "apt-get update && apt-get install -y git curl",
           },
         },
         tools: {
-          allow: ["read"],                    // Only read tool
-          deny: ["exec", "write", "edit", "apply_patch"],    // Deny others
+          allow: ["read"],                    // 中文注释：只允许 read
+          deny: ["exec", "write", "edit", "apply_patch"],    // 中文注释：拒绝其他工具
         },
       },
     ],
@@ -339,16 +330,14 @@ Starting with v2026.1.6, each agent can have its own sandbox and tool restrictio
 }
 ```
 
-Note: `setupCommand` lives under `sandbox.docker` and runs once on container creation.
-Per-agent `sandbox.docker.*` overrides are ignored when the resolved scope is `"shared"`.
+注意：`setupCommand` 位于 `sandbox.docker` 下，并在容器创建时运行一次。当解析后的 scope 为 `"shared"` 时，每个 Agent 的 `sandbox.docker.*` 覆盖会被忽略。
 
-**Benefits:**
-- **Security isolation**: Restrict tools for untrusted agents
-- **Resource control**: Sandbox specific agents while keeping others on host
-- **Flexible policies**: Different permissions per agent
+**好处：**
+- **安全隔离**：限制不可信 Agent 的工具
+- **资源控制**：为特定 Agent 开沙盒，同时其他 Agent 走主机
+- **灵活策略**：不同 Agent 不同权限
 
-Note: `tools.elevated` is **global** and sender-based; it is not configurable per agent.
-If you need per-agent boundaries, use `agents.list[].tools` to deny `exec`.
-For group targeting, use `agents.list[].groupChat.mentionPatterns` so @mentions map cleanly to the intended agent.
+注意：`tools.elevated` 是 **全局** 且基于发送者；不能按 Agent 配置。如果你需要每 Agent 的边界，使用 `agents.list[].tools` 禁用 `exec`。
+针对群聊，使用 `agents.list[].groupChat.mentionPatterns` 以便 @mention 清晰映射到目标 Agent。
 
-See [Multi-Agent Sandbox & Tools](/multi-agent-sandbox-tools) for detailed examples.
+参见 [多 Agent 沙盒与工具](/multi-agent-sandbox-tools) 获取更多示例。

@@ -121,11 +121,64 @@
     <main class="main-content">
         <div class="content">
             <h1>Linux</h1>
+<h1>Linux 应用</h1>
+<p>Gateway 在 Linux 上完全支持。<strong>Node 是推荐的运行时</strong>。<br>不推荐 Bun 作为 Gateway（WhatsApp/Telegram 有 bug）。</p>
+<p>计划推出原生 Linux 配套应用。如果你愿意贡献构建它，欢迎贡献。</p>
+<h2>新手快速路径（VPS）</h2>
+<ol>
+<li>安装 Node 22+  </li>
+<li><code>npm i -g openclaw@latest</code>  </li>
+<li><code>openclaw onboard --install-daemon</code>  </li>
+<li>从你的笔记本电脑：<code>ssh -N -L 18789:127.0.0.1:18789 &lt;user&gt;@&lt;host&gt;</code>  </li>
+<li>打开 <code>http://127.0.0.1:18789/</code> 并粘贴你的令牌</li>
+</ol>
+<p>分步 VPS 指南：<a href="/platforms/exe-dev">exe.dev</a></p>
+<h2>安装</h2>
+<ul>
+<li><a href="/start/getting-started">入门</a></li>
+<li><a href="/install/updating">安装和更新</a></li>
+<li>可选流程：<a href="/install/bun">Bun（实验性）</a>、<a href="/install/nix">Nix</a>、<a href="/install/docker">Docker</a></li>
+</ul>
+<h2>Gateway</h2>
+<ul>
+<li><a href="/gateway">Gateway 运行手册</a></li>
+<li><a href="/gateway/configuration">Gateway 配置</a></li>
+</ul>
+<h2>Gateway 服务安装（CLI）</h2>
+<p>使用以下之一：</p>
+<pre><code>openclaw onboard --install-daemon
+</code></pre>
+<p>或：</p>
+<pre><code>openclaw gateway install
+</code></pre>
+<p>或：</p>
+<pre><code>openclaw configure
+</code></pre>
+<p>在提示时选择 <strong>Gateway 服务</strong>。</p>
+<p>修复/迁移：</p>
+<pre><code>openclaw doctor
+</code></pre>
+<h2>系统控制（systemd 用户单元）</h2>
+<p>OpenClaw 默认安装 systemd <strong>用户</strong> 服务。对共享或始终在线的服务器使用 <strong>系统</strong> 服务。完整单元示例和指导在 <a href="/gateway">Gateway 运行手册</a> 中。</p>
+<p>最小设置：</p>
+<p>创建 <code>~/.config/systemd/user/openclaw-gateway[-&lt;profile&gt;].service</code>：</p>
+<pre><code>[Unit]
+Description=OpenClaw Gateway（配置文件：&lt;profile&gt;，v&lt;version&gt;）
+After=network-online.target
+Wants=network-online.target
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/platforms/linux" target="_blank">查看原始英文文档</a></p>
-        
+[Service]
+ExecStart=/usr/local/bin/openclaw gateway --port 18789
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
+</code></pre>
+<p>启用它：</p>
+<pre><code>systemctl --user enable --now openclaw-gateway[-&lt;profile&gt;].service
+</code></pre>
+
         </div>
     </main>
 

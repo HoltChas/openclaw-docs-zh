@@ -121,11 +121,210 @@
     <main class="main-content">
         <div class="content">
             <h1>节点</h1>
+<h1>节点</h1>
+<p><strong>节点</strong> 是连接到 Gateway <strong>WebSocket</strong>（与操作员相同端口）的配套设备（macOS/iOS/Android/无头），带有 <code>role: &quot;node&quot;</code> 并通过 <code>node.invoke</code> 暴露命令表面（例如 <code>canvas.*</code>、<code>camera.*</code>、<code>system.*</code>）。协议详情：<a href="/gateway/protocol">Gateway 协议</a>。</p>
+<p>遗留传输：<a href="/gateway/bridge-protocol">桥接协议</a>（TCP JSONL；当前节点已弃用/移除）。</p>
+<p>macOS 也可以运行在 <strong>节点模式</strong>：菜单栏应用连接到 Gateway 的 WS 服务器并将其本地 Canvas/相机命令作为节点暴露（因此 <code>openclaw nodes …</code> 可以针对此 Mac 工作）。</p>
+<p>说明：</p>
+<ul>
+<li>节点是 <strong>外围设备</strong>，不是 Gateway。它们不运行 Gateway 服务。</li>
+<li>Telegram/WhatsApp/等消息到达 <strong>Gateway</strong>，不在节点上。</li>
+</ul>
+<h2>配对 + 状态</h2>
+<p><strong>WS 节点使用设备配对。</strong> 节点在 <code>connect</code> 期间展示设备标识；Gateway<br>为 <code>role: node</code> 创建设备配对请求。通过设备 CLI（或 UI）批准。</p>
+<p>快速 CLI：</p>
+<pre><code class="language-bash">openclaw devices list
+openclaw devices approve &lt;requestId&gt;
+openclaw devices reject &lt;requestId&gt;
+openclaw nodes status
+openclaw nodes describe --node &lt;idOrNameOrIp&gt;
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>当设备配对角色包括 <code>node</code> 时，<code>nodes status</code> 将节点标记为 <strong>已配对</strong>。</li>
+<li><code>node.pair.*</code>（CLI: <code>openclaw nodes pending/approve/reject</code>）是独立的 Gateway 拥有的<br>节点配对存储；它 <strong>不</strong> 控制 WS <code>connect</code> 握手。</li>
+</ul>
+<h2>远程节点主机（system.run）</h2>
+<p>当你的 Gateway 在一台机器上运行但你想在另一台机器上执行命令时，使用 <strong>节点主机</strong>。模型仍然与 <strong>Gateway</strong> 通信；Gateway 在选择了 <code>host=node</code> 时将 <code>exec</code> 调用转发给 <strong>节点主机</strong>。</p>
+<h3>什么在哪里运行</h3>
+<ul>
+<li><strong>Gateway 主机</strong>：接收消息，运行模型，路由工具调用。</li>
+<li><strong>节点主机</strong>：在节点机器上执行 <code>system.run</code>/<code>system.which</code>。</li>
+<li><strong>批准</strong>：通过 <code>~/.openclaw/exec-approvals.json</code> 在节点主机上强制执行。</li>
+</ul>
+<h3>启动节点主机（前台）</h3>
+<p>在节点机器上：</p>
+<pre><code class="language-bash">openclaw node run --host &lt;gateway-host&gt; --port 18789 --display-name &quot;Build Node&quot;
+</code></pre>
+<h3>启动节点主机（服务）</h3>
+<pre><code class="language-bash">openclaw node install --host &lt;gateway-host&gt; --port 18789 --display-name &quot;Build Node&quot;
+openclaw node restart
+</code></pre>
+<h3>配对 + 命名</h3>
+<p>在 Gateway 主机上：</p>
+<pre><code class="language-bash">openclaw nodes pending
+openclaw nodes approve &lt;requestId&gt;
+openclaw nodes list
+</code></pre>
+<p>命名选项：</p>
+<ul>
+<li><code>openclaw node run</code> / <code>openclaw node install</code> 上的 <code>--display-name</code>（持久化在节点上的 <code>~/.openclaw/node.json</code> 中）。</li>
+<li><code>openclaw nodes rename --node &lt;id|name|ip&gt; --name &quot;Build Node&quot;</code>（Gateway 覆盖）。</li>
+</ul>
+<h3>允许列表命令</h3>
+<p>Exec 批准是 <strong>每个节点主机</strong> 的。从 Gateway 添加允许列表条目：</p>
+<pre><code class="language-bash">openclaw approvals allowlist add --node &lt;id|name|ip&gt; &quot;/usr/bin/uname&quot;
+openclaw approvals allowlist add --node &lt;id|name|ip&gt; &quot;/usr/bin/sw_vers&quot;
+</code></pre>
+<p>批准存在于节点主机的 <code>~/.openclaw/exec-approvals.json</code> 中。</p>
+<h3>将 exec 指向节点</h3>
+<p>配置默认值（Gateway 配置）：</p>
+<pre><code class="language-bash">openclaw config set tools.exec.host node
+openclaw config set tools.exec.security allowlist
+openclaw config set tools.exec.node &quot;&lt;id-or-name&gt;&quot;
+</code></pre>
+<p>或每个会话：</p>
+<pre><code>/exec host=node security=allowlist node=&lt;id-or-name&gt;
+</code></pre>
+<p>设置后，任何带有 <code>host=node</code> 的 <code>exec</code> 调用在节点主机上运行（受节点允许列表/批准约束）。</p>
+<p>相关：</p>
+<ul>
+<li><a href="/cli/node">节点主机 CLI</a></li>
+<li><a href="/tools/exec">Exec 工具</a></li>
+<li><a href="/tools/exec-approvals">Exec 批准</a></li>
+</ul>
+<h2>调用命令</h2>
+<p>低级（原始 RPC）：</p>
+<pre><code class="language-bash">openclaw nodes invoke --node &lt;idOrNameOrIp&gt; --command canvas.eval --params &#39;{&quot;javaScript&quot;:&quot;location.href&quot;}&#39;
+</code></pre>
+<p>高级助手存在于常见的&quot;给 Agent 一个 MEDIA 附件&quot;工作流。</p>
+<h2>截图（Canvas 快照）</h2>
+<p>如果节点显示 Canvas（WebView），<code>canvas.snapshot</code> 返回 <code>{ format, base64 }</code>。</p>
+<p>CLI 助手（写入临时文件并打印 <code>MEDIA:&lt;path&gt;</code>）：</p>
+<pre><code class="language-bash">openclaw nodes canvas snapshot --node &lt;idOrNameOrIp&gt; --format png
+openclaw nodes canvas snapshot --node &lt;idOrNameOrIp&gt; --format jpg --max-width 1200 --quality 0.9
+</code></pre>
+<h3>Canvas 控制</h3>
+<pre><code class="language-bash">openclaw nodes canvas present --node &lt;idOrNameOrIp&gt; --target https://example.com
+openclaw nodes canvas hide --node &lt;idOrNameOrIp&gt;
+openclaw nodes canvas navigate https://example.com --node &lt;idOrNameOrIp&gt;
+openclaw nodes canvas eval --node &lt;idOrNameOrIp&gt; --js &quot;document.title&quot;
+</code></pre>
+<p>说明：</p>
+<ul>
+<li><code>canvas present</code> 接受 URL 或本地文件路径（<code>--target</code>），加上可选的 <code>--x/--y/--width/--height</code> 用于定位。</li>
+<li><code>canvas eval</code> 接受内联 JS（<code>--js</code>）或位置参数。</li>
+</ul>
+<h3>A2UI（Canvas）</h3>
+<pre><code class="language-bash">openclaw nodes canvas a2ui push --node &lt;idOrNameOrIp&gt; --text &quot;Hello&quot;
+openclaw nodes canvas a2ui push --node &lt;idOrNameOrIp&gt; --jsonl ./payload.jsonl
+openclaw nodes canvas a2ui reset --node &lt;idOrNameOrIp&gt;
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>仅支持 A2UI v0.8 JSONL（v0.9/createSurface 被拒绝）。</li>
+</ul>
+<h2>照片 + 视频（节点相机）</h2>
+<p>照片（<code>jpg</code>）：</p>
+<pre><code class="language-bash">openclaw nodes camera list --node &lt;idOrNameOrIp&gt;
+openclaw nodes camera snap --node &lt;idOrNameOrIp&gt;            # 默认：两个朝向（2 个 MEDIA 行）
+openclaw nodes camera snap --node &lt;idOrNameOrIp&gt; --facing front
+</code></pre>
+<p>视频片段（<code>mp4</code>）：</p>
+<pre><code class="language-bash">openclaw nodes camera clip --node &lt;idOrNameOrIp&gt; --duration 10s
+openclaw nodes camera clip --node &lt;idOrNameOrIp&gt; --duration 3000 --no-audio
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>节点必须 <strong>前台化</strong> 才能使用 <code>canvas.*</code> 和 <code>camera.*</code>（后台调用返回 <code>NODE_BACKGROUND_UNAVAILABLE</code>）。</li>
+<li>片段持续时间被限制（当前 <code>&lt;= 60s</code>）以避免超大 base64 负载。</li>
+<li>Android 会在可能时提示 <code>CAMERA</code>/<code>RECORD_AUDIO</code> 权限；拒绝的权限失败并返回 <code>*_PERMISSION_REQUIRED</code>。</li>
+</ul>
+<h2>屏幕录制（节点）</h2>
+<p>节点暴露 <code>screen.record</code> (mp4)。示例：</p>
+<pre><code class="language-bash">openclaw nodes screen record --node &lt;idOrNameOrIp&gt; --duration 10s --fps 10
+openclaw nodes screen record --node &lt;idOrNameOrIp&gt; --duration 10s --fps 10 --no-audio
+</code></pre>
+<p>说明：</p>
+<ul>
+<li><code>screen.record</code> 需要节点应用在前台。</li>
+<li>Android 会在录制前显示系统屏幕捕获提示。</li>
+<li>屏幕录制被限制为 <code>&lt;= 60s</code>。</li>
+<li><code>--no-audio</code> 禁用麦克风捕获（iOS/Android 支持；macOS 使用系统捕获音频）。</li>
+<li>当有多个屏幕可用时使用 <code>--screen &lt;index&gt;</code> 选择显示器。</li>
+</ul>
+<h2>位置（节点）</h2>
+<p>当设置中启用位置时，节点暴露 <code>location.get</code>。</p>
+<p>CLI 助手：</p>
+<pre><code class="language-bash">openclaw nodes location get --node &lt;idOrNameOrIp&gt;
+openclaw nodes location get --node &lt;idOrNameOrIp&gt; --accuracy precise --max-age 15000 --location-timeout 10000
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>位置 <strong>默认关闭</strong>。</li>
+<li>&quot;始终&quot; 需要系统权限；后台获取是尽力而为。</li>
+<li>响应包括纬度/经度、精度（米）和时间戳。</li>
+</ul>
+<h2>SMS（Android 节点）</h2>
+<p>当用户授予 <strong>SMS</strong> 权限且设备支持电话时，Android 节点可以暴露 <code>sms.send</code>。</p>
+<p>低级调用：</p>
+<pre><code class="language-bash">openclaw nodes invoke --node &lt;idOrNameOrIp&gt; --command sms.send --params &#39;{&quot;to&quot;:&quot;+15555550123&quot;,&quot;message&quot;:&quot;Hello from OpenClaw&quot;}&#39;
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>必须在 Android 设备上接受权限提示，然后能力才会被广告。</li>
+<li>没有电话的纯 Wi-Fi 设备不会广告 <code>sms.send</code>。</li>
+</ul>
+<h2>系统命令（节点主机 / mac 节点）</h2>
+<p>macOS 节点暴露 <code>system.run</code>、<code>system.notify</code> 和 <code>system.execApprovals.get/set</code>。<br>无头节点主机暴露 <code>system.run</code>、<code>system.which</code> 和 <code>system.execApprovals.get/set</code>。</p>
+<p>示例：</p>
+<pre><code class="language-bash">openclaw nodes run --node &lt;idOrNameOrIp&gt; -- echo &quot;Hello from mac node&quot;
+openclaw nodes notify --node &lt;idOrNameOrIp&gt; --title &quot;Ping&quot; --body &quot;Gateway ready&quot;
+</code></pre>
+<p>说明：</p>
+<ul>
+<li><code>system.run</code> 在负载中返回 stdout/stderr/退出代码。</li>
+<li><code>system.notify</code> 尊重 macOS 应用上的通知权限状态。</li>
+<li><code>system.run</code> 支持 <code>--cwd</code>、<code>--env KEY=VAL</code>、<code>--command-timeout</code> 和 <code>--needs-screen-recording</code>。</li>
+<li><code>system.notify</code> 支持 <code>--priority &lt;passive|active|timeSensitive&gt;</code> 和 <code>--delivery &lt;system|overlay|auto&gt;</code>。</li>
+<li>macOS 节点丢弃 <code>PATH</code> 覆盖；无头节点主机仅在它前置节点主机 PATH 时接受 <code>PATH</code>。</li>
+<li>在 macOS 节点模式下，<code>system.run</code> 由 macOS 应用中的 exec 批准控制（设置 → Exec 批准）。<br>询问/允许列表/完整的行为与无头节点主机相同；拒绝的提示返回 <code>SYSTEM_RUN_DENIED</code>。</li>
+<li>在无头节点主机上，<code>system.run</code> 由 exec 批准控制（<code>~/.openclaw/exec-approvals.json</code>）。</li>
+</ul>
+<h2>Exec 节点绑定</h2>
+<p>当有多个节点可用时，你可以将 exec 绑定到特定节点。<br>这会为 <code>exec host=node</code> 设置默认节点（并且可以被每个 Agent 覆盖）。</p>
+<p>全局默认值：</p>
+<pre><code class="language-bash">openclaw config set tools.exec.node &quot;node-id-or-name&quot;
+</code></pre>
+<p>每个 Agent 覆盖：</p>
+<pre><code class="language-bash">openclaw config get agents.list
+openclaw config set agents.list[0].tools.exec.node &quot;node-id-or-name&quot;
+</code></pre>
+<p>取消设置以允许任何节点：</p>
+<pre><code class="language-bash">openclaw config unset tools.exec.node
+openclaw config unset agents.list[0].tools.exec.node
+</code></pre>
+<h2>权限映射</h2>
+<p>节点可能在 <code>node.list</code> / <code>node.describe</code> 中包含 <code>permissions</code> 映射，按键为权限名称（例如 <code>screenRecording</code>、<code>accessibility</code>）带有布尔值（<code>true</code> = 已授予）。</p>
+<h2>无头节点主机（跨平台）</h2>
+<p>OpenClaw 可以运行 <strong>无头节点主机</strong>（无 UI），它连接到 Gateway<br>WebSocket 并暴露 <code>system.run</code> / <code>system.which</code>。这在 Linux/Windows 上或作为服务器旁的最小节点运行非常有用。</p>
+<p>启动它：</p>
+<pre><code class="language-bash">openclaw node run --host &lt;gateway-host&gt; --port 18789
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>仍然需要配对（Gateway 会显示节点批准提示）。</li>
+<li>节点主机将其节点 ID、令牌、显示名称和 Gateway 连接信息存储在 <code>~/.openclaw/node.json</code> 中。</li>
+<li>Exec 批准通过 <code>~/.openclaw/exec-approvals.json</code> 在本地强制执行<br>（参见 <a href="/tools/exec-approvals">Exec 批准</a>）。</li>
+<li>在 macOS 上，无头节点主机在可到达时优先使用配套应用 exec 主机，如果应用不可用则回退到本地执行。设置 <code>OPENCLAW_NODE_EXEC_HOST=app</code> 要求使用应用，或 <code>OPENCLAW_NODE_EXEC_FALLBACK=0</code> 禁用回退。</li>
+<li>当 Gateway WS 使用 TLS 时添加 <code>--tls</code> / <code>--tls-fingerprint</code>。</li>
+</ul>
+<h2>Mac 节点模式</h2>
+<ul>
+<li>macOS 菜单栏应用作为节点连接到 Gateway WS 服务器（因此 <code>openclaw nodes …</code> 可以针对此 Mac 工作）。</li>
+<li>在远程模式下，应用为 Gateway 端口打开 SSH 隧道并连接到 <code>localhost</code>。</li>
+</ul>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/nodes/index" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 

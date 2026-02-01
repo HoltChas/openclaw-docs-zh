@@ -121,11 +121,78 @@
     <main class="main-content">
         <div class="content">
             <h1>图片</h1>
+<h1>图像和媒体支持 — 2025-12-05</h1>
+<p>WhatsApp 频道通过 <strong>Baileys Web</strong> 运行。本文档捕获发送、Gateway 和 Agent 回复的当前媒体处理规则。</p>
+<h2>目标</h2>
+<ul>
+<li>通过 <code>openclaw message send --media</code> 发送带可选标题的媒体。</li>
+<li>允许 Web 收件箱的自动回复包含媒体以及文本。</li>
+<li>保持每种类型限制合理且可预测。</li>
+</ul>
+<h2>CLI 表面</h2>
+<ul>
+<li><code>openclaw message send --media &lt;path-or-url&gt; [--message &lt;caption&gt;]</code><ul>
+<li><code>--media</code> 可选；标题可以为空用于仅媒体发送。</li>
+<li><code>--dry-run</code> 打印解析的负载；<code>--json</code> 发出 <code>{ channel, to, messageId, mediaUrl, caption }</code>。</li>
+</ul>
+</li>
+</ul>
+<h2>WhatsApp Web 频道行为</h2>
+<ul>
+<li>输入：本地文件路径 <strong>或</strong> HTTP(S) URL。</li>
+<li>流程：加载到 Buffer，检测媒体类型，并构建正确的负载：<ul>
+<li><strong>图像：</strong> 调整大小并重新压缩为 JPEG（最大边 2048px），目标 <code>agents.defaults.mediaMaxMb</code>（默认 5 MB），上限为 6 MB。</li>
+<li><strong>音频/语音/视频：</strong> 直通高达 16 MB；音频作为语音笔记发送（<code>ptt: true</code>）。</li>
+<li><strong>文档：</strong> 其他任何东西，高达 100 MB，尽可能保留文件名。</li>
+</ul>
+</li>
+<li>WhatsApp GIF 风格播放：发送带 <code>gifPlayback: true</code> 的 MP4（CLI: <code>--gif-playback</code>）以便移动客户端内联循环。</li>
+<li>MIME 检测优先使用魔数，然后是 headers，然后是文件扩展名。</li>
+<li>标题来自 <code>--message</code> 或 <code>reply.text</code>；允许空标题。</li>
+<li>日志记录：非详细显示 <code>↩️</code>/<code>✅</code>；详细包括大小和源路径/URL。</li>
+</ul>
+<h2>自动回复管道</h2>
+<ul>
+<li><code>getReplyFromConfig</code> 返回 <code>{ text?, mediaUrl?, mediaUrls? }</code>。</li>
+<li>当存在媒体时，Web 发送器使用与 <code>openclaw message send</code> 相同的管道解析本地路径或 URL。</li>
+<li>如果提供多个媒体条目，则顺序发送。</li>
+</ul>
+<h2>入站媒体到命令（Pi）</h2>
+<ul>
+<li>当入站 Web 消息包含媒体时，OpenClaw 下载到临时文件并暴露模板变量：<ul>
+<li>入站媒体的 <code>{{MediaUrl}}</code> 伪 URL。</li>
+<li>运行命令前写入的本地临时路径 <code>{{MediaPath}}</code>。</li>
+</ul>
+</li>
+<li>当启用每会话 Docker 沙盒时，入站媒体被复制到沙盒工作区，<code>MediaPath</code>/<code>MediaUrl</code> 被重写为相对路径如 <code>media/inbound/&lt;filename&gt;</code>。</li>
+<li>媒体理解（如果通过 <code>tools.media.*</code> 或共享 <code>tools.media.models</code> 配置）在模板化之前运行，并可以在 <code>Body</code> 中插入 <code>[Image]</code>、<code>[Audio]</code> 和 <code>[Video]</code> 块。<ul>
+<li>音频设置 <code>{{Transcript}}</code> 并使用转录本进行命令解析，以便斜杠命令仍然有效。</li>
+<li>视频和图像描述保留任何标题文本用于命令解析。</li>
+</ul>
+</li>
+<li>默认情况下仅处理第一个匹配的图像/音频/视频附件；设置 <code>tools.media.&lt;cap&gt;.attachments</code> 以处理多个附件。</li>
+</ul>
+<h2>限制和错误</h2>
+<p><strong>出站发送上限（WhatsApp Web 发送）</strong></p>
+<ul>
+<li>图像：重新压缩后约 6 MB 上限。</li>
+<li>音频/语音/视频：16 MB 上限；文档：100 MB 上限。</li>
+<li>超大或不可读媒体 → 日志中的清晰错误并跳过回复。</li>
+</ul>
+<p><strong>媒体理解上限（转录/描述）</strong></p>
+<ul>
+<li>图像默认：10 MB（<code>tools.media.image.maxBytes</code>）。</li>
+<li>音频默认：20 MB（<code>tools.media.audio.maxBytes</code>）。</li>
+<li>视频默认：50 MB（<code>tools.media.video.maxBytes</code>）。</li>
+<li>超大媒体跳过理解，但回复仍通过原始正文进行。</li>
+</ul>
+<h2>测试说明</h2>
+<ul>
+<li>覆盖图像/音频/文档情况的发送 + 回复流程。</li>
+<li>验证图像的重新压缩（大小限制）和音频的语音笔记标志。</li>
+<li>确保多媒体回复作为顺序发送扇出。</li>
+</ul>
 
-            <p>此页面正在翻译中，即将提供完整的中文文档。</p>
-            <p>请稍后再访问以获取更新。</p>
-            <p>参考：<a href="https://docs.openclaw.ai/nodes/images" target="_blank">查看原始英文文档</a></p>
-        
         </div>
     </main>
 
