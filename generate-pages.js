@@ -88,7 +88,7 @@ const pages = [
     { path: 'experiments/onboarding-config-protocol.html', title: '配置协议', category: '实验性', mdPath: 'experiments/onboarding-config-protocol.md' },
 
     // Help
-    { path: 'help.html', title: '帮助', category: '其他', mdPath: null },
+    { path: 'help.html', title: '帮助', category: '其他', mdPath: 'help.md' },
 ];
 
 function getRelativePrefix(filePath) {
